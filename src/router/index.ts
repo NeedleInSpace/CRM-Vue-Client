@@ -15,6 +15,11 @@ const routes: Array<RouteConfig> = [
     name: 'KnowledgeBase',
     component: () => import('../knowledge-base/KnowledgeBase.vue'),
   },
+  {
+    path: '/kb/addCompany',
+    name: 'AddCompany',
+    component: () => import('../addCompany/AddCompany.vue'),
+  },
 ];
 
 const router = new VueRouter({

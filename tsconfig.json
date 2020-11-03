@@ -33,7 +33,7 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx", "src/knowledge-base/companiesList.js"
   ],
   "exclude": [
     "node_modules"
