@@ -6,7 +6,7 @@
           <div id = "activeCompanyElements-layout">
             <div id = "title">Компании</div>
             <div id = "icons">
-              <img src = "../assets/filter.svg"/>
+              <i class = "fas fa-filter"/>
             </div>
           </div>
           <div id = "addCompany-layout">
@@ -69,23 +69,31 @@ export default class KnowledgeBase extends Vue {}
     margin-right: 1%;
     width: 49%;
     box-shadow: 1.3px 1.3px 5px #707070;
-    // background: blue;
 
     #companiesForm-header {
       margin-top: 20px;
       margin-left: 25px;
       margin-right: 35px;
-      // background: darkgoldenrod;
 
       #activeCompanyElements-layout {
         display: inline-block;
         width: 50%;
         vertical-align: middle;
-        // background: crimson;
 
         #title {
+          display: inline-block;
           font-size: 28pt;
           opacity: 0.95;
+        }
+
+        #icons {
+          display: inline-block;
+          margin-left: 15px;
+          color: #707070;
+
+          i:hover {
+            color: black;
+          }
         }
       }
 

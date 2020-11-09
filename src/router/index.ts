@@ -20,6 +20,11 @@ const routes: Array<RouteConfig> = [
     name: 'AddCompany',
     component: () => import('../addCompany/AddCompany.vue'),
   },
+  {
+    path: '/kb/addContact',
+    name: 'AddContact',
+    component: () => import('../addContact/AddContact.vue'),
+  },
 ];
 
 const router = new VueRouter({

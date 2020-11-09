@@ -1,15 +1,21 @@
 <template>
     <div>
         <ul id ="contactPersons-list">
-            <li class = "contact" v-for= "contact in contactPersons" v-bind:key= "contact.FIO">
-                <div id = "contactFIO-layout" class = "contactField">
-                    <div id = "contactFIO" class = "fieldContent">{{ contact.FIO }}</div>
+            <li class = "contact" v-for = "contact in contactPersons"
+            v-bind:key = "contact.contactName">
+                <div id = "contactName-layout" class = "contactField"
+                v-if = "contact.contactName != null">
+                    <div id = "contactName" class = "fieldContent">{{ contact.contactName }}</div>
                 </div>
-                <div id = "contactCompany-layout" class = "contactField">
-                    <div id = "contactCompany" class = "fieldTitle">Компания</div>
-                    <div class = "fieldContent">{{ contact.company }}</div>
+                <div v-for = "company in companies" v-bind:key = "company">
+                    <div id = "contactCompany-layout" class = "contactField"
+                    v-if = "contact.companyId == company.companyId">
+                        <div id = "contactCompany" class = "fieldTitle">Компания</div>
+                        <div class = "fieldContent">{{ company.fullName }}</div>
+                    </div>
                 </div>
-                <div id = "contactPosition-layout" class = "contactField">
+                <div id = "contactPosition-layout" class = "contactField"
+                v-if = "contact.position != ''">
                     <div id = "contactPosition" class = "fieldTitle">Должность</div>
                     <div class = "fieldContent">{{ contact.position }}</div>
                 </div>
@@ -19,13 +25,15 @@
                         Лицо принимающее решения
                     </div>
                 </div>
-                <div id = "contactEmail-layout" class = "contactField">
+                <div id = "contactEmail-layout" class = "contactField"
+                v-if = "contact.mainEmail != ''">
                     <div id = "contactEmail" class = "fieldTitle">E-mail</div>
-                    <div class = "fieldContent">{{ contact.email }}</div>
+                    <div class = "fieldContent">{{ contact.mainEmail }}</div>
                 </div>
-                <div id = "contactPhone-layout" class = "contactField">
+                <div id = "contactPhone-layout" class = "contactField"
+                v-if = "contact.mainPhone != null">
                     <div id = "contactPhone" class = "fieldTitle">Телефон</div>
-                    <div class = "fieldContent">{{ contact.phone }}</div>
+                    <div class = "fieldContent">{{ contact.mainPhone }}</div>
                 </div>
             </li>
         </ul>
@@ -33,36 +41,18 @@
 </template>
 
 <script lang="ts">
+import store from '@/store';
 import { Component, Vue } from 'vue-property-decorator';
 
 @Component
 export default class ContactPersonList extends Vue {
-    contactPersons = [
-      {
-        FIO: 'Petrov Petr Petrovich',
-        company: 'Stroim',
-        position: 'Electric',
-        makeDecision: true,
-        email: 'ppp@first.com',
-        phone: '+7 (999) 001-22-77',
-      },
-      {
-        FIO: 'Sergeev Sergey Sergeevich',
-        company: 'Stroim',
-        position: 'Kto-to',
-        makeDecision: false,
-        email: 'sss@first.com',
-        phone: '+7 (999) 001-22-27',
-      },
-      {
-        FIO: 'Mihailov Mihail Mihailovich',
-        company: 'Stroim',
-        position: 'Kto-to',
-        makeDecision: false,
-        email: 'mmm@second.com',
-        phone: '+7 (999) 342-88-99',
-      },
-    ];
+    contactPersons = store.getters.CONTACTS;
+
+    companies = store.getters.COMPANIES;
+
+    mounted() {
+      this.$store.dispatch('GET_CONTACTS');
+    }
 }
 
 </script>
@@ -70,7 +60,8 @@ export default class ContactPersonList extends Vue {
 <style scoped lang="scss">
 
 #contactPersons-list {
-  display: block;
+  display: grid;
+  grid-template-columns: auto auto;
   padding-left: 0;
   margin-left: 0;
   text-align: left;
@@ -79,7 +70,7 @@ export default class ContactPersonList extends Vue {
         display: inline-block;
         list-style: none;
         vertical-align: top;
-        width: 45%;
+        // width: 45%;
         margin-top: 10px;
         margin-right: 5px;
         margin-left: 5px;
@@ -95,7 +86,7 @@ export default class ContactPersonList extends Vue {
         border-color: #508C64;
     }
 
-    #contactFIO {
+    #contactName {
         font-size: 24pt;
         padding-bottom: 5px;
     }
