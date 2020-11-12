@@ -58,7 +58,9 @@
     "parserOptions": {
       "ecmaVersion": 2020
     },
-    "rules": {},
+    "rules": {
+      "linebreak-style": "off"
+    },
     "overrides": [
       {
         "files": [
