@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import router from '@/router';
+import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 
@@ -10,6 +11,7 @@ export default new Vuex.Store({
     companies: null,
     contacts: null,
   },
+  plugins: [createPersistedState()],
   getters: {
     CURRENT_TIME: (state) => new Date(),
     COMPANIES: (state) => state.companies,
@@ -40,7 +42,7 @@ export default new Vuex.Store({
         .post('http://localhost:8090/api/contacts', contact)
         .then((response) => {
           // window.location.replace('http://localhost:8080/#/kb/');
-          router.push('http://localhost:8080/#/kb/');
+          router.back();
           console.log(response);
         })
         .catch((error) => {

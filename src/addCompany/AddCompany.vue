@@ -159,7 +159,7 @@ input::-webkit-inner-spin-button {
         margin-top: 25px;
         padding-bottom: 25px;
         box-shadow: 1.4px 1.4px 5px #707070;
-        border: 1px solid #ffffff
+        border: 1px solid #ffffff;
     }
 
     #addCompany-header {
