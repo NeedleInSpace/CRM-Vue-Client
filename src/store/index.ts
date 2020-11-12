@@ -1,17 +1,14 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
-import router from '@/router';
-import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    companies: null,
-    contacts: null,
+    companies: [] as any[],
+    contacts: [] as any[],
   },
-  plugins: [createPersistedState()],
   getters: {
     CURRENT_TIME: (state) => new Date(),
     COMPANIES: (state) => state.companies,
@@ -27,35 +24,34 @@ export default new Vuex.Store({
   },
   actions: {
     POST_NEW_COMPANY(state, [company]) {
-      axios
-        .post('http://localhost:8090/api/companies', company)
-        .then((response) => {
-          window.location.replace('http://localhost:8080/#/kb/');
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      return new Promise((resolve, reject) => {
+        axios
+          .post('http://localhost:8090/api/companies', company)
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
     },
     POST_NEW_CONTACT(state, [contact]) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post('http://localhost:8090/api/contacts', contact)
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+    GET_COMPANIES: (context, payload) => {
       axios
-        .post('http://localhost:8090/api/contacts', contact)
+        .get('http://localhost:8090/api/companies')
         .then((response) => {
-          // window.location.replace('http://localhost:8080/#/kb/');
-          router.back();
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
+          context.commit('SET_COMPANIES', response.data);
         });
     },
-    GET_COMPANIES: async (context, payload) => {
-      const { data } = await axios.get('http://localhost:8090/api/companies');
-      context.commit('SET_COMPANIES', data);
-    },
-    GET_CONTACTS: async (context, payload) => {
-      const { data } = await axios.get('http://localhost:8090/api/contacts');
-      context.commit('SET_CONTACTS', data);
+    GET_CONTACTS: (context, payload) => {
+      axios
+        .get('http://localhost:8090/api/contacts')
+        .then((response) => {
+          context.commit('SET_CONTACTS', response.data);
+        });
     },
   },
   modules: {
