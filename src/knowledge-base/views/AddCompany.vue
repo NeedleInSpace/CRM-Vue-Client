@@ -132,7 +132,8 @@ export default class Company extends Vue {
   onAddButtonClick() {
     this.temp = '';
 
-    this.$store.dispatch('POST_NEW_COMPANY', [this.company])
+    this.$store
+      .dispatch('POST_NEW_COMPANY', [this.company])
       .then((response) => {
         console.log(response);
         this.$router.push('/kb');
@@ -174,9 +175,11 @@ export default class Company extends Vue {
     inn: null,
     kpp: null,
     okpo: null,
-    email: null,
+    email: '',
     phone: null,
-    projects: null,
+    creatorId: null,
+    changerId: null,
+    notes: null,
   };
 }
 </script>

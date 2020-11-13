@@ -18,17 +18,17 @@ const routes: Array<RouteConfig> = [
   {
     path: '/kb/addCompany',
     name: 'AddCompany',
-    component: () => import('../addCompany/AddCompany.vue'),
+    component: () => import('../knowledge-base/views/AddCompany.vue'),
   },
   {
     path: '/kb/addContact',
     name: 'AddContact',
-    component: () => import('../addContact/AddContact.vue'),
+    component: () => import('../knowledge-base/views/AddContact.vue'),
   },
   {
-    path: '/kb/companyDetail/:id',
+    path: '/kb/companyDetails/:id',
     name: 'CompanyDetails',
-    component: () => import('../companyDetails/CompanyDetails.vue'),
+    component: () => import('../knowledge-base/views/CompanyDetails.vue'),
   },
 ];
 
