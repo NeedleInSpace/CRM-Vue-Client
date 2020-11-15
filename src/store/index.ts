@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
+import Company from '@/models/Company';
+import Contact from '@/models/Contact';
 
 Vue.use(Vuex);
 
@@ -8,11 +10,15 @@ export default new Vuex.Store({
   state: {
     companies: [] as Company[],
     contacts: [] as Contact[],
+    currentCompany: {} as Company,
+    companyContacts: [] as Contact[],
   },
   getters: {
     CURRENT_TIME: (state) => new Date(),
     COMPANIES: (state) => state.companies,
     CONTACTS: (state) => state.contacts,
+    CURRENT_COMPANY: (state) => state.currentCompany,
+    COMPANY_CONTACTS: (state) => state.companyContacts,
   },
   mutations: {
     SET_COMPANIES: (state, payload) => {
@@ -20,6 +26,12 @@ export default new Vuex.Store({
     },
     SET_CONTACTS: (state, payload) => {
       state.contacts = payload;
+    },
+    SET_CURRENT_COMPANY: (state, payload) => {
+      state.currentCompany = payload;
+    },
+    SET_COMPANY_CONTACTS: (state, payload) => {
+      state.companyContacts = payload;
     },
   },
   actions: {
@@ -30,15 +42,14 @@ export default new Vuex.Store({
           context.commit('SET_COMPANIES', response.data);
         });
     },
-    GET_COMPANY_BY_ID(state, id) {
+    GET_COMPANY_BY_ID(context, id) {
       const apiUrl = 'http://localhost:8090/api/companies/';
 
-      return new Promise((resolve, reject) => {
-        axios
-          .get(apiUrl.concat(id))
-          .then((response) => resolve(response.data))
-          .catch((error) => reject(error));
-      });
+      axios
+        .get(apiUrl.concat(id))
+        .then((response) => {
+          context.commit('SET_CURRENT_COMPANY', response.data);
+        });
     },
     GET_CONTACTS: (context) => {
       axios
@@ -47,15 +58,14 @@ export default new Vuex.Store({
           context.commit('SET_CONTACTS', response.data);
         });
     },
-    GET_COMPANY_CONTACTS(state, id) {
+    GET_COMPANY_CONTACTS(context, id) {
       const apiUrl = 'http://localhost:8090/api/contacts/company/';
 
-      return new Promise((resolve, reject) => {
-        axios
-          .get(apiUrl.concat(id))
-          .then((response) => resolve(response.data))
-          .catch((error) => reject(error));
-      });
+      axios
+        .get(apiUrl.concat(id))
+        .then((response) => {
+          context.commit('SET_COMPANY_CONTACTS', response.data);
+        });
     },
     POST_NEW_COMPANY(state, [company]) {
       return new Promise((resolve, reject) => {

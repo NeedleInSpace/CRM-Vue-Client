@@ -24,7 +24,7 @@
                   <i class="fa fa-pencil" aria-hidden="true"></i>
                 </div>
                 <div id="onEditMode-buttons" v-if="editMode">
-                  <div id="rollback-button" v-on:click="editMode = false;">
+                  <div id="rollback-button" v-on:click="onRollBackButtonClick">
                     <i class="fa fa-undo" aria-hidden="true"></i>
                   </div>
                   <div id="save-button" v-on:click="onSaveButtonClick">
@@ -138,7 +138,7 @@
                 <div
                   id="notes"
                   v-for="note in company.notes"
-                  v-bind:key="note"
+                  v-bind:key="note.text"
                 >
                   <div class="note">
                     {{ note }}
@@ -168,7 +168,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import EditMode from './EditMode.vue';
-import Company from '../../models/Company';
 
 @Component({
   components: {
@@ -176,44 +175,38 @@ import Company from '../../models/Company';
   },
 })
 export default class CompanyDetails extends Vue {
-  company: Company = null;
+  get company() {
+    return this.$store.getters.CURRENT_COMPANY;
+  }
 
-  companyContacts: Contact[] = [];
+  get companyContacts() {
+    return this.$store.getters.COMPANY_CONTACTS;
+  }
 
   editMode = false;
 
   newNote = '';
 
   beforeCreate() {
-    this.$store
-      .dispatch('GET_COMPANY_BY_ID', this.$route.params.id)
-      .then((response) => this.setCompany(response));
-    this.$store
-      .dispatch('GET_COMPANY_CONTACTS', this.$route.params.id)
-      .then((response) => this.setCompanyContacts(response));
-  }
-
-  setCompany(response: Company) {
-    this.company = response;
-  }
-
-  setCompanyContacts(response: Contact[]) {
-    this.companyContacts = response;
+    this.$store.dispatch('GET_COMPANY_BY_ID', this.$route.params.id);
+    this.$store.dispatch('GET_COMPANY_CONTACTS', this.$route.params.id);
   }
 
   onEditButtonClick() {
     this.editMode = true;
   }
 
+  onRollBackButtonClick() {
+    this.$store.dispatch('GET_COMPANY_BY_ID', this.$route.params.id);
+    this.editMode = false;
+  }
+
   onSaveButtonClick() {
     this.$store
       .dispatch('PATCH_COMPANY', [this.company, this.$route.params.id])
-      .then((response) => {
-        console.log(response);
+      .then(() => {
+        this.$store.dispatch('GET_COMPANY_BY_ID', this.$route.params.id);
         this.editMode = false;
-      })
-      .catch((error) => {
-        console.error(error);
       });
   }
 
@@ -221,13 +214,9 @@ export default class CompanyDetails extends Vue {
     if (this.newNote !== '') {
       this.$store
         .dispatch('POST_NOTE_TO_COMPANY', [this.newNote, this.$route.params.id])
-        .then((response) => {
-          console.log(response);
+        .then(() => {
           this.$store.dispatch('GET_COMPANIES');
           this.newNote = '';
-        })
-        .catch((error) => {
-          console.error(error);
         });
     }
   }
@@ -235,12 +224,8 @@ export default class CompanyDetails extends Vue {
   onDeleteButton() {
     this.$store
       .dispatch('DELETE_COMPANY', this.$route.params.id)
-      .then((response) => {
-        console.log(response);
+      .then(() => {
         this.$router.push('/kb');
-      })
-      .catch((error) => {
-        console.error(error);
       });
   }
 }

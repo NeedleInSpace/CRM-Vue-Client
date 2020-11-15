@@ -43,15 +43,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import CompanyList from "@/knowledge-base/components/CompanyList.vue";
-import ContactPersonList from "./components/ContactPersonList.vue";
+import { Component, Vue } from 'vue-property-decorator';
+import CompanyList from '@/knowledge-base/components/CompanyList.vue';
+import ContactPersonList from './components/ContactPersonList.vue';
 
 @Component({
   components: {
     CompanyList,
-    ContactPersonList
-  }
+    ContactPersonList,
+  },
 })
 export default class KnowledgeBase extends Vue {}
 </script>

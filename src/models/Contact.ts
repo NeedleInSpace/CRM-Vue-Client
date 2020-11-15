@@ -1,4 +1,4 @@
-class Contact {
+export default interface Contact {
 
   contactPersonId: number;
   contactName: string;
@@ -12,6 +12,4 @@ class Contact {
   lastUpdaterId: number;
   mainPhone: number;
 	otherPhones: string[];
-
-	constructor() {}
 }

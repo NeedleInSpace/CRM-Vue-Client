@@ -106,14 +106,12 @@ import { Component, Vue } from 'vue-property-decorator';
 
 @Component
 export default class EditMode extends Vue {
-  beforeCreate() {
-    this.$store
-      .dispatch('GET_COMPANY_BY_ID', this.$route.params.id)
-      .then((response) => this.setCompany(response));
+  get company() {
+    return this.$store.getters.CURRENT_COMPANY;
   }
 
-  setCompany(response: Company) {
-    this.company = response;
+  beforeCreate() {
+    this.$store.dispatch('GET_COMPANY_BY_ID', this.$route.params.id);
   }
 
   options = [
@@ -134,23 +132,6 @@ export default class EditMode extends Vue {
       value: 0,
     },
   ];
-
-  company = {
-    companyId: null,
-    name: ' ',
-    fullName: ' ',
-    kindOfActivity: ' ',
-    consumptionVolume: 0,
-    generatingCapacity: false,
-    inn: 0,
-    kpp: 0,
-    okpo: 0,
-    email: ' ',
-    phone: 0,
-    creatorId: 0,
-    changerId: 0,
-    notes: 0,
-  };
 }
 </script>
 

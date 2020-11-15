@@ -134,12 +134,7 @@ export default class Company extends Vue {
 
     this.$store
       .dispatch('POST_NEW_COMPANY', [this.company])
-      .then((response) => {
-        console.log(response);
-        this.$router.push('/kb');
-      })
-      .catch((error) => {
-        console.error(error);
+      .then(() => {
         this.$router.push('/kb');
       });
   }

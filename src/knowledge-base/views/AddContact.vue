@@ -144,12 +144,7 @@ export default class Contact extends Vue {
 
     this.$store
       .dispatch('POST_NEW_CONTACT', [this.contact])
-      .then((response) => {
-        console.log(response);
-        this.$router.push('/kb');
-      })
-      .catch((error) => {
-        console.error(error);
+      .then(() => {
         this.$router.push('/kb');
       });
   }
