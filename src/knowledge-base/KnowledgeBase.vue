@@ -1,6 +1,9 @@
 <template>
   <div>
     <div id="main-layout">
+       <div id = "search-layout">
+        <Search id ="search"/>
+      </div>
       <div id="companiesForm-layout">
         <div id="companiesForm-header">
           <div id="activeCompanyElements-layout">
@@ -62,7 +65,9 @@ export default class KnowledgeBase extends Vue {}
   margin-left: 1%;
   margin-right: 1%;
   // background: yellowgreen;
-
+  #search-layout{
+    margin: 0 auto 15px;
+  }
   #companiesForm-layout {
     display: inline-block;
     margin-right: 1%;
