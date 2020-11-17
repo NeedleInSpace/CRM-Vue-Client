@@ -8,6 +8,10 @@
       active-class="active">
       <i class="fas fa-database"/> База знаний
     </router-link>
+    <router-link to="/deals" class="nav-element"
+      active-class="active">
+      <i class="fas fa-hands-helping"/> Сделки
+    </router-link>
   </nav>
 </template>
 

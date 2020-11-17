@@ -1,17 +1,51 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import axios from 'axios';
+import Project from '@/models/Project';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    projects: [] as Project[],
+    currentProject: {} as Project,
   },
   getters: {
     CURRENT_TIME: (state) => new Date(),
+    PROJECTS: (state) => state.projects,
+    CURRENT_PROJECT: (state) => state.currentProject,
   },
   mutations: {
+    SET_PROJECTS: (state, payload) => {
+      state.projects = payload;
+    },
+    SET_CURRENT_PROJECT: (state, payload) => {
+      state.currentProject = payload;
+    },
   },
   actions: {
+    GET_PROJECTS: (context) => {
+      axios
+        .get('http://localhost:8090/api/projects')
+        .then((response) => {
+          context.commit('SET_PROJECTS', response.data);
+        });
+    },
+    GET_PROJECT_BY_ID(context, id) {
+      axios
+        .get(`http://localhost:8080/api/projects/${id}`)
+        .then((response) => {
+          context.commit('SET_CURRENT_PROJECT', response.data);
+        });
+    },
+    PATCH_PROJECT(state, [project]) {
+      return new Promise((resolve, reject) => {
+        axios
+          .patch('http://localhost:8080/api/projects', project)
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
   },
   modules: {
   },
