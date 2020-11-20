@@ -1,6 +1,8 @@
 /**
  * Класс контактного лица.
  */
+import Company from './Company';
+
 export default interface Contact {
 
   /**
@@ -9,6 +11,7 @@ export default interface Contact {
   contactPersonId: number;
   contactName: string;
   companyId: number;
+  company: Company;
   position: string;
   makeDecision: boolean;
   mainEmail: string;
