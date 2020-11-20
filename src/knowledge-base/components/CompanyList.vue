@@ -75,6 +75,10 @@ export default class CompanyList extends Vue {
     this.$store.dispatch('GET_COMPANIES');
   }
 
+  /**
+   * Функция редиректа на страницу с подробной информацией о компании.
+   * @param {string} companyId - id компании
+   */
   toCompanyDetails(companyId: string) {
     this.tempUrl = '/kb/companyDetails/';
 

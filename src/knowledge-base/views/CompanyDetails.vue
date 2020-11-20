@@ -192,15 +192,18 @@ export default class CompanyDetails extends Vue {
     this.$store.dispatch('GET_COMPANY_CONTACTS', this.$route.params.id);
   }
 
+  /** Функция обработки нажатия кнопки редактирования */
   onEditButtonClick() {
     this.editMode = true;
   }
 
+  /** Функция обработки нажатия кнопки сброса изменений */
   onRollBackButtonClick() {
     this.$store.dispatch('GET_COMPANY_BY_ID', this.$route.params.id);
     this.editMode = false;
   }
 
+  /** Функция обработки нажатия кнопки сохранений изменений */
   onSaveButtonClick() {
     this.$store
       .dispatch('PATCH_COMPANY', [this.company, this.$route.params.id])
@@ -210,17 +213,19 @@ export default class CompanyDetails extends Vue {
       });
   }
 
+  /** Функция обработки нажатия кнопки добавления новой заметки */
   onAddButtonClick() {
     if (this.newNote !== '') {
       this.$store
         .dispatch('POST_NOTE_TO_COMPANY', [this.newNote, this.$route.params.id])
         .then(() => {
-          this.$store.dispatch('GET_COMPANIES');
+          this.$store.dispatch('GET_COMPANY_BY_ID', this.$route.params.id);
           this.newNote = '';
         });
     }
   }
 
+  /** Функция обработки нажатия кнопки удаления компании */
   onDeleteButton() {
     this.$store
       .dispatch('DELETE_COMPANY', this.$route.params.id)

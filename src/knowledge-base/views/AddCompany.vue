@@ -129,6 +129,7 @@ import { Component, Vue } from 'vue-property-decorator';
 
 @Component
 export default class Company extends Vue {
+  /** Функция обработки нажатия кнопки добавления новой компании */
   onAddButtonClick() {
     this.temp = '';
 
@@ -141,6 +142,10 @@ export default class Company extends Vue {
 
   temp = '';
 
+  /**
+   * Поле с вариантами выбора для выпадающего списка.
+   * (Пока что не реализовано)
+   */
   options = [
     {
       text: 'Неизвестно',

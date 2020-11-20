@@ -1,5 +1,11 @@
+/**
+ * Класс контактного лица.
+ */
 export default interface Contact {
 
+  /**
+   * Все поля являются отображением получаемой с бэкенда модели класса Contact.
+   */
   contactPersonId: number;
   contactName: string;
   companyId: number;

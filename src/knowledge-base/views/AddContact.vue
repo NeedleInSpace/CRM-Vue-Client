@@ -115,16 +115,19 @@ import { Component, Vue } from 'vue-property-decorator';
 
 @Component
 export default class Contact extends Vue {
+  /** Функция обработки нажатия кнопки добавления новой почты */
   addEmailButtonClick() {
     this.temp = '';
     this.emails.push('');
   }
 
+  /** Функция обработки нажатия кнопки добавления нового телефона */
   addPhoneButtonClick() {
     this.temp = '';
     this.phones.push('');
   }
 
+  /** Функция обработки нажатия кнопки добавления нового контактного лица */
   onAddButtonClick() {
     const emailList = document.querySelectorAll<HTMLInputElement>('.emailField');
     const phoneList = document.querySelectorAll<HTMLInputElement>('.phoneField');
