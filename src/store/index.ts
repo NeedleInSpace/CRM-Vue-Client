@@ -26,7 +26,7 @@ export default new Vuex.Store({
   actions: {
     GET_PROJECTS: (context) => {
       axios
-        .get('http://localhost:8090/api/projects')
+        .get('http://localhost:8080/api/projects')
         .then((response) => {
           context.commit('SET_PROJECTS', response.data);
         });
@@ -42,6 +42,22 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios
           .patch('http://localhost:8080/api/projects', project)
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+    POST_NEW_PROJECT(state, [project]) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post('http://localhost:8080/api/projects', project)
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+    DELETE_PROJECT(state, id) {
+      return new Promise((resolve, reject) => {
+        axios
+          .delete(`http://localhost:8080/api/projects/${id}`)
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });

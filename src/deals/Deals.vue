@@ -1,10 +1,14 @@
 <template>
   <div class="deals">
     <div class="projects">
-      <ProjectsList id="project-list-component"  @select='onSelect'/>
+      <ProjectsList id="project-list-component"  @select='onSelect'
+      @newProject='onAddButtonClicked'/>
     </div>
-    <div class="details">
+    <div class="details" v-show="!addButtonClicked">
       <ProjectDetails id="project-details" :projectId='projectId'/>
+    </div>
+    <div class="details" v-if="addButtonClicked">
+      <AddProject id="add-project" @cancel='cancelAddBlock'/>
     </div>
   </div>
 </template>
@@ -13,20 +17,34 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import ProjectsList from './components/ProjectsList.vue';
 import ProjectDetails from './components/ProjectDetails.vue';
+import AddProject from './components/AddProject.vue';
 import Project from '../models/Project';
 
 @Component({
   components: {
     ProjectsList,
     ProjectDetails,
+    AddProject,
   },
 })
 export default class Deals extends Vue {
   projectId = -1;
 
+  addButtonClicked = false;
+
+  onAddButtonClicked() {
+    this.addButtonClicked = true;
+  }
+
+  cancelAddBlock(data: any) {
+    this.addButtonClicked = false;
+    if (data !== undefined) {
+      this.projectId = data.projectId;
+    }
+  }
+
   onSelect(data: any) {
     this.projectId = data.selectedProject.id;
-    console.log(this.projectId);
   }
 }
 </script>

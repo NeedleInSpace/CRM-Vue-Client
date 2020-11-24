@@ -5,7 +5,7 @@
           Проекты
           <img alt="sort" src="../../assets/sort.svg" v-on:click="sortIt">
         </div>
-        <div class = "add-project-button">
+        <div class = "add-project-button" v-on:click="addNewProject()">
           <i class="fas fa-plus"></i>
           Добавить проект
         </div>
@@ -46,15 +46,15 @@
 </template>
 
 <script lang="ts">
-import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import Project from '@/models/Project';
 
 @Component
 export default class ProjectsList extends Vue {
+  isSorted = false;
+
   get projects() {
-    return this.$store.getters.PROJECTS.sort((a: Project, b: Project) => a.id - b.id);
+    return this.$store.getters.PROJECTS;
   }
 
   mounted() {
@@ -67,16 +67,26 @@ export default class ProjectsList extends Vue {
     });
   }
 
+  addNewProject() {
+    this.$emit('newProject');
+  }
+
   sortIt() {
-    return this.projects.sort((a: Project, b: Project) => {
-      if (a.shortName < b.shortName) {
-        return -1;
-      }
-      if (a.shortName > b.shortName) {
-        return 1;
-      }
-      return 0;
-    });
+    if (this.isSorted) {
+      this.projects.sort((a: Project, b: Project) => a.id - b.id);
+      this.isSorted = false;
+    } else {
+      this.projects.sort((a: Project, b: Project) => {
+        if (a.shortName.toLowerCase() < b.shortName.toLowerCase()) {
+          return -1;
+        }
+        if (a.shortName.toLowerCase() > b.shortName.toLowerCase()) {
+          return 1;
+        }
+        return 0;
+      });
+      this.isSorted = true;
+    }
   }
 }
 </script>
