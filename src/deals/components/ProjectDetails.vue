@@ -67,8 +67,8 @@
           </div>
           <div class="field" v-show="!isEditing">
             {{ project.startDate !== null?
-            project.startDate = project.startDate.substring(0,10).split('-').reverse().join('.')
-            :'--'}}
+            project.startDate = project.startDate.toString().substring(0,10)
+            .split('-').reverse().join('.') : '--'}}
           </div>
           <input
             v-model.lazy.trim="project.startDate"
