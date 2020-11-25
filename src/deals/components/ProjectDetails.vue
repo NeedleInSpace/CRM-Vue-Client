@@ -82,13 +82,8 @@
           </div>
           <div class="field">
             {{ project.startDate !== null?
-<<<<<<< HEAD
-            project.startDate = project.startDate.toString().substring(0,10)
-            .split('-').reverse().join('.') : '--'}}
-=======
             project.startDate.substring(0,10).split('-').reverse().join('.')
             :'--'}}
->>>>>>> d3deb45679fb82ee5c35f4d031db60c45a2da4be
           </div>
         </div>
         <div class="member-num">
