@@ -1,13 +1,19 @@
 <template>
   <div class="deals">
     <div class="projects">
-      <ProjectsList id="project-list-component"  @select='onSelect'/>
+      <ProjectsList id="project-list-component"  @select='onSelect'
+      @newProject='onAddButtonClicked'/>
     </div>
-    <div class="details">
+    <div class="details" v-show="!addButtonClicked">
       <ProjectDetails id="project-details" :projectId='projectId'/>
     </div>
+<<<<<<< HEAD
     <div class="stages">
       <ProjectStages id="project-stages" :projectId='projectId'/>
+=======
+    <div class="details" v-if="addButtonClicked">
+      <AddProject id="add-project" @cancel='cancelAddBlock'/>
+>>>>>>> d3deb45679fb82ee5c35f4d031db60c45a2da4be
     </div>
   </div>
 </template>
@@ -16,18 +22,39 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import ProjectsList from './components/ProjectsList.vue';
 import ProjectDetails from './components/ProjectDetails.vue';
+<<<<<<< HEAD
 import ProjectStages from './components/ProjectStages.vue';
+=======
+import AddProject from './components/AddProject.vue';
+>>>>>>> d3deb45679fb82ee5c35f4d031db60c45a2da4be
 import Project from '../models/Project';
 
 @Component({
   components: {
     ProjectsList,
     ProjectDetails,
+<<<<<<< HEAD
     ProjectStages,
+=======
+    AddProject,
+>>>>>>> d3deb45679fb82ee5c35f4d031db60c45a2da4be
   },
 })
 export default class Deals extends Vue {
   projectId = 1;
+
+  addButtonClicked = false;
+
+  onAddButtonClicked() {
+    this.addButtonClicked = true;
+  }
+
+  cancelAddBlock(data: any) {
+    this.addButtonClicked = false;
+    if (data !== undefined) {
+      this.projectId = data.projectId;
+    }
+  }
 
   onSelect(data: any) {
     this.projectId = data.selectedProject.id;
