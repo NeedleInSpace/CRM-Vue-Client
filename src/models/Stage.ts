@@ -4,7 +4,7 @@ export default interface Stage {
 
     id: number;
     stageName: string;
-    projectId: Project;
+    projectId: number;
     result: string;
     description: number;
     stageNumber: number;

@@ -28,11 +28,18 @@ export default new Vuex.Store({
     SET_CURRENT_STAGES: (state, payload) => {
       state.currentStages = payload;
     },
+    DELETE_STAGE: (state, stageId) => {
+      for (let i = 0; i < state.currentStages.length; i += 1) {
+        if (state.currentStages[i].id === stageId) {
+          state.currentStages.splice(i, 1);
+        }
+      }
+    },
   },
   actions: {
     GET_PROJECTS: (context) => {
       axios
-        .get('http://localhost:8080/api/projects')
+        .get('http://localhost:8090/api/projects')
         .then((response) => {
           context.commit('SET_PROJECTS', response.data);
         });
@@ -82,7 +89,7 @@ export default new Vuex.Store({
     POST_NEW_PROJECT(state, [project]) {
       return new Promise((resolve, reject) => {
         axios
-          .post('http://localhost:8080/api/projects', project)
+          .post('http://localhost:8090/api/projects', project)
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });
@@ -90,7 +97,7 @@ export default new Vuex.Store({
     DELETE_PROJECT(state, id) {
       return new Promise((resolve, reject) => {
         axios
-          .delete(`http://localhost:8080/api/projects/${id}`)
+          .delete(`http://localhost:8090/api/projects/${id}`)
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });

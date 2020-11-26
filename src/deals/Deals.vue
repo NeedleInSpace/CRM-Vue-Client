@@ -9,6 +9,7 @@
     </div>
     <div class="stages">
       <ProjectStages id="project-stages" :projectId='projectId'/>
+    </div>
     <div class="details" v-if="addButtonClicked">
       <AddProject id="add-project" @cancel='cancelAddBlock'/>
     </div>

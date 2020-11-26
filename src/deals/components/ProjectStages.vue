@@ -37,7 +37,7 @@
             </div>
             <div id="fields">
               <div class="field-layout">
-                <div class="field-title" v-if="!editMode">Название этапа</div>
+                <div class="field-title">Название этапа</div>
                 <div class="field-content" v-if="!editMode">
                   {{ stage.stageName }}
                 </div>
@@ -50,7 +50,7 @@
                 </div>
               </div>
               <div class="field-layout">
-                <div class="field-title" v-if="!editMode">Описание этапа</div>
+                <div class="field-title">Описание этапа</div>
                 <div class="field-content" v-if="!editMode">
                   {{ stage.description }}
                 </div>
@@ -63,7 +63,7 @@
                 </div>
               </div>
               <div class="field-layout">
-                <div class="field-title" v-if="!editMode">Критерий окончания этапа</div>
+                <div class="field-title">Критерий окончания этапа</div>
                 <div class="field-content" v-if="!editMode">
                   {{ stage.result }}
                 </div>
@@ -123,8 +123,8 @@ export default class ProjectStages extends Vue {
   }
 
   onDelete(id: number) {
+    this.$store.commit('DELETE_STAGE', id);
     this.$store.dispatch('DELETE_STAGE', id);
-    this.$store.dispatch('GET_PROJECT_STAGES', this.projectId);
     this.editMode = false;
   }
 
@@ -132,24 +132,6 @@ export default class ProjectStages extends Vue {
   onChange(newVal: number, oldVal: number) {
     this.$store.dispatch('GET_PROJECT_STAGES', newVal);
   }
-
-  stagess = [
-    {
-      stageName: 'Название первого этапа',
-      description: 'Описание первого этапа',
-      result: 'Результат первого этапа',
-    },
-    {
-      stageName: 'Название второго  этапа',
-      description: 'Описание второго  этапа',
-      result: 'Результат второго  этапа',
-    },
-    {
-      stageName: 'Название третьего  этапа',
-      description: 'Описание третьего  этапа',
-      result: 'Результат третьего  этапа',
-    },
-  ];
 }
 </script>
 
@@ -209,30 +191,29 @@ input::-webkit-inner-spin-button {
         #toEditMode {
           display: inline-block;
           margin-left: 10px;
+          font-size: 14pt;
+          color:  #707070;
+        }
+
+        #toEditMode:hover {
+          color: black;
         }
 
         #fromEditMode {
           display: inline-block;
           margin-left: 10px;
+          font-size: 14pt;
+          color: #5ac37d;
         }
 
         #onEditMode-buttons {
           display: inline-block;
 
-          #rollback-button {
-            display: inline-block;
-            margin-left: 10px;
-            font-size: 12pt;
-
-            i:hover {
-              color: black;
-            }
-          }
-
           #save-button {
             display: inline-block;
             margin-left: 10px;
-            font-size: 12pt;
+            font-size: 14pt;
+            color: #5ac37d;
             i:hover {
               color: black;
             }
@@ -298,6 +279,11 @@ input::-webkit-inner-spin-button {
           #delete-button {
             display: inline-block;
             margin: 10px 20px 0px 0px;
+            color:  #707070;
+
+            i:hover {
+              color: black;
+            }
           }
         }
 
@@ -318,7 +304,8 @@ input::-webkit-inner-spin-button {
             display: grid;
             margin-top: 5px;
             border-radius: 6px;
-            border: 1px solid #584848;
+            border: 1px solid #7f7f7f;
+            opacity: 0.95;
 
             .fieldContent {
               margin: 5px;
