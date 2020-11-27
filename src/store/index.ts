@@ -10,6 +10,7 @@ export default new Vuex.Store({
   state: {
     projects: [] as Project[],
     currentProject: {} as Project,
+    /** Поле с этапами для текущего проекта */
     currentStages: [] as Stage[],
   },
   getters: {
@@ -28,7 +29,12 @@ export default new Vuex.Store({
     SET_CURRENT_STAGES: (state, payload) => {
       state.currentStages = payload;
     },
-    DELETE_STAGE: (state, stageId) => {
+    /**
+     * Удаление этапа из CURRENT_STAGES
+     *
+     * @param {number} stageId - id этапа.
+     */
+    DELETE_STAGE: (state, stageId: number) => {
       for (let i = 0; i < state.currentStages.length; i += 1) {
         if (state.currentStages[i].id === stageId) {
           state.currentStages.splice(i, 1);
@@ -51,6 +57,11 @@ export default new Vuex.Store({
           context.commit('SET_CURRENT_PROJECT', response.data);
         });
     },
+    /**
+     * Получает все этапы проекта и помещает в currentStages
+     *
+     * @param {number} id - id проекта.
+     */
     GET_PROJECT_STAGES: (context, id: string) => {
       const apiUrl = 'http://localhost:8090/api/stages/project/';
 
@@ -68,7 +79,12 @@ export default new Vuex.Store({
           .catch((error) => reject(error));
       });
     },
-    PATCH_STAGE(state, [stage]) {
+    /**
+     * Изменяет информацию об этапе в БД.
+     *
+     * @param {Stage} stage - новая версия этапа.
+     */
+    PATCH_STAGE(state, stage: Stage) {
       return new Promise((resolve, reject) => {
         axios
           .patch('http://localhost:8090/api/stages', stage)
@@ -76,7 +92,25 @@ export default new Vuex.Store({
           .catch((error) => reject(error));
       });
     },
-    DELETE_STAGE(state, id) {
+    /**
+     * Добавляет новый этап в БД.
+     *
+     * @param {Stage} stage - добавляемый этап.
+     */
+    POST_NEW_STAGE(state, stage: Stage) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post('http://localhost:8090/api/stages', stage)
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+    /**
+     * Удаляет этап из БД.
+     *
+     * @param {string} id - id удаляемого этапа.
+     */
+    DELETE_STAGE(state, id: string) {
       const apiUrl = 'http://localhost:8090/api/stages/';
 
       return new Promise((resolve, reject) => {

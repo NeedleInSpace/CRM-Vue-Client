@@ -7,11 +7,11 @@
     <div class="details" v-show="!addButtonClicked">
       <ProjectDetails id="project-details" :projectId='projectId'/>
     </div>
-    <div class="stages">
-      <ProjectStages id="project-stages" :projectId='projectId'/>
-    </div>
     <div class="details" v-if="addButtonClicked">
       <AddProject id="add-project" @cancel='cancelAddBlock'/>
+    </div>
+    <div class="stages">
+      <ProjectStages id="project-stages" :projectId='projectId'/>
     </div>
   </div>
 </template>

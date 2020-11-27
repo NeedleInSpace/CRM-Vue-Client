@@ -23,14 +23,17 @@
         </div>
         <div id="rightPart">
           <div id="addButton-layout">
-            <div id="addButton-text">+ Добавить этап</div>
+            <div id="addButton-text" v-on:click="onAddStageClick">+ Добавить этап</div>
           </div>
         </div>
       </div>
       <div id="list">
         <div id="stages-layout">
+          <div class="error" v-if="error.length!==0">
+            {{this.error}}
+          </div>
           <li class="stage" v-for="stage in stages" v-bind:key="stage.stageId">
-            <div id="buttons">
+            <div id="buttons" v-if="editMode">
               <div id="delete-button" v-on:click="onDelete(stage.id)">
                 <i class="fa fa-trash" aria-hidden="true"></i>
               </div>
@@ -77,6 +80,9 @@
               </div>
             </div>
           </li>
+          <div id="addStage" class="stage" v-if="addingStage">
+            <AddStage id="add-stage" @cancelAddStage="onCancelAddStage" :projectId='projectId'/>
+          </div>
         </div>
       </div>
     </div>
@@ -88,13 +94,22 @@ import {
   Component, Prop, Vue, Watch,
 } from 'vue-property-decorator';
 import Stage from '@/models/Stage';
+import AddStage from './AddStage.vue';
 
-@Component
+@Component({
+  components: {
+    AddStage,
+  },
+})
 export default class ProjectStages extends Vue {
   @Prop()
   projectId!: number;
 
+  addingStage = false;
+
   editMode = false;
+
+  error = '';
 
   temp = null;
 
@@ -109,23 +124,44 @@ export default class ProjectStages extends Vue {
       .sort((a: Stage, b: Stage) => a.stageNumber - b.stageNumber);
   }
 
+  /** Функция, обрабатывающая сброс изменений в режиме редактирования */
   onRollback() {
     this.$store.dispatch('GET_PROJECT_STAGES', this.projectId);
     this.editMode = false;
+    this.error = '';
   }
 
+  /** Функция, обрабатывающая нажатие на кнопку сохранения изменений */
   onSave() {
     this.stages.forEach((stage: Stage) => {
-      this.$store.dispatch('PATCH_STAGE', [stage]);
+      if (stage.stageName === undefined || stage.description === undefined
+      || stage.result === undefined || stage.stageName.length === 0
+      || stage.description.length === 0 || stage.result.length === 0) {
+        this.error = 'Заполните все поля';
+      } else {
+        this.error = '';
+        this.$store.dispatch('PATCH_STAGE', stage);
+        this.editMode = false;
+        this.$store.dispatch('GET_PROJECT_STAGES', this.projectId);
+      }
     });
-    this.editMode = false;
-    this.$store.dispatch('GET_PROJECT_STAGES', this.projectId);
   }
 
+  /** Функция обработки удаления этапа */
   onDelete(id: number) {
     this.$store.commit('DELETE_STAGE', id);
     this.$store.dispatch('DELETE_STAGE', id);
     this.editMode = false;
+  }
+
+  /** Функция перехода в режим редактирования */
+  onAddStageClick() {
+    this.addingStage = true;
+  }
+
+  /** Функция отмены добавления нового этапа */
+  onCancelAddStage() {
+    this.addingStage = false;
   }
 
   @Watch('projectId')
@@ -186,6 +222,7 @@ input::-webkit-inner-spin-button {
         #edit-text {
           display: inline-block;
           margin-left: 10px;
+          color:  #707070;
         }
 
         #toEditMode {
@@ -266,6 +303,12 @@ input::-webkit-inner-spin-button {
     #stages-layout {
       margin: 10px 2px;
 
+      .error {
+        margin-left: 10px;
+        color:red;
+        font-size: 12pt;
+      }
+
       .stage {
         display: grid;
         list-style: none;
@@ -279,10 +322,11 @@ input::-webkit-inner-spin-button {
           #delete-button {
             display: inline-block;
             margin: 10px 20px 0px 0px;
+            font-size: 14pt;
             color:  #707070;
 
             i:hover {
-              color: black;
+              color: #EF5350;
             }
           }
         }
@@ -315,6 +359,11 @@ input::-webkit-inner-spin-button {
             }
           }
         }
+      }
+
+      #addStage {
+        margin-top: 15px;
+        box-shadow: 1.5px 1.5px 10px #508C64;
       }
     }
   }

@@ -6,6 +6,6 @@ export default interface Stage {
     stageName: string;
     projectId: number;
     result: string;
-    description: number;
+    description: string;
     stageNumber: number;
 }
