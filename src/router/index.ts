@@ -15,6 +15,11 @@ const routes: Array<RouteConfig> = [
     name: 'KnowledgeBase',
     component: () => import('../knowledge-base/KnowledgeBase.vue'),
   },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../login/Login.vue'),
+  },
 ];
 
 const router = new VueRouter({
