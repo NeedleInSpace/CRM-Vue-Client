@@ -57,14 +57,8 @@ export default class ProjectsList extends Vue {
     return this.$store.getters.PROJECTS;
   }
 
-  mounted() {
-    this.$store.dispatch('GET_PROJECTS');
-  }
-
   selectProject(project: Project) {
-    this.$emit('select', {
-      selectedProject: project,
-    });
+    this.$store.commit('SET_CURRENT_PROJECT', project);
   }
 
   addNewProject() {

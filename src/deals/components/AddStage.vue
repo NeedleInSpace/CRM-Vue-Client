@@ -64,12 +64,13 @@ import {
 
 @Component
 export default class AddStage extends Vue {
-  @Prop()
-  projectId!: number;
-
   stage = {} as Stage;
 
   error = '';
+
+  get currentProject() {
+    return this.$store.getters.CURRENT_PROJECT;
+  }
 
   /** Функция, генерирующая событие возврата из режима добавления */
   onCancelClick() {
@@ -79,15 +80,14 @@ export default class AddStage extends Vue {
   /** Функция, обрабатывающая кнопку добавления нового этапа */
   onAddStageClick() {
     if (this.checkForm()) {
-      this.stage.projectId = this.projectId;
-      this.stage.stageNumber = 2;
+      this.stage.projectId = this.currentProject.id;
+      this.stage.stageNumber = 0;
       this.$store
         .dispatch('POST_NEW_STAGE', this.stage)
-        .then((response) => {
-          this.$emit('cancelAddStage', {
-            projectId: response.data.id,
-          });
-          this.$store.dispatch('GET_PROJECT_STAGES', this.projectId);
+        .then(() => {
+          this.$emit('cancelAddStage');
+          this.$store.dispatch('GET_PROJECT_STAGES', this.currentProject.id);
+          this.$store.dispatch('GET_PROJECTS');
         });
     }
   }
@@ -101,11 +101,6 @@ export default class AddStage extends Vue {
       return false;
     }
     return true;
-  }
-
-  @Watch('projectId')
-  onChange(newVal: number, oldVal: number) {
-    this.$store.dispatch('GET_PROJECT_STAGES', newVal);
   }
 }
 

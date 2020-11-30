@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div id="main-layout">
+    <div id="main-layout" v-if="currentProject.id!=0">
       <div id="head">
         <div id="leftPart">
           <div id="name">
             Этапы
           </div>
-          <div id="editMode">
+          <div id="editMode" v-if="stages.length!=0">
             <div id="edit-text">
               Режим редкатирования
             </div>
@@ -22,19 +22,20 @@
           </div>
         </div>
         <div id="rightPart">
-          <div id="addButton-layout">
+          <button id="addButton-layout">
             <div id="addButton-text" v-on:click="onAddStageClick">+ Добавить этап</div>
-          </div>
+          </button>
         </div>
       </div>
       <div id="list">
-        <div id="stages-layout">
+        <div id="stages-layout" v-if="stages.length!=0">
           <div class="error" v-if="error.length!==0">
             {{this.error}}
           </div>
           <li class="stage" v-for="stage in stages" v-bind:key="stage.stageId">
             <div id="buttons" v-if="editMode">
-              <div id="delete-button" v-on:click="onDelete(stage.id)">
+              <div id="delete-button" v-if="stage.stageNumber==stages.length-1"
+              v-on:click="onDelete(stage.id)">
                 <i class="fa fa-trash" aria-hidden="true"></i>
               </div>
             </div>
@@ -80,9 +81,9 @@
               </div>
             </div>
           </li>
-          <div id="addStage" class="stage" v-if="addingStage">
-            <AddStage id="add-stage" @cancelAddStage="onCancelAddStage" :projectId='projectId'/>
-          </div>
+        </div>
+        <div id="addStage" class="stage" v-if="addingStage">
+          <AddStage id="add-stage" @cancelAddStage="onCancelAddStage"/>
         </div>
       </div>
     </div>
@@ -94,6 +95,7 @@ import {
   Component, Prop, Vue, Watch,
 } from 'vue-property-decorator';
 import Stage from '@/models/Stage';
+import store from '@/store';
 import AddStage from './AddStage.vue';
 
 @Component({
@@ -102,9 +104,6 @@ import AddStage from './AddStage.vue';
   },
 })
 export default class ProjectStages extends Vue {
-  @Prop()
-  projectId!: number;
-
   addingStage = false;
 
   editMode = false;
@@ -113,10 +112,9 @@ export default class ProjectStages extends Vue {
 
   temp = null;
 
-  editStatus = new Array(10).fill(false);
-
-  mounted() {
-    this.$store.dispatch('GET_PROJECT_STAGES', 1);
+  get currentProject() {
+    this.$store.dispatch('GET_PROJECT_STAGES', this.$store.getters.CURRENT_PROJECT.id);
+    return this.$store.getters.CURRENT_PROJECT;
   }
 
   get stages() {
@@ -124,27 +122,29 @@ export default class ProjectStages extends Vue {
       .sort((a: Stage, b: Stage) => a.stageNumber - b.stageNumber);
   }
 
-  /** Функция, обрабатывающая сброс изменений в режиме редактирования */
+  /** Функция, обрабатывающая сброс изменений */
   onRollback() {
-    this.$store.dispatch('GET_PROJECT_STAGES', this.projectId);
+    this.$store.dispatch('GET_PROJECT_STAGES', this.currentProject.id);
     this.editMode = false;
     this.error = '';
   }
 
-  /** Функция, обрабатывающая нажатие на кнопку сохранения изменений */
+  /** Функция, обрабатывающая сохранение изменений */
   onSave() {
-    this.stages.forEach((stage: Stage) => {
+    for (let i = 0; i < this.stages.length; i += 1) {
+      const stage = this.stages[i];
       if (stage.stageName === undefined || stage.description === undefined
       || stage.result === undefined || stage.stageName.length === 0
       || stage.description.length === 0 || stage.result.length === 0) {
         this.error = 'Заполните все поля';
+        break;
       } else {
         this.error = '';
         this.$store.dispatch('PATCH_STAGE', stage);
         this.editMode = false;
-        this.$store.dispatch('GET_PROJECT_STAGES', this.projectId);
+        this.$store.dispatch('GET_PROJECT_STAGES', this.$store.getters.CURRENT_PROJECT.id);
       }
-    });
+    }
   }
 
   /** Функция обработки удаления этапа */
@@ -162,11 +162,6 @@ export default class ProjectStages extends Vue {
   /** Функция отмены добавления нового этапа */
   onCancelAddStage() {
     this.addingStage = false;
-  }
-
-  @Watch('projectId')
-  onChange(newVal: number, oldVal: number) {
-    this.$store.dispatch('GET_PROJECT_STAGES', newVal);
   }
 }
 </script>
@@ -360,11 +355,11 @@ input::-webkit-inner-spin-button {
           }
         }
       }
+    }
 
-      #addStage {
-        margin-top: 15px;
-        box-shadow: 1.5px 1.5px 10px #508C64;
-      }
+    #addStage {
+      margin: 10px;
+      box-shadow: 1.5px 1.5px 10px #508C64;
     }
   }
 }

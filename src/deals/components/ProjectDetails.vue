@@ -122,26 +122,11 @@ import {
 
 @Component
 export default class ProjectsDetils extends Vue {
-  @Prop()
-  projectId!: number;
-
   isEditing = false;
 
   isSaved = true;
 
   confirmOpened = false;
-
-  created() {
-    this.$store.dispatch('GET_PROJECTS');
-  }
-
-  mounted() {
-    setTimeout(() => {
-      if (this.$store.getters.PROJECTS.length > 0) {
-        this.$store.dispatch('GET_PROJECT_BY_ID', this.$store.getters.PROJECTS[0].id);
-      }
-    }, 1000);
-  }
 
   get project() {
     if (this.$store.getters.CURRENT_PROJECT.id !== undefined) {
@@ -180,11 +165,6 @@ export default class ProjectsDetils extends Vue {
         this.isEditing = false;
         this.isSaved = true;
       });
-  }
-
-  @Watch('projectId')
-  onChange(newVal: number, oldVal: number) {
-    this.$store.dispatch('GET_PROJECT_BY_ID', newVal);
   }
 }
 </script>

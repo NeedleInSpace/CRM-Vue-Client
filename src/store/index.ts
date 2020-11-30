@@ -26,6 +26,13 @@ export default new Vuex.Store({
     SET_CURRENT_PROJECT: (state, payload) => {
       state.currentProject = payload;
     },
+    SET_CURRENT_PROJECT_BY_ID: (state, id) => {
+      state.projects.forEach((project) => {
+        if (project.id === id) {
+          state.currentProject = project;
+        }
+      });
+    },
     SET_CURRENT_STAGES: (state, payload) => {
       state.currentStages = payload;
     },

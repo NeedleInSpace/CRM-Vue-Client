@@ -1,23 +1,22 @@
 <template>
   <div class="deals">
     <div class="projects">
-      <ProjectsList id="project-list-component"  @select='onSelect'
-      @newProject='onAddButtonClicked'/>
+      <ProjectsList id="project-list-component" @newProject='onAddButtonClicked'/>
     </div>
     <div class="details" v-show="!addButtonClicked">
-      <ProjectDetails id="project-details" :projectId='projectId'/>
+      <ProjectDetails id="project-details"/>
     </div>
     <div class="details" v-if="addButtonClicked">
       <AddProject id="add-project" @cancel='cancelAddBlock'/>
     </div>
     <div class="stages">
-      <ProjectStages id="project-stages" :projectId='projectId'/>
+      <ProjectStages id="project-stages"/>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import ProjectsList from './components/ProjectsList.vue';
 import ProjectDetails from './components/ProjectDetails.vue';
 import ProjectStages from './components/ProjectStages.vue';
@@ -33,23 +32,24 @@ import Project from '../models/Project';
   },
 })
 export default class Deals extends Vue {
-  projectId = 1;
-
   addButtonClicked = false;
+
+  mounted() {
+    this.$store.dispatch('GET_PROJECTS');
+    setTimeout(() => {
+      if (this.$store.getters.PROJECTS.length > 0) {
+        this.$store.commit('SET_CURRENT_PROJECT', this.$store.getters.PROJECTS[0]);
+        this.$store.dispatch('GET_PROJECT_STAGES', this.$store.getters.PROJECTS[0].id);
+      }
+    }, 1000);
+  }
 
   onAddButtonClicked() {
     this.addButtonClicked = true;
   }
 
-  cancelAddBlock(data: any) {
+  cancelAddBlock() {
     this.addButtonClicked = false;
-    if (data !== undefined) {
-      this.projectId = data.projectId;
-    }
-  }
-
-  onSelect(data: any) {
-    this.projectId = data.selectedProject.id;
   }
 }
 </script>
