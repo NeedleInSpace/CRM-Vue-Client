@@ -101,13 +101,8 @@ export default class CompanyList extends Vue {
     display: inline-block;
     list-style: none;
     vertical-align: top;
-    // width: 47%;
-    margin-top: 10px;
-    margin-right: 5px;
-    margin-left: 5px;
-    padding-top: 10px;
-    padding-left: 5px;
-    padding-bottom: 10px;
+    margin: 10px 5px 0px 5px;
+    padding: 10px 5px 10px 5px;
     box-shadow: 1.3px 1.3px 5px #707070;
     border: 1px solid #ffffff;
   }
@@ -122,11 +117,7 @@ export default class CompanyList extends Vue {
   }
 
   .companyField {
-    margin-top: 4px;
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-bottom: 5px;
-    // background: royalblue;
+    margin: 5px 10px;
   }
 
   .fieldTitle {
@@ -148,10 +139,7 @@ export default class CompanyList extends Vue {
   .project-layout {
     display: inline-block;
     text-align: center;
-    padding-top: 2.5px;
-    padding-bottom: 2.5px;
-    padding-left: 6px;
-    padding-right: 6px;
+    padding: 2.5px 6px;
     border-radius: 8px;
     margin-top: 5px;
     margin-bottom: 1px;

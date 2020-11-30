@@ -61,10 +61,8 @@ export default class KnowledgeBase extends Vue {}
 
 <style scoped lang="scss">
 #main-layout {
-  margin-top: 2.5%;
-  margin-left: 1%;
-  margin-right: 1%;
-  // background: yellowgreen;
+  margin: 2.5% 1%;
+
   #search-layout{
     margin: 0 auto 15px;
   }
@@ -75,9 +73,7 @@ export default class KnowledgeBase extends Vue {}
     box-shadow: 1.3px 1.3px 5px #707070;
 
     #companiesForm-header {
-      margin-top: 20px;
-      margin-left: 25px;
-      margin-right: 35px;
+      margin: 20px 35px 0px 25px;
 
       #activeCompanyElements-layout {
         display: inline-block;
@@ -106,7 +102,6 @@ export default class KnowledgeBase extends Vue {}
         vertical-align: middle;
         text-align: right;
         width: 50%;
-        // background: darkorange;
 
         #addCompany-button {
           display: inline-block;
@@ -137,11 +132,7 @@ export default class KnowledgeBase extends Vue {}
       display: inline-block;
       width: 96%;
       height: 96%;
-      margin-left: 2%;
-      margin-right: 2%;
-      margin-top: 2%;
-      margin-bottom: 2%;
-      // background: mediumseagreen;
+      margin: 2%;
     }
   }
 
@@ -150,13 +141,9 @@ export default class KnowledgeBase extends Vue {}
     vertical-align: top;
     width: 49%;
     box-shadow: 1.3px 1.3px 5px #707070;
-    // background: green;
 
     #contactsForm-header {
-      margin-top: 20px;
-      margin-left: 25px;
-      margin-right: 35px;
-      // background: yellow;
+      margin: 20px 35px 0px 25px;
 
       #activeContactElements-layout {
         display: inline-block;
@@ -203,10 +190,7 @@ export default class KnowledgeBase extends Vue {}
       display: inline-block;
       width: 96%;
       height: 96%;
-      margin-left: 2%;
-      margin-right: 2%;
-      margin-top: 2%;
-      margin-bottom: 2%;
+      margin: 2%;
     }
   }
 }

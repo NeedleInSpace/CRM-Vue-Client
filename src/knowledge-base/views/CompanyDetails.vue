@@ -1,8 +1,6 @@
 <template>
   <div>
     <div id="main-layout">
-      <!-- <div v-for="company in companies" v-bind:key="company.companyId">
-        v-if="company.companyId == $route.params.id"-->
         <div id="details-layout">
           <div id="details-header">
             <div id="header-left">
@@ -267,24 +265,18 @@ input::-webkit-inner-spin-button {
     display: inline-block;
     min-width: 1000px;
     max-width: auto;
-    margin-top: 25px;
-    margin-left: 25px;
-    margin-right: 25px;
+    margin: 25px 25px 0px 25px;
     padding-bottom: 25px;
     text-align: left;
     box-shadow: 1.4px 1.4px 5px #707070;
     border: 1px solid #ffffff;
 
     #details-layout {
-      margin-left: 15px;
-      margin-right: 15px;
+      margin: 0px 15px;
 
       #details-header {
         text-align: left;
-        margin-top: 25px;
-        margin-left: 10px;
-        margin-right: 20px;
-        margin-bottom: 15px;
+        margin: 25px 20px 15px 10px;
         font-size: 28pt;
         color: #7f7f7f;
 
@@ -378,10 +370,7 @@ input::-webkit-inner-spin-button {
         width: 35%;
 
         .companyField {
-          margin-top: 8px;
-          margin-left: 10px;
-          margin-right: 10px;
-          margin-bottom: 5px;
+          margin: 8px 10px 5px 10px;
         }
 
         .fieldTitle {
@@ -397,10 +386,7 @@ input::-webkit-inner-spin-button {
         .project-layout {
           display: inline-block;
           text-align: center;
-          padding-top: 2.5px;
-          padding-bottom: 2.5px;
-          padding-left: 6px;
-          padding-right: 6px;
+          padding: 2.5px 6px;
           border-radius: 8px;
           margin-top: 5px;
           margin-bottom: 1px;

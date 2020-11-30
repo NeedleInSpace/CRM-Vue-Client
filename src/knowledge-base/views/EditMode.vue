@@ -143,8 +143,7 @@ export default class EditMode extends Vue {
     grid-auto-columns: minmax(400px, auto);
     text-align: left;
     grid-row-gap: 10px;
-    margin-left: 20px;
-    margin-right: 20px;
+    margin: 0px 20px;
 
     #generatingCapacity-checkbox {
       margin-top: 5px;

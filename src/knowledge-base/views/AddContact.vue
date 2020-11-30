@@ -15,6 +15,10 @@
               placeholder="ФИО"
             />
           </div>
+          <div class="error"
+          v-if="contact.contactName===undefined || contact.contactName.length===0">
+            {{this.error}}
+          </div>
         </div>
         <div id="fields-layout">
           <div id="companyId-layout" class="contactField">
@@ -29,6 +33,9 @@
                 {{ company.fullName }}
               </option>
             </select>
+            <div class="error" v-if="contact.companyId===undefined || contact.companyId===0">
+              {{this.error}}
+            </div>
           </div>
           <div id="position-layout" class="companyField">
             <div id="position" class="fieldTitle">Должность</div>
@@ -111,46 +118,18 @@
 </template>
 
 <script lang="ts">
+import Contact from '@/models/Contact';
 import { Component, Vue } from 'vue-property-decorator';
 
 @Component
-export default class Contact extends Vue {
-  /** Функция обработки нажатия кнопки добавления новой почты */
-  addEmailButtonClick() {
-    this.temp = '';
-    this.emails.push('');
-  }
+export default class AddContact extends Vue {
+  contact = {} as Contact;
 
-  /** Функция обработки нажатия кнопки добавления нового телефона */
-  addPhoneButtonClick() {
-    this.temp = '';
-    this.phones.push('');
-  }
+  emails: string[] = [];
 
-  /** Функция обработки нажатия кнопки добавления нового контактного лица */
-  onAddButtonClick() {
-    const emailList = document.querySelectorAll<HTMLInputElement>('.emailField');
-    const phoneList = document.querySelectorAll<HTMLInputElement>('.phoneField');
-    this.temp = '';
+  phones: string[] = [];
 
-    emailList.forEach((email) => {
-      if (email.value !== '') {
-        this.contact.otherEmails.push(email.value);
-      }
-    });
-
-    phoneList.forEach((phone) => {
-      if (phone.value !== '') {
-        this.contact.otherPhones.push(phone.value);
-      }
-    });
-
-    this.$store
-      .dispatch('POST_NEW_CONTACT', [this.contact])
-      .then(() => {
-        this.$router.push('/kb');
-      });
-  }
+  error = '';
 
   get companies() {
     return this.$store.getters.COMPANIES;
@@ -158,27 +137,53 @@ export default class Contact extends Vue {
 
   mounted() {
     this.$store.dispatch('GET_COMPANIES');
+    this.contact.companyId = 0;
   }
 
-  temp = '';
+  /** Функция обработки нажатия кнопки добавления новой почты */
+  addEmailButtonClick() {
+    this.emails.push('');
+  }
 
-  emails: string[] = [];
+  /** Функция обработки нажатия кнопки добавления нового телефона */
+  addPhoneButtonClick() {
+    this.phones.push('');
+  }
 
-  phones: string[] = [];
+  /** Функция обработки нажатия кнопки добавления нового контактного лица */
+  onAddButtonClick() {
+    if (this.checkForm()) {
+      const emailList = document.querySelectorAll<HTMLInputElement>('.emailField');
+      const phoneList = document.querySelectorAll<HTMLInputElement>('.phoneField');
 
-  contact = {
-    contactPersonId: null,
-    contactName: '',
-    companyId: 0,
-    position: '',
-    makeDecision: false,
-    mainEmail: '',
-    otherEmails: [] as string[],
-    creatorId: null,
-    lastUpdaterId: null,
-    mainPhone: null,
-    otherPhones: [] as string[],
-  };
+      emailList.forEach((email) => {
+        if (email.value !== '') {
+          this.contact.otherEmails.push(email.value);
+        }
+      });
+
+      phoneList.forEach((phone) => {
+        if (phone.value !== '') {
+          this.contact.otherPhones.push(phone.value);
+        }
+      });
+
+      this.$store
+        .dispatch('POST_NEW_CONTACT', [this.contact])
+        .then(() => {
+          this.$router.push('/kb');
+        });
+    }
+  }
+
+  checkForm() {
+    if (this.contact.contactName === undefined || this.contact.contactName.length === 0
+    || this.contact.companyId === undefined || this.contact.companyId === 0) {
+      this.error = 'Пожалуйста, заполните поле';
+      return false;
+    }
+    return true;
+  }
 }
 </script>
 
@@ -217,12 +222,14 @@ input::-webkit-inner-spin-button {
     border: 1px solid #ffffff;
   }
 
+  .error {
+    color:red;
+    font-size: 12pt;
+  }
+
   #addContact-header {
     text-align: left;
-    margin-top: 25px;
-    margin-left: 20px;
-    margin-right: 20px;
-    margin-bottom: 30px;
+    margin: 25px 20px 30px 20px;
     font-size: 28pt;
     color: #7f7f7f;
 
@@ -237,8 +244,7 @@ input::-webkit-inner-spin-button {
 
     #contactName-field {
       display: inline-block;
-      margin-left: 20px;
-      margin-right: 20px;
+      margin: 0px 20px;
 
       #contactName-input {
         display: inline-block;
@@ -257,8 +263,7 @@ input::-webkit-inner-spin-button {
     grid-auto-columns: minmax(600px, auto);
     text-align: left;
     grid-row-gap: 10px;
-    margin-left: 20px;
-    margin-right: 20px;
+    margin: 0px 20px;
 
     #makeDecision-checkbox {
       margin-top: 5px;

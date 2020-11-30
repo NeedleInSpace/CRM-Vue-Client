@@ -15,6 +15,9 @@
               placeholder="Наименование компании"
             />
           </div>
+          <div class="error" v-if="company.name===undefined || company.name.length===0">
+            {{this.error}}
+          </div>
         </div>
         <div id="fields-layout">
           <div id="companyFullName-layout" class="companyField">
@@ -26,6 +29,10 @@
                 placeholder="Полное название"
               />
             </div>
+            <div class="error"
+            v-if="company.fullName===undefined || company.fullName.length===0">
+              {{this.error}}
+            </div>
           </div>
           <div id="companyActivity-layout" class="companyField">
             <div id="companyActivity" class="fieldTitle">Род деятельности</div>
@@ -35,6 +42,10 @@
                 class="fieldContent"
                 placeholder="Род деятельности"
               />
+            </div>
+            <div class="error"
+            v-if="company.kindOfActivity===undefined || company.kindOfActivity.length===0">
+              {{this.error}}
             </div>
           </div>
           <div id="companyVolume-layout" class="companyField">
@@ -125,22 +136,35 @@
 </template>
 
 <script lang="ts">
+import Company from '@/models/Company';
 import { Component, Vue } from 'vue-property-decorator';
 
 @Component
-export default class Company extends Vue {
+export default class AddCompany extends Vue {
+  company = {} as Company;
+
+  error = '';
+
   /** Функция обработки нажатия кнопки добавления новой компании */
   onAddButtonClick() {
-    this.temp = '';
-
-    this.$store
-      .dispatch('POST_NEW_COMPANY', [this.company])
-      .then(() => {
-        this.$router.push('/kb');
-      });
+    if (this.checkForm()) {
+      this.$store
+        .dispatch('POST_NEW_COMPANY', [this.company])
+        .then(() => {
+          this.$router.push('/kb');
+        });
+    }
   }
 
-  temp = '';
+  checkForm() {
+    if (this.company.name === undefined || this.company.fullName === undefined
+    || this.company.kindOfActivity === undefined || this.company.name.length === 0
+    || this.company.fullName.length === 0 || this.company.kindOfActivity.length === 0) {
+      this.error = 'Пожалуйста, заполните поле';
+      return false;
+    }
+    return true;
+  }
 
   /**
    * Поле с вариантами выбора для выпадающего списка.
@@ -164,23 +188,6 @@ export default class Company extends Vue {
       value: null,
     },
   ];
-
-  company = {
-    companyId: null,
-    name: '',
-    fullName: '',
-    kindOfActivity: '',
-    consumptionVolume: null,
-    generatingCapacity: false,
-    inn: null,
-    kpp: null,
-    okpo: null,
-    email: '',
-    phone: null,
-    creatorId: null,
-    changerId: null,
-    notes: null,
-  };
 }
 </script>
 
@@ -219,12 +226,14 @@ input::-webkit-inner-spin-button {
     border: 1px solid #ffffff;
   }
 
+  .error {
+    color:red;
+    font-size: 12pt;
+  }
+
   #addCompany-header {
     text-align: left;
-    margin-top: 25px;
-    margin-left: 20px;
-    margin-right: 20px;
-    margin-bottom: 25px;
+    margin: 25px 20px;
     font-size: 28pt;
     color: #7f7f7f;
 
@@ -258,8 +267,7 @@ input::-webkit-inner-spin-button {
     grid-auto-columns: minmax(400px, auto);
     text-align: left;
     grid-row-gap: 10px;
-    margin-left: 20px;
-    margin-right: 20px;
+    margin: 0px 20px;
 
     #generatingCapacity-checkbox {
       margin-top: 5px;
