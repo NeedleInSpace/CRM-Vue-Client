@@ -49,11 +49,13 @@
 import { Component, Vue } from 'vue-property-decorator';
 import CompanyList from '@/knowledge-base/components/CompanyList.vue';
 import ContactPersonList from './components/ContactPersonList.vue';
+import Search from './components/Search.vue';
 
 @Component({
   components: {
     CompanyList,
     ContactPersonList,
+    Search,
   },
 })
 export default class KnowledgeBase extends Vue {}
