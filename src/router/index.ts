@@ -17,6 +17,16 @@ const routes: Array<RouteConfig> = [
     component: () => import('../knowledge-base/KnowledgeBase.vue'),
   },
   {
+    path: '/deals',
+    name: 'Deals',
+    component: () => import('../deals/Deals.vue'),
+  },
+  {
+    path: '/manager',
+    name: 'Manager',
+    component: () => import('../manager/Manager.vue'),
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('../login/Login.vue'),
