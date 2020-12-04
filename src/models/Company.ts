@@ -20,4 +20,4 @@ export default interface Company {
     creatorId: number;
     changerId: number;
     notes: string[];
-  }
+}

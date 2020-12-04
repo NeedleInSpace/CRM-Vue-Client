@@ -1,15 +1,18 @@
 <template>
   <div id="app">
-    <Header id="header"/>
-    <NavigationPanel id="nav"/>
+    <Header id="header" v-show="$route.path!=='/login'"/>
+    <NavigationPanel id="nav" v-show="$route.path!=='/login'"/>
     <router-view id="body"/>
   </div>
 </template>
 
 <script lang="ts">
+import axios from 'axios';
+import store from '@/store';
 import { Component, Vue } from 'vue-property-decorator';
 import Header from '@/shared/components/Header.vue';
 import NavigationPanel from '@/shared/components/NavigationPanel.vue';
+import router from './router';
 
 @Component({
   components: {
