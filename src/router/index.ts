@@ -30,6 +30,11 @@ const routes: Array<RouteConfig> = [
     name: 'CompanyDetails',
     component: () => import('../knowledge-base/views/CompanyDetails.vue'),
   },
+  {
+    path: '/kb/contactDetails/:id',
+    name: 'ContactDetails',
+    component: () => import('../knowledge-base/views/ContactDetails.vue'),
+  },
 ];
 
 const router = new VueRouter({

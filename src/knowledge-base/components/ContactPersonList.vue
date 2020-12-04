@@ -2,37 +2,39 @@
   <div>
     <ul id="contactPersons-list">
       <li class="contact" v-for="contact in contactPersons" v-bind:key="contact.contactPersonId">
-        <div id="contactName-layout" class="contactField" v-if="contact.contactName != null">
-          <div id="contactName" class="fieldContent">
-            {{ contact.contactName }}
+        <div v-on:click="toContactDetails(contact.contactPersonId)">
+          <div id="contactName-layout" class="contactField" v-if="contact.contactName != null">
+            <div id="contactName" class="fieldContent">
+              {{ contact.contactName }}
+            </div>
           </div>
-        </div>
-        <div v-for="company in companies" v-bind:key="company.companyId">
-          <div
-            id="contactCompany-layout"
-            class="contactField"
-            v-if="contact.companyId == company.companyId"
-          >
-            <div id="contactCompany" class="fieldTitle">Компания</div>
-            <div class="fieldContent">{{ company.fullName }}</div>
+          <div v-for="company in companies" v-bind:key="company.companyId">
+            <div
+              id="contactCompany-layout"
+              class="contactField"
+              v-if="contact.companyId == company.companyId"
+            >
+              <div id="contactCompany" class="fieldTitle">Компания</div>
+              <div class="fieldContent">{{ company.fullName }}</div>
+            </div>
           </div>
-        </div>
-        <div id="contactPosition-layout" class="contactField" v-if="contact.position != ''">
-          <div id="contactPosition" class="fieldTitle">Должность</div>
-          <div class="fieldContent">{{ contact.position }}</div>
-        </div>
-        <div v-if="contact.makeDecision" id="contactDecision-layout" class="contactField">
-          <div id="makeDecisionField-text" class="fieldContent">
-            Лицо принимающее решения
+          <div id="contactPosition-layout" class="contactField" v-if="contact.position != ''">
+            <div id="contactPosition" class="fieldTitle">Должность</div>
+            <div class="fieldContent">{{ contact.position }}</div>
           </div>
-        </div>
-        <div id="contactEmail-layout" class="contactField" v-if="contact.mainEmail != ''">
-          <div id="contactEmail" class="fieldTitle">E-mail</div>
-          <div class="fieldContent">{{ contact.mainEmail }}</div>
-        </div>
-        <div id="contactPhone-layout" class="contactField" v-if="contact.mainPhone != null">
-          <div id="contactPhone" class="fieldTitle">Телефон</div>
-          <div class="fieldContent">{{ contact.mainPhone }}</div>
+          <div v-if="contact.makeDecision" id="contactDecision-layout" class="contactField">
+            <div id="makeDecisionField-text" class="fieldContent">
+              Лицо принимающее решения
+            </div>
+          </div>
+          <div id="contactEmail-layout" class="contactField" v-if="contact.mainEmail != ''">
+            <div id="contactEmail" class="fieldTitle">E-mail</div>
+            <div class="fieldContent">{{ contact.mainEmail }}</div>
+          </div>
+          <div id="contactPhone-layout" class="contactField" v-if="contact.mainPhone != null">
+            <div id="contactPhone" class="fieldTitle">Телефон</div>
+            <div class="fieldContent">{{ contact.mainPhone }}</div>
+          </div>
         </div>
       </li>
     </ul>
@@ -55,6 +57,18 @@ export default class ContactPersonList extends Vue {
   mounted() {
     this.$store.dispatch('GET_CONTACTS');
   }
+
+  /**
+  * Функция редиректа на страницу с подробной информацией о контактном лице.
+  * @param {string} contactPersonId - id контактного лица
+  */
+  toContactDetails(contactPersonId: string) {
+    this.tempUrl = '/kb/contactDetails/';
+
+    this.$router.push(this.tempUrl.concat(contactPersonId));
+  }
+
+  tempUrl = '';
 }
 </script>
 
