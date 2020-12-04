@@ -1,122 +1,139 @@
 <template>
   <div>
     <div id="main-layout">
-        <div id="details-layout">
-          <div id="details-header">
-            <div id="header-left">
-              <router-link to="/kb" class="nav-element" active-class="active">
-                <div id="return-button">
-                  <i class="fa fa-arrow-left" aria-hidden="true"></i>
-                </div>
-              </router-link>
-              <div id="contactName-layout">
-                <div id="contactName" class="fieldContent">
-                    {{ contact.contactName }}
-                </div>
+      <div id="details-layout">
+        <div id="details-header">
+          <div id="header-left">
+            <router-link to="/kb" class="nav-element" active-class="active">
+              <div id="return-button">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i>
               </div>
-              <div id="editMode">
-                <div id="edit-text">
-                    Режим редкатирования
-                </div>
-                <div id="toEdit-button" v-on:click="onEditButtonClick" v-if="!editMode">
-                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                </div>
-                <div id="onEditMode-buttons" v-if="editMode">
-                    <div id="rollback-button" v-on:click="onRollBackButtonClick">
-                      <i class="fa fa-undo" aria-hidden="true"></i>
-                    </div>
-                    <div id="save-button" v-on:click="onSaveButtonClick">
-                      <i class="fa fa-floppy-o" aria-hidden="true"></i>
-                    </div>
-                </div>
+            </router-link>
+            <div id="contactName-layout">
+              <div id="contactName" class="fieldContent">
+                  {{ contact.contactName }}
               </div>
             </div>
-            <div id="header-right">
-              <div id="delete-button" v-on:click="onDeleteButton">
-                <i class="fa fa-trash" aria-hidden="true"></i>
+            <div id="editMode">
+              <div id="edit-text">
+                  Режим редкатирования
+              </div>
+              <div id="toEdit-button" v-on:click="onEditButtonClick" v-if="!editMode">
+                  <i class="fa fa-pencil" aria-hidden="true"></i>
+              </div>
+              <div id="onEditMode-buttons" v-if="editMode">
+                  <div id="rollback-button" v-on:click="onRollBackButtonClick">
+                    <i class="fa fa-undo" aria-hidden="true"></i>
+                  </div>
+                  <div id="save-button" v-on:click="onSaveButtonClick">
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                  </div>
               </div>
             </div>
           </div>
-          <div id="fields-layout">
-            <div id="fields" v-if="!editMode">
-              <div id="contactCompany-layout" class="contactField">
-                <div id="contactCompany" class="fieldTitle">
-                  Компания
-                </div>
-                <div class="fieldContent" v-if="contact!==undefined && contact.company!==undefined">
-                  {{ contact.company.name }}
-                </div>
+          <div id="header-right">
+            <div id="delete-button" v-on:click="onDeleteButton">
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+        <div id="fields-layout">
+          <div id="fields" v-if="!editMode">
+            <div id="contactCompany-layout" class="contactField">
+              <div id="contactCompany" class="fieldTitle">
+                Компания
               </div>
-              <div
-                id="contactPosition-layout"
-                class="contactField"
-                v-if="contact.position != ''"
-              >
-                <div id="contactPosition" class="fieldTitle">
-                  Должность
-                </div>
-                <div class="fieldContent">{{ contact.position }}</div>
+              <div class="fieldContent" v-if="contact!==undefined && contact.company!==undefined">
+                {{ contact.company.name }}
               </div>
-              <div
-                id="contactMakeDecision-layout"
-                class="contactField"
-              >
-                <div id="contactMakeDecision" class="fieldTitle">
-                  Лицо принимающее решение
-                </div>
-                <div class="fieldContent">
-                  <div v-if="contact.makeDecision">Да</div>
-                  <div v-if="!contact.makeDecision">Отсутствует</div>
-                </div>
-              </div>
-              <div id="contactMainEmail-layout" class="contactField" v-if="contact.mainEmail != ''">
-                <div id="contactMainEmail" class="fieldTitle">
-                  E-mail
-                </div>
-                <div class="fieldContent">{{ contact.mainEmail }}</div>
-              </div>
-              <div
-              id="contactOtherEmails-layout"
+            </div>
+            <div
+              id="contactPosition-layout"
               class="contactField"
-              v-if="contact.otherEmails != null"
-              >
-                <div id="otherEmails" class="fieldTitle">Другие E-mail</div>
-                <div
-                  id="oEmail"
-                  v-for="oEmail in contact.otherEmails"
-                  v-bind:key="oEmail.text"
-                >
-                  <div class="oEmail">
-                    {{ oEmail }}
-                  </div>
-                </div>
+              v-if="contact.position != ''"
+            >
+              <div id="contactPosition" class="fieldTitle">
+                Должность
               </div>
-              <div id="contactMainPhone-layout" class="contactField" v-if="contact.mainPhone != ''">
-                <div id="contactMainPhone" class="fieldTitle">
-                  Телефон
-                </div>
-                <div class="fieldContent">{{ contact.mainPhone }}</div>
-              </div>
-              <div
-              id="contactOtherPhones-layout"
+              <div class="fieldContent">{{ contact.position }}</div>
+            </div>
+            <div
+              id="contactMakeDecision-layout"
               class="contactField"
-              v-if="contact.otherPhones != null"
+            >
+              <div id="contactMakeDecision" class="fieldTitle">
+                Лицо принимающее решение
+              </div>
+              <div class="fieldContent">
+                <div v-if="contact.makeDecision">Да</div>
+                <div v-if="!contact.makeDecision">Отсутствует</div>
+              </div>
+            </div>
+            <div id="contactMainEmail-layout" class="contactField" v-if="contact.mainEmail != ''">
+              <div id="contactMainEmail" class="fieldTitle">
+                E-mail
+              </div>
+              <div class="fieldContent">{{ contact.mainEmail }}</div>
+            </div>
+            <div
+            id="contactOtherEmails-layout"
+            class="contactField"
+            v-if="contact.otherEmails != null"
+            >
+              <div id="otherEmails" class="fieldTitle">Другие E-mail</div>
+              <div
+                id="oEmail"
+                v-for="oEmail in contact.otherEmails"
+                v-bind:key="oEmail.text"
               >
-                <div id="otherPhones" class="fieldTitle">Другие телефоны</div>
-                <div
-                  id="oPhones"
-                  v-for="oPhones in contact.otherPhones"
-                  v-bind:key="oPhones.text"
-                >
-                  <div class="oPhones">
-                    {{ oPhones }}
-                  </div>
+                <div class="oEmail">
+                  {{ oEmail }}
                 </div>
               </div>
-              <div id="contactNotes-layout" class="contactField" v-if="contact.notes != null">
-                <div id="notes" class="fieldTitle">Заметки</div>
+            </div>
+            <div id="contactMainPhone-layout" class="contactField" v-if="contact.mainPhone != ''">
+              <div id="contactMainPhone" class="fieldTitle">
+                Телефон
+              </div>
+              <div class="fieldContent">{{ contact.mainPhone }}</div>
+            </div>
+            <div
+            id="contactOtherPhones-layout"
+            class="contactField"
+            v-if="contact.otherPhones != null"
+            >
+              <div id="otherPhones" class="fieldTitle">Другие телефоны</div>
+              <div
+                id="oPhones"
+                v-for="oPhones in contact.otherPhones"
+                v-bind:key="oPhones.text"
+              >
+                <div class="oPhones">
+                  {{ oPhones }}
+                </div>
+              </div>
+            </div>
+            <div id="contactNotes-layout" class="contactField" v-if="contact.notes != null">
+              <div id="notes" class="fieldTitle">Заметки</div>
+              <div
+                id="note"
+                v-for="note in contact.notes"
+                v-bind:key="note.text"
+              >
+                <div class="note">
+                  {{ note }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="editFields-layout" v-if="editMode">
+            <EditMode id="editMode-layout"/>
+          </div>
+          <div id="contacts">
+            <div id="notes-layout">
+                <div id="notes-title">Заметки</div>
                 <div
-                  id="note"
+                  id="notes"
                   v-for="note in contact.notes"
                   v-bind:key="note.text"
                 >
@@ -124,38 +141,22 @@
                     {{ note }}
                   </div>
                 </div>
-              </div>
-            </div>
-            <div id="editFields-layout" v-if="editMode">
-              <EditMode id="editMode-layout"/>
-            </div>
-            <div id="contacts">
-              <div id="notes-layout">
-                  <div id="notes-title">Заметки</div>
-                  <div
-                    id="notes"
-                    v-for="note in contact.notes"
-                    v-bind:key="note.text"
-                  >
-                    <div class="note">
-                      {{ note }}
-                    </div>
-                  </div>
-                  <div id="input-border">
-                    <input
-                      v-model.lazy.trim="newNote"
-                      id="notes-input"
-                      placeholder="Напишите текст заметки..."
-                    />
-                  </div>
-                  <div id="buttons-layout">
-                    <button id="addNoteButton-layout" v-on:click="onAddButtonClick">
-                      <div id="addNoteButton-text">+ Добавить заметку</div>
-                    </button>
-                  </div>
+                <div id="input-border">
+                  <input
+                    v-model.lazy.trim="newNote"
+                    id="notes-input"
+                    placeholder="Напишите текст заметки..."
+                  />
                 </div>
-            </div>
+                <div id="buttons-layout">
+                  <button id="addNoteButton-layout" v-on:click="onAddButtonClick">
+                    <div id="addNoteButton-text">+ Добавить заметку</div>
+                  </button>
+                </div>
+              </div>
+          </div>
         </div>
+      </div>
     </div>
   </div>
 </template>
