@@ -21,7 +21,6 @@ import ProjectsList from './components/ProjectsList.vue';
 import ProjectDetails from './components/ProjectDetails.vue';
 import ProjectStages from './components/ProjectStages.vue';
 import AddProject from './components/AddProject.vue';
-import Project from '../models/Project';
 
 @Component({
   components: {

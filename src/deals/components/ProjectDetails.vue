@@ -82,7 +82,7 @@
           </div>
           <div class="field">
             {{ project.startDate !== null?
-            project.startDate.toString().substring(0,10).split('-').reverse().join('.')
+            project.startDate
             :'--'}}
           </div>
         </div>
@@ -116,6 +116,7 @@
 
 <script lang="ts">
 import Project from '@/models/Project';
+import DateConverter from '@/models/DateConverter';
 import {
   Component, Prop, Vue, Watch,
 } from 'vue-property-decorator';
@@ -130,12 +131,15 @@ export default class ProjectsDetils extends Vue {
 
   get project() {
     if (this.$store.getters.CURRENT_PROJECT.id !== undefined) {
-      return this.$store.getters.CURRENT_PROJECT;
+      const project = this.$store.getters.CURRENT_PROJECT;
+      project.startDate = DateConverter.fasttimeToDate(project.startDate);
+      return project;
     }
     return undefined;
   }
 
   edit() {
+    alert(this.project.startDate);
     if (!this.isEditing) {
       this.rollBack();
     }
