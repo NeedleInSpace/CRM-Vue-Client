@@ -8,7 +8,7 @@ export default interface Company {
    */
   companyId: number;
   name: string;
-  fullName: number;
+  fullName: string;
   kindOfActivity: string;
   consumptionVolume: number;
   generatingCapacity: boolean;

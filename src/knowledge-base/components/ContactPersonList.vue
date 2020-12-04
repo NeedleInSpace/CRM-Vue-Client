@@ -84,16 +84,10 @@ export default class ContactPersonList extends Vue {
     display: inline-block;
     list-style: none;
     vertical-align: top;
-    // width: 45%;
-    margin-top: 10px;
-    margin-right: 5px;
-    margin-left: 5px;
-    padding-top: 10px;
-    padding-left: 5px;
-    padding-bottom: 10px;
+    margin: 10px 5px 0px 5px;
+    padding: 10px 5px;
     box-shadow: 1.3px 1.3px 5px #707070;
     border: 1px solid #ffffff;
-    // background: yellow;
   }
 
   .contact:hover {
@@ -106,11 +100,7 @@ export default class ContactPersonList extends Vue {
   }
 
   .contactField {
-    margin-top: 4px;
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-bottom: 5px;
-    // background: royalblue;
+    margin: 5px 10px;
   }
 
   .fieldTitle {
@@ -125,10 +115,7 @@ export default class ContactPersonList extends Vue {
 
   #contactDecision-layout {
     display: inline-block;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 2px;
-    padding-bottom: 2px;
+    padding: 2px 10px;
     border-radius: 12px;
     opacity: 0.95;
     background: #5ac37d;
