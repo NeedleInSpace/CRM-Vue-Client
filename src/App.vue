@@ -14,20 +14,6 @@ import Header from '@/shared/components/Header.vue';
 import NavigationPanel from '@/shared/components/NavigationPanel.vue';
 import router from './router';
 
-axios.interceptors.request.use((req) => {
-  if (store.getters.TOKEN === '') {
-    router.push('/login');
-  } else {
-    store.dispatch('CHECK_SESSION')
-      .then((response) => {
-        if (response.status === 403 || response.status === 'NOT_FOUND') {
-          router.push('/login');
-        }
-      });
-  }
-  return req;
-});
-
 @Component({
   components: {
     Header,

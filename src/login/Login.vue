@@ -7,7 +7,7 @@
 
         <input required v-model="password" type="password" placeholder="Пароль"/> <br><br>
 
-        <button id="button" v-on:click="login()">Вход</button>
+        <div id="button" v-on:click="login()">Вход</div>
         <label id="authWarn" v-show="warnFlag">Неверный логин или пароль</label>
       </form>
     </div>
@@ -27,14 +27,16 @@ export default class Login extends Vue {
   warnFlag = false;
 
   login() {
-    store.dispatch('GET_USER', [this.userLogin, this.password]).then(() => {
-      if (store.getters.TOKEN !== '') {
-        this.warnFlag = false;
-        this.$router.push('/');
-      } else {
-        this.warnFlag = true;
-      }
-    });
+    this.$store.dispatch('GET_USER', [this.userLogin, this.password])
+      .then((response) => {
+        if (response.data.token !== '') {
+          this.warnFlag = false;
+          this.$router.push('/');
+        } else {
+          this.warnFlag = true;
+        }
+      })
+      .catch(() => { this.warnFlag = true; });
   }
 }
 </script>
@@ -74,11 +76,12 @@ export default class Login extends Vue {
   }
   #button {
     border: #508C64;
-    width: 97.5%;
+    width: 87%;
     padding: 5%;
     color: white;
     background-color: #508C64;
-    font-size: 18pt;
+    font-size: 19pt;
+    text-align: center;
   }
   #authWarn {
     color: red;

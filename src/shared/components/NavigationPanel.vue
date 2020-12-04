@@ -8,8 +8,29 @@
       active-class="active">
       <i class="fas fa-database"/> База знаний
     </router-link>
+    <div v-on:click="logout()">
+      <router-link to="/login" class="nav-element"
+      active-class="active">
+        <i class="fas fa-sign-out-alt" /> Выход
+      </router-link>
+    </div>
   </nav>
 </template>
+<script lang="ts">
+import axios from 'axios';
+import { Component, Vue } from 'vue-property-decorator';
+
+@Component
+export default class NavigationPanel extends Vue {
+  get userRole() {
+    return this.$store.getters.ROLE;
+  }
+
+  logout() {
+    this.$store.dispatch('POST_LOGOUT');
+  }
+}
+</script>
 
 <style scoped lang="scss">
 .nav-list {
