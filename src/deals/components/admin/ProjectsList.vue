@@ -3,7 +3,7 @@
     <div class="head">
         <div class="name">
           Проекты
-          <img alt="sort" src="../../assets/sort.svg" v-on:click="sortIt">
+          <img alt="sort" src="../../../assets/sort.svg" v-on:click="sortIt">
         </div>
         <div class = "add-project-button" v-on:click="addNewProject()">
           <i class="fas fa-plus"></i>

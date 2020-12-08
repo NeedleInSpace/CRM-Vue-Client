@@ -21,11 +21,7 @@ const routes: Array<RouteConfig> = [
     name: 'Deals',
     component: () => import('../deals/Deals.vue'),
   },
-  {
-    path: '/manager',
-    name: 'Manager',
-    component: () => import('../manager/Manager.vue'),
-  },
+
   {
     path: '/login',
     name: 'Login',

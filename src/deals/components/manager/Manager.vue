@@ -17,12 +17,12 @@
         </button>
       </div>
       <div id="main-layout">
-        <Calendar id="calendar" @open='openCalendar'/>
+        <Calendar id="calendar" @open='openCalendar' @newTask='onAddButtonClicked'/>
         <div id="details-layout">
-          <div id="taskDetails-layout">
-            Подробности по задаче.
+          <div id="taskDetails-layout" v-if="addButtonClicked">
+            <AddTask id="add-task-layout" @cancel='cancelAddBlock'/>
           </div>
-          <div id="personDetails-layout">
+          <div id="personDetails-layout" v-if="!addButtonClicked">
             Подробности по КЛ.
           </div>
         </div>
@@ -33,17 +33,21 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import Calendar from './components/Calendar.vue';
-import CalendarWidget from './components/CalendarWidget.vue';
+import Calendar from './Calendar.vue';
+import CalendarWidget from './CalendarWidget.vue';
+import AddTask from './AddTask.vue';
 
 @Component({
   components: {
     Calendar,
     CalendarWidget,
+    AddTask,
   },
 })
 export default class Manager extends Vue {
   showCalendar = false;
+
+  addButtonClicked = false;
 
   mounted() {
     this.$store.dispatch('GET_THREE_DAY_TASKS', [1, new Date()]);
@@ -59,6 +63,14 @@ export default class Manager extends Vue {
     this.showCalendar = false;
     // alert(1);
     // this.$forceUpdate();
+  }
+
+  onAddButtonClicked() {
+    this.addButtonClicked = true;
+  }
+
+  cancelAddBlock() {
+    this.addButtonClicked = false;
   }
 }
 
