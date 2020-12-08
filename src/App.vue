@@ -7,12 +7,9 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios';
-import store from '@/store';
 import { Component, Vue } from 'vue-property-decorator';
 import Header from '@/shared/components/Header.vue';
 import NavigationPanel from '@/shared/components/NavigationPanel.vue';
-import router from './router';
 
 @Component({
   components: {

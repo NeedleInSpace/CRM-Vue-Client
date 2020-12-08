@@ -2,11 +2,11 @@
   <div>
     <div id="main-layout">
       <div id="buttons">
-        <div id="calendarButton">
+        <div id="calendarButton" v-on:click="openCalendar">
           <i class="fa fa-calendar" aria-hidden="true"></i>
         </div>
         <button class="button-layout">
-          <div class="button-text" v-on:click="onAddStageClick">+ Добавить задачу</div>
+          <div class="button-text" v-on:click="onAddTaskClick">+ Добавить задачу</div>
         </button>
       </div>
       <div id="calendar-list">
@@ -19,25 +19,27 @@
               {{ day.dayNumber }}
             </div>
           </div>
-          <div class="task" v-for="task in day.tasks" v-bind:key="task.taskId">
-            <div class="fields-layout">
-              <div class="taskField">
-                <div class="taskField-title">
-                  Компания
+          <div v-for="task in tasks" v-bind:key="task.taskId">
+            <div class="task" v-if="getFormatedDate(task.taskDate)===day.dayNumber">
+              <div class="fields-layout">
+                <div class="taskField">
+                  <div class="taskField-title">
+                    Компания
+                  </div>
+                  <div class="taskField-content">{{ getCompanyName(task.taskCompanyId) }}</div>
                 </div>
-                <div class="taskField-content">{{ getCompanyName(task.taskCompanyId) }}</div>
-              </div>
-              <div class="taskField">
-                <div class="taskField-title">
-                  Время
+                <div class="taskField">
+                  <div class="taskField-title">
+                    Время
+                  </div>
+                  <div class="taskField-content">{{ task.taskTime }}</div>
                 </div>
-                <div class="taskField-content">{{ task.taskTime }}</div>
-              </div>
-              <div class="taskField">
-                <div class="taskField-title">
-                  Название задачи
+                <div class="taskField">
+                  <div class="taskField-title">
+                    Название задачи
+                  </div>
+                  <div class="taskField-content">{{ task.taskName }}</div>
                 </div>
-                <div class="taskField-content">{{ task.taskName }}</div>
               </div>
             </div>
           </div>
@@ -54,11 +56,13 @@ import { ru } from 'date-fns/locale';
 
 @Component
 export default class Calendar extends Vue {
+  temp = '';
+
   get companies() {
     return this.$store.getters.COMPANIES;
   }
 
-  getCompanyName(taskCompanyId: any) {
+  getCompanyName(taskCompanyId: string) {
     for (let i = 0; i < this.companies.length; i += 1) {
       if (this.companies[i].companyId === taskCompanyId) {
         return this.companies[i].name;
@@ -67,13 +71,35 @@ export default class Calendar extends Vue {
     return '';
   }
 
+  getFormatedDate(date: Date) {
+    if (date === undefined) {
+      return '';
+    }
+    this.temp = '';
+
+    return format(date, 'dd.MM');
+  }
+
+  get tasks() {
+    return this.$store.getters.TASKS;
+  }
+
+  get firstDay() {
+    return this.$store.getters.FIRST_DAY;
+  }
+
+  mounted() {
+    if (this.firstDay === null) {
+      this.$forceUpdate();
+    }
+  }
+
   get days() {
-    const tasks = this.$store.getters.TASKS;
     const arr: any[] = [];
 
-    const first = new Date();
-    const second = new Date();
-    const third = new Date();
+    const first = this.firstDay;
+    const second = new Date(this.firstDay.getFullYear(), this.firstDay.getMonth());
+    const third = new Date(this.firstDay.getFullYear(), this.firstDay.getMonth());
 
     second.setDate(first.getDate() + 1);
     third.setDate(first.getDate() + 2);
@@ -83,26 +109,30 @@ export default class Calendar extends Vue {
     const lowerThird = format(third, 'eeee', { locale: ru });
 
     arr[0] = {
+      date: first,
       dayNumber: format(first, 'dd.MM'),
       dayName: lowerFirst[0].toUpperCase() + lowerFirst.slice(1),
-      tasks: tasks[0],
     };
     arr[1] = {
+      date: second,
       dayNumber: format(second, 'dd.MM'),
       dayName: lowerSecond[0].toUpperCase() + lowerSecond.slice(1),
-      tasks: tasks[1],
     };
     arr[2] = {
+      date: third,
       dayNumber: format(third, 'dd.MM'),
       dayName: lowerThird[0].toUpperCase() + lowerThird.slice(1),
-      tasks: tasks[2],
     };
 
     return arr;
   }
 
-  onAddStageClick() {
-    alert(this.days[0]);
+  openCalendar() {
+    this.$emit('open');
+  }
+
+  onAddTaskClick() {
+    alert(this.getFormatedDate(this.tasks[0].taskDate));
   }
 }
 

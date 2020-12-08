@@ -1,5 +1,5 @@
-import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
+import Vue from 'vue';
 import Home from '../home/Home.vue';
 import store from '../store';
 
@@ -31,6 +31,7 @@ const routes: Array<RouteConfig> = [
     name: 'Login',
     component: () => import('../login/Login.vue'),
   },
+  {
     path: '/kb/addCompany',
     name: 'AddCompany',
     component: () => import('../knowledge-base/views/AddCompany.vue'),

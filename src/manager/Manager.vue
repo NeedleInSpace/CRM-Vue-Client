@@ -1,5 +1,10 @@
 <template>
   <div>
+    <div id="background" v-if="showCalendar">
+      <div id = "fadeBackground">
+      </div>
+      <CalendarWidget id="calendar-widget" @close='closeCalendar'/>
+    </div>
     <div id="offsets">
       <div id="header-buttons">
         <button class="button-layout">
@@ -12,7 +17,7 @@
         </button>
       </div>
       <div id="main-layout">
-        <Calendar id="calendar"/>
+        <Calendar id="calendar" @open='openCalendar'/>
         <div id="details-layout">
           <div id="taskDetails-layout">
             Подробности по задаче.
@@ -29,22 +34,58 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Calendar from './components/Calendar.vue';
+import CalendarWidget from './components/CalendarWidget.vue';
 
 @Component({
   components: {
     Calendar,
+    CalendarWidget,
   },
 })
 export default class Manager extends Vue {
+  showCalendar = false;
+
   mounted() {
     this.$store.dispatch('GET_THREE_DAY_TASKS', [1, new Date()]);
     this.$store.dispatch('GET_COMPANIES');
+  }
+
+  openCalendar() {
+    this.showCalendar = true;
+    // alert(2);
+  }
+
+  closeCalendar() {
+    this.showCalendar = false;
+    // alert(1);
+    // this.$forceUpdate();
   }
 }
 
 </script>
 
 <style scoped lang="scss">
+
+#fadeBackground {
+  position: fixed;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0.7;
+}
+
+#calendar-widget {
+  position: absolute;
+  z-index: 2;
+  top:50%;
+  left:50%;
+  text-align: left;
+  background-color: white;
+  opacity: 1;
+  margin:-200px 0 0 -200px;
+  border-radius: 10px;
+}
 
 #offsets {
   margin: 2%;

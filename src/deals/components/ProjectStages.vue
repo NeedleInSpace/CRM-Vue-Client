@@ -92,10 +92,9 @@
 
 <script lang='ts'>
 import {
-  Component, Prop, Vue, Watch,
+  Component, Vue,
 } from 'vue-property-decorator';
 import Stage from '@/models/Stage';
-import store from '@/store';
 import AddStage from './AddStage.vue';
 
 @Component({

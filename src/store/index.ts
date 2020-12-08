@@ -8,19 +8,19 @@ import Stage from '@/models/Stage';
 import { format } from 'date-fns';
 import Task from '@/models/Task';
 // Установить npm install --save vuex-persistedstate
-import createPersistedState from 'vuex-persistedstate';
-import request from '../request';
+// import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  plugins: [createPersistedState()],
+  // plugins: [createPersistedState()],
   state: {
     projects: [] as Project[],
     currentProject: {} as Project,
     /** Поле с этапами для текущего проекта */
     currentStages: [] as Stage[],
-    tasks: [] as Task[][],
+    tasks: [] as Task[],
+    firstDay: null,
     /** Поле со всеми компаниями */
     companies: [] as Company[],
     /** Поле со всеми контактными лицами */
@@ -41,7 +41,13 @@ export default new Vuex.Store({
     PROJECTS: (state) => state.projects,
     CURRENT_PROJECT: (state) => state.currentProject,
     CURRENT_STAGES: (state) => state.currentStages,
-    TASKS: (state) => state.tasks,
+    TASKS: (state) => state.tasks
+      .sort((prev, next) => prev.taskDate.getDate() - next.taskDate.getDate()),
+    FIRST_DAY: (state) => state.firstDay,
+    /* FIRST_DAY: (state) => {
+      alert(state.firstDay);
+      return state.firstDay;
+    }, */
     CURRENT_TIME: (state) => new Date(),
     COMPANIES: (state) => state.companies,
     CONTACTS: (state) => state.contacts,
@@ -81,8 +87,22 @@ export default new Vuex.Store({
     SET_CURRENT_STAGES: (state, payload) => {
       state.currentStages = payload;
     },
-    SET_TASKS: (state, [payload, index]) => {
-      state.tasks[index] = payload;
+    SET_TASKS: (state, payload) => {
+      const tempArr = [] as Task[];
+
+      if (payload[0] !== undefined) {
+        for (let i = 0; i < payload.length; i += 1) {
+          const task: Task = payload[i];
+          task.taskDate = new Date(payload[i].taskDate);
+          state.tasks.push(payload[i]);
+        }
+      }
+    },
+    SET_FIRST_DAY: (state, payload) => {
+      state.firstDay = payload;
+    },
+    CLEAR_TASKS: (state) => {
+      state.tasks = [];
     },
     SET_COMPANIES: (state, payload) => {
       state.companies = payload;
@@ -190,17 +210,24 @@ export default new Vuex.Store({
         });
     },
     GET_THREE_DAY_TASKS(context, [employeeId, firstDay]) {
-      const secondDay = new Date();
-      const thirdDay = new Date();
+      if (this.getters.FIRST_DAY === null
+        || this.getters.FIRST_DAY.getDate() !== firstDay.getDate()) {
+        this.commit('CLEAR_TASKS');
 
-      secondDay.setDate(firstDay.getDate() + 1);
-      thirdDay.setDate(firstDay.getDate() + 2);
+        const secondDay = new Date(firstDay.getFullYear(), firstDay.getMonth());
+        const thirdDay = new Date(firstDay.getFullYear(), firstDay.getMonth());
 
-      this.dispatch('GET_DAY_TASKS', [employeeId, format(firstDay, 'yyyy-MM-dd'), 0]);
-      this.dispatch('GET_DAY_TASKS', [employeeId, format(secondDay, 'yyyy-MM-dd'), 1]);
-      this.dispatch('GET_DAY_TASKS', [employeeId, format(thirdDay, 'yyyy-MM-dd'), 2]);
+        secondDay.setDate(firstDay.getDate() + 1);
+        thirdDay.setDate(firstDay.getDate() + 2);
+
+        this.commit('SET_FIRST_DAY', firstDay);
+
+        this.dispatch('GET_DAY_TASKS', [employeeId, format(firstDay, 'yyyy-MM-dd')]);
+        this.dispatch('GET_DAY_TASKS', [employeeId, format(secondDay, 'yyyy-MM-dd')]);
+        this.dispatch('GET_DAY_TASKS', [employeeId, format(thirdDay, 'yyyy-MM-dd')]);
+      }
     },
-    GET_DAY_TASKS(context, [employeeId, date, index]) {
+    GET_DAY_TASKS(context, [employeeId, date]) {
       return new Promise((resolve, reject) => {
         axios({
           method: 'GET',
@@ -211,7 +238,7 @@ export default new Vuex.Store({
           },
         })
           .then((response) => {
-            context.commit('SET_TASKS', [response.data, index]);
+            context.commit('SET_TASKS', response.data);
           })
           .catch((error) => reject(error));
       });
@@ -230,10 +257,10 @@ export default new Vuex.Store({
           context.commit('SET_CURRENT_PROJECT', response.data);
         });
     },
-     GET_USER(context, [username, password]) {
+    GET_USER(context, [username, password]) {
       return new Promise((resolve, reject) => {
         axios
-          .post('http://localhost:8080/api/auth/login', { username, password })
+          .post('http://localhost:8090/api/auth/login', { username, password })
           .then((response) => {
             context.commit('SET_TOKEN', response.data.token);
             context.commit('SET_USERNAME', response.data.employee.name);
@@ -246,7 +273,7 @@ export default new Vuex.Store({
     POST_LOGOUT(context) {
       return new Promise((resolve, reject) => {
         axios
-          .post('http://localhost:8080/api/auth/logout', context.state.token)
+          .post('http://localhost:8090/api/auth/logout', context.state.token)
           .then(() => {
             context.commit('SET_TOKEN', '');
             context.commit('SET_USERNAME', '');
@@ -258,14 +285,14 @@ export default new Vuex.Store({
     CHECK_SESSION(context) {
       return new Promise((resolve, reject) => {
         axios
-          .post('http://localhost:8080/api/auth/token', context.state.token)
+          .post('http://localhost:8090/api/auth/token', context.state.token)
           .then((response) => {
             context.commit('SET_TOKEN', response.data);
           })
           .catch((error) => {
             reject(error);
           });
-      }),
+      });
     },
     /** Получает список всех компаний и помещает в companies. */
     GET_COMPANIES: (context) => {
