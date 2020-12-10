@@ -7,7 +7,7 @@ export default interface Task {
   taskCompanyId: number;
   contactId: number;
   taskDate: Date;
-  taskTime: Date;
+  taskTime: string;
   taskPlace: string;
   taskDescription: string;
   taskStatusId: number;

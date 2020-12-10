@@ -132,7 +132,7 @@ export default class Calendar extends Vue {
   }
 
   onAddTaskClick() {
-    alert(this.getFormatedDate(this.tasks[0].taskDate));
+    this.$emit('newTask');
   }
 }
 

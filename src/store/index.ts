@@ -36,6 +36,7 @@ export default new Vuex.Store({
     userLogin: '',
     userPassword: '',
     userRole: '',
+    userId: '',
   },
   getters: {
     PROJECTS: (state) => state.projects,
@@ -57,6 +58,7 @@ export default new Vuex.Store({
     TOKEN: (state) => state.token,
     USERNAME: (state) => state.userName,
     ROLE: (state) => state.userRole,
+    USER_ID: (state) => state.userId,
   },
   mutations: {
     SET_PROJECTS: (state, payload) => {
@@ -127,6 +129,9 @@ export default new Vuex.Store({
     },
     SET_ROLE: (state, payload) => {
       state.userRole = payload;
+    },
+    SET_USER_ID: (state, payload) => {
+      state.userId = payload;
     },
   },
   actions: {
@@ -265,6 +270,7 @@ export default new Vuex.Store({
             context.commit('SET_TOKEN', response.data.token);
             context.commit('SET_USERNAME', response.data.employee.name);
             context.commit('SET_ROLE', response.data.employee.role.role);
+            context.commit('SET_USER_ID', response.data.employee.employee_id);
             resolve(response);
           })
           .catch((error) => reject(error));
@@ -278,6 +284,7 @@ export default new Vuex.Store({
             context.commit('SET_TOKEN', '');
             context.commit('SET_USERNAME', '');
             context.commit('SET_ROLE', '');
+            context.commit('SET_USER_ID', '');
           })
           .catch((error) => reject(error));
       });
@@ -483,6 +490,14 @@ export default new Vuex.Store({
           url: apiUrl.concat(id),
           params: { note },
         })
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+    POST_NEW_TASK(state, [task]) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post('http://localhost:8090/api/tasks', task)
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });
