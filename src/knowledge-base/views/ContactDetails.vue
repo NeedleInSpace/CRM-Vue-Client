@@ -113,47 +113,33 @@
                 </div>
               </div>
             </div>
-            <div id="contactNotes-layout" class="contactField" v-if="contact.notes != null">
-              <div id="notes" class="fieldTitle">Заметки</div>
-              <div
-                id="note"
-                v-for="note in contact.notes"
-                v-bind:key="note.text"
-              >
-                <div class="note">
-                  {{ note }}
-                </div>
-              </div>
-            </div>
           </div>
           <div id="editFields-layout" v-if="editMode">
             <EditMode id="editMode-layout"/>
           </div>
-          <div id="contacts">
-            <div id="notes-layout">
-                <div id="notes-title">Заметки</div>
-                <div
-                  id="notes"
-                  v-for="note in contact.notes"
-                  v-bind:key="note.text"
-                >
-                  <div class="note">
-                    {{ note }}
-                  </div>
-                </div>
-                <div id="input-border">
-                  <input
-                    v-model.lazy.trim="newNote"
-                    id="notes-input"
-                    placeholder="Напишите текст заметки..."
-                  />
-                </div>
-                <div id="buttons-layout">
-                  <button id="addNoteButton-layout" v-on:click="onAddButtonClick">
-                    <div id="addNoteButton-text">+ Добавить заметку</div>
-                  </button>
-                </div>
+          <div id="notes-layout">
+            <div id="notes-title">Заметки</div>
+            <div
+              id="notes"
+              v-for="note in contact.notes"
+              v-bind:key="note.text"
+            >
+              <div class="note">
+                {{ note }}
               </div>
+            </div>
+            <div id="input-border">
+              <input
+                v-model.lazy.trim="newNote"
+                id="notes-input"
+                placeholder="Напишите текст заметки..."
+              />
+            </div>
+            <div id="buttons-layout">
+              <button id="addNoteButton-layout" v-on:click="onAddButtonClick">
+                <div id="addNoteButton-text">+ Добавить заметку</div>
+              </button>
+            </div>
           </div>
         </div>
       </div>
