@@ -46,19 +46,19 @@ export default class Manager extends Vue {
   showCalendar = false;
 
   mounted() {
-    this.$store.dispatch('GET_THREE_DAY_TASKS', [1, new Date()]);
+    // alert(this.$store.getters.TOKEN);
+    // alert(this.$store.getters.USERNAME);
+    // alert(this.$store.getters.ROLE);
+    this.$store.dispatch('GET_THREE_DAY_TASKS', new Date());
     this.$store.dispatch('GET_COMPANIES');
   }
 
   openCalendar() {
     this.showCalendar = true;
-    // alert(2);
   }
 
   closeCalendar() {
     this.showCalendar = false;
-    // alert(1);
-    // this.$forceUpdate();
   }
 }
 

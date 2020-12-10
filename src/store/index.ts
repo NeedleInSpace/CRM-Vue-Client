@@ -209,7 +209,7 @@ export default new Vuex.Store({
           context.commit('SET_CURRENT_STAGES', response.data);
         });
     },
-    GET_THREE_DAY_TASKS(context, [employeeId, firstDay]) {
+    GET_THREE_DAY_TASKS(context, firstDay) {
       if (this.getters.FIRST_DAY === null
         || this.getters.FIRST_DAY.getDate() !== firstDay.getDate()) {
         this.commit('CLEAR_TASKS');
@@ -222,18 +222,18 @@ export default new Vuex.Store({
 
         this.commit('SET_FIRST_DAY', firstDay);
 
-        this.dispatch('GET_DAY_TASKS', [employeeId, format(firstDay, 'yyyy-MM-dd')]);
-        this.dispatch('GET_DAY_TASKS', [employeeId, format(secondDay, 'yyyy-MM-dd')]);
-        this.dispatch('GET_DAY_TASKS', [employeeId, format(thirdDay, 'yyyy-MM-dd')]);
+        this.dispatch('GET_DAY_TASKS', [this.getters.USERNAME, format(firstDay, 'yyyy-MM-dd')]);
+        this.dispatch('GET_DAY_TASKS', [this.getters.USERNAME, format(secondDay, 'yyyy-MM-dd')]);
+        this.dispatch('GET_DAY_TASKS', [this.getters.USERNAME, format(thirdDay, 'yyyy-MM-dd')]);
       }
     },
-    GET_DAY_TASKS(context, [employeeId, date]) {
+    GET_DAY_TASKS(context, [username, date]) {
       return new Promise((resolve, reject) => {
         axios({
           method: 'GET',
           url: 'http://localhost:8090/api/employee/tasks',
           params: {
-            employeeId,
+            username,
             date,
           },
         })

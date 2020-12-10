@@ -154,8 +154,7 @@ export default class CalendarWidget extends Vue {
     if (this.selectedDay === '-') {
       this.error = true;
     } else {
-      this.$store.dispatch('GET_THREE_DAY_TASKS', [1,
-        new Date(this.currentYear, this.currentMonth, Number(this.selectedDay))]);
+      this.$store.dispatch('GET_THREE_DAY_TASKS', new Date(this.currentYear, this.currentMonth, Number(this.selectedDay)));
       this.closeCalendar();
     }
   }
