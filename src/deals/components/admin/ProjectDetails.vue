@@ -18,10 +18,10 @@
         </div>
          <div class="edit-title" v-if="project !== undefined">
             <div class="edit-mode">
-              Режим редактирования
+              Редактирование
               <div class="edit-switch" v-on:click="edit()">
                 <i class="fas fa-toggle-on"
-                v-on:click="isEditing=!isEditing" v-show="isEditing"></i>
+                v-on:click="rollBack()" v-show="isEditing"></i>
                 <i class="fas fa-toggle-off"
                 v-on:click="isEditing=!isEditing" v-show="!isEditing"></i>
               </div>
@@ -29,9 +29,9 @@
             <div class="delete-button" >
               <i class="far fa-trash-alt" v-on:click="confirmOpened=true" v-show="!isEditing"></i>
             </div>
-            <div class="rollback-button" >
-              <i class="fa fa-undo" v-on:click="rollBack()" v-show="isEditing"></i>
-            </div>
+            <!-- <div class="rollback-button" > -->
+              <!-- <i class="fa fa-undo" v-on:click="rollBack()" v-show="isEditing"></i> -->
+            <!-- </div> -->
             <div class="save-button" >
               <i class="fa fa-floppy-o" v-on:click="saveChanges()" v-show="isEditing"></i>
             </div>
@@ -115,10 +115,9 @@
 </template>
 
 <script lang="ts">
-import Project from '@/models/Project';
 import DateConverter from '@/models/DateConverter';
 import {
-  Component, Prop, Vue, Watch,
+  Component, Vue,
 } from 'vue-property-decorator';
 
 @Component
@@ -139,7 +138,6 @@ export default class ProjectsDetils extends Vue {
   }
 
   edit() {
-    alert(this.project.startDate);
     if (!this.isEditing) {
       this.rollBack();
     }
@@ -238,7 +236,8 @@ export default class ProjectsDetils extends Vue {
 
   .edit-title {
     display: flex;
-    width: 60%;
+    // width: 60%;
+    margin-right: 10px;
     justify-content: space-between;
     align-items: center;
 
@@ -250,7 +249,7 @@ export default class ProjectsDetils extends Vue {
     }
 
     .edit-switch {
-      margin: 0 5px;
+      margin: 0 7px;
       font-size: 20px;
     }
 

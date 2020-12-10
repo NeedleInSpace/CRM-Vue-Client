@@ -182,15 +182,16 @@ export default class AddTask extends Vue {
     display: flex;
     justify-content: space-between;
     width: 90%;
-    margin: 4% auto;}
-    .name {
+    margin: 4% auto;
+  }
+
+  .name {
     font-size: 20px;
     font-family: calibri;
     align-items: center;
     display: flex;
     opacity: 87%;
     justify-content: space-around;
-    width: 35%;
 }
 
 .task-data {
@@ -210,9 +211,11 @@ export default class AddTask extends Vue {
   .edit-field {
     border: 1px solid #BEBEBE;
     border-radius: 4px;
+    margin-top: 3px;
     padding: 2px 5px;
     font-size: 17px;
     width: 95%;
+    outline-style: none;
   }
 .edit-attr{
     border-radius: 3px;
@@ -278,4 +281,27 @@ export default class AddTask extends Vue {
       color:#5AC37D;
       font-size: 20px;
     }
+
+::-webkit-input-placeholder {
+  color: #bebebe;
+  opacity: 0.95;
+} /* webkit */
+::-moz-placeholder {
+  color: #bebebe;
+  opacity: 0.95;
+} /* Firefox 19+ */
+:-moz-placeholder {
+  color: #bebebe;
+  opacity: 0.95;
+} /* Firefox 18- */
+:-ms-input-placeholder {
+  color: #bebebe;
+  opacity: 0.95;
+} /* IE */
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
 </style>

@@ -22,9 +22,9 @@
           <div id="taskDetails-layout" v-if="addButtonClicked">
             <AddTask id="add-task-layout" @cancel='cancelAddBlock'/>
           </div>
-          <div id="personDetails-layout" v-if="!addButtonClicked">
-            Подробности по КЛ.
-          </div>
+          <!-- <div id="personDetails-layout" v-if="!addButtonClicked"> -->
+            <!-- Подробности по КЛ. -->
+          <!-- </div> -->
         </div>
       </div>
     </div>
@@ -50,9 +50,6 @@ export default class Manager extends Vue {
   addButtonClicked = false;
 
   mounted() {
-    // alert(this.$store.getters.TOKEN);
-    // alert(this.$store.getters.USERNAME);
-    // alert(this.$store.getters.ROLE);
     this.$store.dispatch('GET_THREE_DAY_TASKS', new Date());
     this.$store.dispatch('GET_COMPANIES');
   }
@@ -154,7 +151,7 @@ export default class Manager extends Vue {
 
   #main-layout {
     display: grid;
-    grid-template-columns: minmax(650px, auto) minmax(250px, auto);
+    grid-template-columns: minmax(650px, auto) minmax(250px, 500px);
 
     #calendar {
       margin-right: 20px;
@@ -163,8 +160,7 @@ export default class Manager extends Vue {
 
     #details-layout {
       display: grid;
-      // margin-right: 50px;
-      grid-template-rows: minmax(200px, auto) minmax(200px, auto);
+      grid-template-rows: minmax(200px, auto);
       grid-auto-flow: dense;
 
       #taskDetails-layout {

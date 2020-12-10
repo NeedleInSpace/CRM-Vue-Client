@@ -8,7 +8,7 @@
           </div>
           <div id="editMode" v-if="stages.length!=0">
             <div id="edit-text">
-              Режим редкатирования
+              Редкатирование
             </div>
             <i id="toEditMode" class="fas fa-toggle-off" v-if="!editMode"
             v-on:click="editMode=true"></i>
@@ -216,6 +216,7 @@ input::-webkit-inner-spin-button {
         #edit-text {
           display: inline-block;
           margin-left: 10px;
+          // margin-top: 10px;
           color:  #707070;
         }
 

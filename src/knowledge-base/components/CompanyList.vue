@@ -24,7 +24,8 @@
           </div>
           <div id="generatingCapacity-layout" class="companyField">
             <div id="generatingCapacity" class="fieldTitle">Генерирующие мощности</div>
-            <div class="fieldContent">{{ company.generatingCapacity }}</div>
+            <div class="fieldContent" v-if="company.generatingCapacity">Имеются</div>
+            <div class="fieldContent" v-if="!company.generatingCapacity">Отсутствуют</div>
           </div>
           <div id="innkppokpo-layout">
             <div id="inn-layout" class="companyField" v-if="company.inn != null">
