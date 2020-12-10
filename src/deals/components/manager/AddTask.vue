@@ -58,6 +58,45 @@
           </div>
         </div>
         <div class="attr">
+          <div class="project-block">
+            <div class="title">
+              Проект
+            </div>
+            <select @change="projectSelected($event)"
+            v-model="task.taskProjectId" class="edit-field select-field">
+              <option selected disabled>Выберите проект</option>
+              <option
+                v-for="project in projects"
+                v-bind:key="project.id"
+                v-bind:value="project.id"
+              >
+                {{ project.shortName }}
+              </option>
+            </select>
+            <div class="error" v-if="task.taskProjectId===undefined">
+              {{this.error}}
+            </div>
+          </div>
+          <div class="project-block">
+            <div class="title">
+            Этап проекта
+            </div>
+            <select v-model="task.taskStageId" class="edit-field select-field">
+              <option selected disabled>Выберите этап</option>
+              <option
+                v-for="projectStage in projectStages"
+                v-bind:key="projectStage.id"
+                v-bind:value="projectStage.id"
+              >
+                {{ projectStage.stageName }}
+              </option>
+            </select>
+            <div class="error" v-if="task.taskStageId===undefined">
+              {{this.error}}
+            </div>
+          </div>
+        </div>
+        <div class="attr">
           <div class="date">
             <div class="title">
               Дата
@@ -107,7 +146,7 @@ import Task from '@/models/Task';
 import {
   Component, Prop, Vue, Watch,
 } from 'vue-property-decorator';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
 @Component
@@ -120,6 +159,10 @@ export default class AddTask extends Vue {
 
   mounted() {
     this.$store.dispatch('GET_PROJECTS');
+  }
+
+  get projectStages() {
+    return this.$store.getters.CURRENT_STAGES;
   }
 
   get companies() {
@@ -138,27 +181,29 @@ export default class AddTask extends Vue {
     this.$store.dispatch('GET_COMPANY_CONTACTS', [event.target.value]);
   }
 
+  projectSelected(event: any) {
+    this.$store.dispatch('GET_PROJECT_STAGES', this.task.taskProjectId);
+  }
+
+  get tasks() {
+    return this.$store.getters.TASKS;
+  }
+
   addTask() {
     if (this.checkForm()) {
       this.task.taskTime = this.task.taskTime.concat(':00');
-      if (this.projects.length !== 0) {
-        if (this.$store.getters.CURRENT_PROJECT === '') {
-          this.task.taskProjectId = this.projects.get(0).id;
-        } else {
-          this.task.taskProjectId = this.$store.getters.CURRENT_PROJECT.id;
-        }
-      } // пока не реализован выбор проекта
-      console.log(this.task.taskProjectId);
-      this.$store.dispatch('GET_PROJECT_STAGES', this.task.taskProjectId)// пока не реализован выбор этапа
-        .then(() => { this.task.taskStageId = this.$store.getters.CURRENT_STAGES[0].id; });
       this.task.employeeId = this.$store.getters.USER_ID;
       this.task.taskStatusId = 1;
       this.$store.dispatch('POST_NEW_TASK', [this.task])
-        .then((response) => {
-          this.$store.dispatch('GET_THREE_DAY_TASKS', [1, new Date()])
-            .then(() => this.$store.getters.TASKS);
-        })
-        .catch((error) => console.log(error));
+        .then(() => {
+          for (let i = 0; i < this.tasks.length; i += 1) {
+            if (format(this.tasks[i].taskDate, 'dd.MM') === format(parseISO(this.task.taskDate.toString()), 'dd.MM')) {
+              this.tasks.splice(i, 1);
+              i -= 1;
+            }
+          }
+          this.$store.dispatch('GET_DAY_TASKS', [this.$store.getters.USERNAME, this.task.taskDate]);
+        });
       this.$emit('cancel');
       this.$store.commit('SET_COMPANY_CONTACTS', '');
     }
@@ -182,16 +227,15 @@ export default class AddTask extends Vue {
     display: flex;
     justify-content: space-between;
     width: 90%;
-    margin: 4% auto;
-  }
-
-  .name {
+    margin: 4% auto;}
+    .name {
     font-size: 20px;
     font-family: calibri;
     align-items: center;
     display: flex;
     opacity: 87%;
     justify-content: space-around;
+    width: 35%;
 }
 
 .task-data {
@@ -211,11 +255,9 @@ export default class AddTask extends Vue {
   .edit-field {
     border: 1px solid #BEBEBE;
     border-radius: 4px;
-    margin-top: 3px;
     padding: 2px 5px;
     font-size: 17px;
     width: 95%;
-    outline-style: none;
   }
 .edit-attr{
     border-radius: 3px;
@@ -278,30 +320,10 @@ export default class AddTask extends Vue {
   display: none;
 }
 .fa-floppy-o{
-      color:#5AC37D;
-      font-size: 20px;
-    }
-
-::-webkit-input-placeholder {
-  color: #bebebe;
-  opacity: 0.95;
-} /* webkit */
-::-moz-placeholder {
-  color: #bebebe;
-  opacity: 0.95;
-} /* Firefox 19+ */
-:-moz-placeholder {
-  color: #bebebe;
-  opacity: 0.95;
-} /* Firefox 18- */
-:-ms-input-placeholder {
-  color: #bebebe;
-  opacity: 0.95;
-} /* IE */
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
+  color:#5AC37D;
+  font-size: 20px;
 }
-
+.project-block {
+  width: 45%;
+}
 </style>

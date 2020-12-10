@@ -28,7 +28,7 @@
           </div>
           <div class="field">
             {{ project.startDate !== null?
-            project.startDate.toString().substring(0,10).split('-').reverse().join('.'):'--'}}
+            project.startDate:'--'}}
           </div>
         </div>
         <div class="stage-num">

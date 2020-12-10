@@ -9,7 +9,7 @@
           Пользователь
         </div>
         <div class="username-full">
-          Иванов Иван Иванович
+          {{ this.user }}
         </div>
       </div>
       <div id="date-block">
@@ -58,6 +58,10 @@ export default class Header extends Vue {
 
   updateTime() {
     this.currentDateTime = addSeconds(this.currentDateTime, 1);
+  }
+
+  get user() {
+    return this.$store.getters.USERNAME;
   }
 }
 </script>

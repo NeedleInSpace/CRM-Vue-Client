@@ -8,7 +8,8 @@ import Stage from '@/models/Stage';
 import { format } from 'date-fns';
 import Task from '@/models/Task';
 // Установить npm install --save vuex-persistedstate
-// import createPersistedState from 'vuex-persistedstate';
+import createPersistedState from 'vuex-persistedstate';
+import request from '../request';
 
 Vue.use(Vuex);
 
@@ -31,12 +32,6 @@ export default new Vuex.Store({
     companyContacts: [] as Contact[],
     /** Поле с выбранной сейчас контактным лицом */
     currentContact: {} as Contact,
-    token: '',
-    userName: '',
-    userLogin: '',
-    userPassword: '',
-    userRole: '',
-    userId: '',
   },
   getters: {
     PROJECTS: (state) => state.projects,
@@ -55,10 +50,10 @@ export default new Vuex.Store({
     CURRENT_COMPANY: (state) => state.currentCompany,
     COMPANY_CONTACTS: (state) => state.companyContacts,
     CURRENT_CONTACT: (state) => state.currentContact,
-    TOKEN: (state) => state.token,
+    /* TOKEN: (state) => state.token,
     USERNAME: (state) => state.userName,
     ROLE: (state) => state.userRole,
-    USER_ID: (state) => state.userId,
+    USER_ID: (state) => state.userId, */
   },
   mutations: {
     SET_PROJECTS: (state, payload) => {
@@ -121,24 +116,12 @@ export default new Vuex.Store({
     SET_CURRENT_CONTACT: (state, payload) => {
       state.currentContact = payload;
     },
-    SET_TOKEN: (state, payload) => {
-      state.token = payload;
-    },
-    SET_USERNAME: (state, payload) => {
-      state.userName = payload;
-    },
-    SET_ROLE: (state, payload) => {
-      state.userRole = payload;
-    },
-    SET_USER_ID: (state, payload) => {
-      state.userId = payload;
-    },
   },
   actions: {
     PATCH_PROJECT(state, [project]) {
       return new Promise((resolve, reject) => {
-        axios
-          .patch('http://localhost:8090/api/projects', project)
+        request
+          .patch('projects', project)
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });
@@ -150,8 +133,8 @@ export default new Vuex.Store({
      */
     PATCH_STAGE(state, stage: Stage) {
       return new Promise((resolve, reject) => {
-        axios
-          .patch('http://localhost:8090/api/stages', stage)
+        request
+          .patch('stages', stage)
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });
@@ -163,8 +146,8 @@ export default new Vuex.Store({
      */
     POST_NEW_STAGE(state, stage: Stage) {
       return new Promise((resolve, reject) => {
-        axios
-          .post('http://localhost:8090/api/stages', stage)
+        request
+          .post('stages', stage)
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });
@@ -175,10 +158,10 @@ export default new Vuex.Store({
      * @param {string} id - id удаляемого этапа.
      */
     DELETE_STAGE(state, id: string) {
-      const apiUrl = 'http://localhost:8090/api/stages/';
+      const apiUrl = 'stages/';
 
       return new Promise((resolve, reject) => {
-        axios
+        request
           .delete(apiUrl.concat(id))
           .then((response) => resolve(response))
           .catch((error) => reject(error));
@@ -186,16 +169,16 @@ export default new Vuex.Store({
     },
     POST_NEW_PROJECT(state, [project]) {
       return new Promise((resolve, reject) => {
-        axios
-          .post('http://localhost:8090/api/projects', project)
+        request
+          .post('projects', project)
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });
     },
     DELETE_PROJECT(state, id) {
       return new Promise((resolve, reject) => {
-        axios
-          .delete(`http://localhost:8090/api/projects/${id}`)
+        request
+          .delete(`projects/${id}`)
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });
@@ -206,12 +189,26 @@ export default new Vuex.Store({
      * @param {number} id - id проекта.
      */
     GET_PROJECT_STAGES: (context, id: string) => {
-      const apiUrl = 'http://localhost:8090/api/stages/project/';
+      const apiUrl = 'stages/project/';
 
-      axios
+      request
         .get(apiUrl.concat(id))
         .then((response) => {
           context.commit('SET_CURRENT_STAGES', response.data);
+        });
+    },
+    GET_PROJECTS: (context) => {
+      request
+        .get('projects')
+        .then((response) => {
+          context.commit('SET_PROJECTS', response.data);
+        });
+    },
+    GET_PROJECT_BY_ID(context, id) {
+      request
+        .get(`projects/${id}`)
+        .then((response) => {
+          context.commit('SET_CURRENT_PROJECT', response.data);
         });
     },
     GET_THREE_DAY_TASKS(context, firstDay) {
@@ -234,77 +231,24 @@ export default new Vuex.Store({
     },
     GET_DAY_TASKS(context, [username, date]) {
       return new Promise((resolve, reject) => {
-        axios({
+        request({
           method: 'GET',
-          url: 'http://localhost:8090/api/employee/tasks',
+          url: 'employee/tasks',
           params: {
             username,
             date,
           },
         })
-          .then((response) => {
-            context.commit('SET_TASKS', response.data);
-          })
-          .catch((error) => reject(error));
-      });
-    },
-    GET_PROJECTS: (context) => {
-      axios
-        .get('http://localhost:8090/api/projects')
         .then((response) => {
-          context.commit('SET_PROJECTS', response.data);
-        });
-    },
-    GET_PROJECT_BY_ID(context, id) {
-      axios
-        .get(`http://localhost:8090/api/projects/${id}`)
-        .then((response) => {
-          context.commit('SET_CURRENT_PROJECT', response.data);
-        });
-    },
-    GET_USER(context, [username, password]) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post('http://localhost:8090/api/auth/login', { username, password })
-          .then((response) => {
-            context.commit('SET_TOKEN', response.data.token);
-            context.commit('SET_USERNAME', response.data.employee.name);
-            context.commit('SET_ROLE', response.data.employee.role.role);
-            context.commit('SET_USER_ID', response.data.employee.employee_id);
-            resolve(response);
-          })
-          .catch((error) => reject(error));
-      });
-    },
-    POST_LOGOUT(context) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post('http://localhost:8090/api/auth/logout', context.state.token)
-          .then(() => {
-            context.commit('SET_TOKEN', '');
-            context.commit('SET_USERNAME', '');
-            context.commit('SET_ROLE', '');
-            context.commit('SET_USER_ID', '');
-          })
-          .catch((error) => reject(error));
-      });
-    },
-    CHECK_SESSION(context) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post('http://localhost:8090/api/auth/token', context.state.token)
-          .then((response) => {
-            context.commit('SET_TOKEN', response.data);
-          })
-          .catch((error) => {
-            reject(error);
-          });
+          context.commit('SET_TASKS', response.data);
+        })
+        .catch((error) => reject(error));
       });
     },
     /** Получает список всех компаний и помещает в companies. */
     GET_COMPANIES: (context) => {
-      axios
-        .get('http://localhost:8090/api/companies')
+      request
+        .get('companies')
         .then((response) => {
           context.commit('SET_COMPANIES', response.data);
         });
@@ -316,9 +260,9 @@ export default new Vuex.Store({
      * @param {string} id - id компании.
      */
     GET_COMPANY_BY_ID(context, id) {
-      const apiUrl = 'http://localhost:8090/api/companies/';
+      const apiUrl = 'companies/';
 
-      axios
+      request
         .get(apiUrl.concat(id))
         .then((response) => {
           context.commit('SET_CURRENT_COMPANY', response.data);
@@ -326,8 +270,8 @@ export default new Vuex.Store({
     },
     /** Получает список всех контактных лиц и помещает в contacts. */
     GET_CONTACTS: (context) => {
-      axios
-        .get('http://localhost:8090/api/contacts')
+      request
+        .get('contacts')
         .then((response) => {
           context.commit('SET_CONTACTS', response.data);
         });
@@ -338,9 +282,9 @@ export default new Vuex.Store({
      * @param {string} id - id компании.
      */
     GET_COMPANY_CONTACTS(context, id) {
-      const apiUrl = 'http://localhost:8090/api/contacts/company/';
+      const apiUrl = 'contacts/company/';
 
-      axios
+      request
         .get(apiUrl.concat(id))
         .then((response) => {
           context.commit('SET_COMPANY_CONTACTS', response.data);
@@ -354,8 +298,8 @@ export default new Vuex.Store({
      */
     POST_NEW_COMPANY(state, [company]) {
       return new Promise((resolve, reject) => {
-        axios
-          .post('http://localhost:8090/api/companies', company)
+        request
+          .post('companies', company)
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });
@@ -368,8 +312,8 @@ export default new Vuex.Store({
      */
     POST_NEW_CONTACT(state, [contact]) {
       return new Promise((resolve, reject) => {
-        axios
-          .post('http://localhost:8090/api/contacts', contact)
+        request
+          .post('contacts', contact)
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });
@@ -382,10 +326,10 @@ export default new Vuex.Store({
      * @returns {Promise} - ответ от сервера.
      */
     POST_NOTE_TO_COMPANY(state, [note, id]) {
-      const apiUrl = 'http://localhost:8090/api/companies/';
+      const apiUrl = 'ompanies/';
 
       return new Promise((resolve, reject) => {
-        axios({
+        request({
           method: 'POST',
           url: apiUrl.concat(id),
           params: { note },
@@ -402,10 +346,10 @@ export default new Vuex.Store({
      * @returns {Promise} - ответ от сервера.
      */
     PATCH_COMPANY(state, [company, id]) {
-      const apiUrl = 'http://localhost:8090/api/companies/';
+      const apiUrl = 'companies/';
 
       return new Promise((resolve, reject) => {
-        axios
+        request
           .patch(apiUrl.concat(id), company)
           .then((response) => resolve(response))
           .catch((error) => reject(error));
@@ -418,10 +362,10 @@ export default new Vuex.Store({
      * @returns {Promise} - ответ от сервера.
      */
     DELETE_COMPANY(state, id) {
-      const apiUrl = 'http://localhost:8090/api/companies/';
+      const apiUrl = 'companies/';
 
       return new Promise((resolve, reject) => {
-        axios
+        request
           .delete(apiUrl.concat(id))
           .then((response) => resolve(response))
           .catch((error) => reject(error));
@@ -433,9 +377,9 @@ export default new Vuex.Store({
      * @param {string} id - id контакта.
      */
     GET_CONTACT_BY_ID(context, id) {
-      const apiUrl = 'http://localhost:8090/api/contacts/';
+      const apiUrl = 'contacts/';
 
-      axios
+      request
         .get(apiUrl.concat(id))
         .then((response) => {
           context.commit('SET_CURRENT_CONTACT', response.data);
@@ -449,10 +393,10 @@ export default new Vuex.Store({
      * @returns {Promise} - ответ от сервера.
      */
     PATCH_CONTACT(state, [contact, id]) {
-      const apiUrl = 'http://localhost:8090/api/contacts/';
+      const apiUrl = 'contacts/';
 
       return new Promise((resolve, reject) => {
-        axios
+        request
           .patch(apiUrl.concat(id), contact)
           .then((response) => resolve(response))
           .catch((error) => reject(error));
@@ -465,10 +409,10 @@ export default new Vuex.Store({
      * @returns {Promise} - ответ от сервера.
      */
     DELETE_CONTACT(state, id) {
-      const apiUrl = 'http://localhost:8090/api/contacts/';
+      const apiUrl = 'contacts/';
 
       return new Promise((resolve, reject) => {
-        axios
+        request
           .delete(apiUrl.concat(id))
           .then((response) => resolve(response))
           .catch((error) => reject(error));
@@ -482,10 +426,10 @@ export default new Vuex.Store({
      * @returns {Promise} - ответ от сервера.
      */
     POST_NOTE_TO_CONTACT(state, [note, id]) {
-      const apiUrl = 'http://localhost:8090/api/contacts/';
+      const apiUrl = 'contacts/';
 
       return new Promise((resolve, reject) => {
-        axios({
+        request({
           method: 'POST',
           url: apiUrl.concat(id),
           params: { note },
@@ -496,13 +440,89 @@ export default new Vuex.Store({
     },
     POST_NEW_TASK(state, [task]) {
       return new Promise((resolve, reject) => {
-        axios
-          .post('http://localhost:8090/api/tasks', task)
+        request
+          .post('tasks', task)
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });
     },
   },
   modules: {
+    User: {
+      state: () => ({
+        token: '',
+        userName: '',
+        userLogin: '',
+        userPassword: '',
+        userRole: '',
+        userId: '',
+      }),
+      getters: {
+        TOKEN: (state) => state.token,
+        USERNAME: (state) => state.userName,
+        ROLE: (state) => state.userRole,
+        USER_ID: (state) => state.userId,
+      },
+      mutations: {
+        SET_TOKEN: (state, payload) => {
+          state.token = payload;
+        },
+        SET_USERNAME: (state, payload) => {
+          state.userName = payload;
+        },
+        SET_ROLE: (state, payload) => {
+          state.userRole = payload;
+        },
+        SET_USER_ID: (state, payload) => {
+          state.userId = payload;
+        },
+      },
+      actions: {
+        GET_USER(context, [username, password]) {
+          return new Promise((resolve, reject) => {
+            axios
+              .post('http://localhost:8090/api/auth/login', { username, password })
+              .then((response) => {
+                context.commit('SET_TOKEN', response.data.token);
+                context.commit('SET_USERNAME', response.data.employee.name);
+                context.commit('SET_ROLE', response.data.employee.role.role);
+                context.commit('SET_USER_ID', response.data.employee.employee_id);
+                resolve(response);
+              })
+              .catch((error) => reject(error));
+          });
+        },
+        POST_LOGOUT(context) {
+          return new Promise((resolve, reject) => {
+            axios
+              .post('http://localhost:8090/api/auth/logout', context.state.token)
+              .then(() => {
+                context.commit('SET_TOKEN', '');
+                context.commit('SET_USERNAME', '');
+                context.commit('SET_ROLE', '');
+                context.commit('SET_USER_ID', '');
+              })
+              .catch((error) => reject(error));
+          });
+        },
+        CHECK_SESSION(context) {
+          return new Promise((resolve, reject) => {
+            axios
+              .post('http://localhost:8090/api/auth/token', context.state.token)
+              .then((response) => {
+                context.commit('SET_TOKEN', response.data);
+              })
+              .catch((error) => {
+                reject(error);
+              });
+          });
+        },
+      },
+    },
   },
+  plugins: [
+    createPersistedState({
+      paths: ['User'],
+    }),
+  ],
 });
