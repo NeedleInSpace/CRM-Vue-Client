@@ -239,10 +239,10 @@ export default new Vuex.Store({
             date,
           },
         })
-        .then((response) => {
-          context.commit('SET_TASKS', response.data);
-        })
-        .catch((error) => reject(error));
+          .then((response) => {
+            context.commit('SET_TASKS', response.data);
+          })
+          .catch((error) => reject(error));
       });
     },
     /** Получает список всех компаний и помещает в companies. */
@@ -326,7 +326,7 @@ export default new Vuex.Store({
      * @returns {Promise} - ответ от сервера.
      */
     POST_NOTE_TO_COMPANY(state, [note, id]) {
-      const apiUrl = 'ompanies/';
+      const apiUrl = 'companies/';
 
       return new Promise((resolve, reject) => {
         request({
