@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <Header id="header"/>
-    <NavigationPanel id="nav"/>
+    <Header id="header" v-show="$route.path!=='/login'"/>
+    <NavigationPanel id="nav" v-show="$route.path!=='/login'"/>
     <router-view id="body"/>
   </div>
 </template>

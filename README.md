@@ -98,3 +98,10 @@ npm run test:unit
 ```
 npm run test:e2e
 ```
+### Также необходимо установить
+```
+npm i --save lodash
+npm install webpack@^4.40.0 --save-dev
+npm install @types/lodash
+npm install --save vuex-persistedstate
+```
