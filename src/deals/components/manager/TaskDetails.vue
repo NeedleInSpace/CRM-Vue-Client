@@ -52,6 +52,14 @@
                 Компания
               </div>
               <div class="fieldContent">
+                {{ company.name }}
+              </div>
+            </div>
+            <div id="taskCompany-layout" class="taskField">
+              <div id="taskCompany" class="fieldTitle">
+                Проект
+              </div>
+              <div class="fieldContent">
                 {{ project.shortName }}
               </div>
             </div>
@@ -106,9 +114,9 @@
                 </div>
             </div>
           </div>
-          <div id="editFields-layout" v-if="editMode">
+          <!-- <div id="editFields-layout" v-if="editMode">
             <EditMode id="editMode-layout"/>
-          </div>
+          </div> !-->
         </div>
       </div>
     </div>
@@ -149,10 +157,13 @@ export default class TaskDetails extends Vue {
 
   taskStatus = '';
 
-  beforeCreate() {
-    this.$store.dispatch('GET_TASK_BY_ID', this.$route.params.id);
+  beforeMount() {
+    console.log(this.$route.params.id);
+    this.$store.dispatch('GET_TASK_BY_ID', parseFloat(this.$route.params.id));
+  }
+
+  mounted() {
     this.$store.dispatch('GET_PROJECT_BY_ID', this.$store.getters.CURRENT_TASK.taskProjectId);
-    this.$store.dispatch('GET_STAGE_BY_ID', this.$store.getters.CURRENT_TASK.taskStageId);
     this.$store.dispatch('GET_COMPANY_BY_ID', this.$store.getters.CURRENT_TASK.taskCompanyId);
     this.$store.dispatch('GET_CONTACT_BY_ID', this.$store.getters.CURRENT_TASK.contactId);
     if (this.$store.getters.CURRENT_TASK.taskStatusId === 1) {
@@ -173,7 +184,7 @@ export default class TaskDetails extends Vue {
 
   /** Функция обработки нажатия кнопки сброса изменений */
   onRollBackButtonClick() {
-    this.$store.dispatch('GET_TASK_BY_ID', this.$route.params.id);
+    this.$store.dispatch('GET_TASK_BY_ID', Number(this.$route.params.id));
     this.editMode = false;
   }
 
@@ -182,7 +193,7 @@ export default class TaskDetails extends Vue {
     this.$store
       .dispatch('PATCH_TASK', [this.task])
       .then(() => {
-        this.$store.dispatch('GET_TASK_BY_ID', this.$route.params.id);
+        this.$store.dispatch('GET_TASK_BY_ID', Number(this.$route.params.id));
         this.editMode = false;
       });
   }

@@ -20,7 +20,7 @@
             </div>
           </div>
           <div v-for="task in tasks" v-bind:key="task.taskId">
-            <div v-on:click="toTaskDetails(task.taskId)"> 
+            <div v-on:click="toTaskDetails(task)">
               <div class="task" v-if="getFormatedDate(task.taskDate)===day.dayNumber">
                 <div class="fields-layout">
                   <div class="taskField">
@@ -55,6 +55,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import Task from '@/models/Task';
 
 @Component
 export default class Calendar extends Vue {
@@ -100,10 +101,10 @@ export default class Calendar extends Vue {
    * Функция редиректа на страницу с подробной информацией о задаче.
    * @param {string} taskId - id задач
    */
-  toCompanyDetails(taskId: string) {
+  toTaskDetails(task: Task) {
     this.tempUrl = '/deals/taskDetails/';
-
-    this.$router.push(this.tempUrl.concat(taskId));
+    this.$store.commit('SET_CURRENT_TASK', task)
+    this.$router.push(this.tempUrl.concat(task.taskId.toString()));
   }
 
   tempUrl = '';
