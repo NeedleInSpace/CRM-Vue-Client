@@ -341,7 +341,7 @@ export default new Vuex.Store({
      * @returns {Promise} - ответ от сервера.
      */
     POST_NOTE_TO_COMPANY(state, [note, id]) {
-      const apiUrl = 'ompanies/';
+      const apiUrl = 'companies/';
 
       return new Promise((resolve, reject) => {
         request({
