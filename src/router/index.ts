@@ -47,6 +47,11 @@ const routes: Array<RouteConfig> = [
     name: 'ContactDetails',
     component: () => import('../knowledge-base/views/ContactDetails.vue'),
   },
+  {
+    path: '/deals/taskDetails/:id',
+    name: 'TaskDetails',
+    component: () => import('../deals/components/manager/TaskDetails.vue'),
+  },
 ];
 
 const router = new VueRouter({

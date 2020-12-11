@@ -32,11 +32,15 @@ export default new Vuex.Store({
     companyContacts: [] as Contact[],
     /** Поле с выбранной сейчас контактным лицом */
     currentContact: {} as Contact,
+    /** Поле с выбранной сейчас задачей */
+    currentTask: {} as Task,
+    currentStage: {} as Stage,
   },
   getters: {
     PROJECTS: (state) => state.projects,
     CURRENT_PROJECT: (state) => state.currentProject,
     CURRENT_STAGES: (state) => state.currentStages,
+    CURRENT_STAGE: (state) => state.currentStage,
     TASKS: (state) => state.tasks
       .sort((prev, next) => prev.taskDate.getDate() - next.taskDate.getDate()),
     FIRST_DAY: (state) => state.firstDay,
@@ -50,6 +54,7 @@ export default new Vuex.Store({
     CURRENT_COMPANY: (state) => state.currentCompany,
     COMPANY_CONTACTS: (state) => state.companyContacts,
     CURRENT_CONTACT: (state) => state.currentContact,
+    CURRENT_TASK: (state) => state.currentTask,
     /* TOKEN: (state) => state.token,
     USERNAME: (state) => state.userName,
     ROLE: (state) => state.userRole,
@@ -94,6 +99,9 @@ export default new Vuex.Store({
           state.tasks.push(payload[i]);
         }
       }
+    },
+    SET_CURRENT_TASK: (state, payload) => {
+      state.currentTask = payload;
     },
     SET_FIRST_DAY: (state, payload) => {
       state.firstDay = payload;
@@ -239,11 +247,18 @@ export default new Vuex.Store({
             date,
           },
         })
-        .then((response) => {
-          context.commit('SET_TASKS', response.data);
-        })
-        .catch((error) => reject(error));
+          .then((response) => {
+            context.commit('SET_TASKS', response.data);
+          })
+          .catch((error) => reject(error));
       });
+    },
+    GET_TASK_BY_ID(context, id) {
+      request
+        .get(`tasks/${id}`)
+        .then((response) => {
+          context.commit('SET_CURRENT_TASK', response.data);
+        });
     },
     /** Получает список всех компаний и помещает в companies. */
     GET_COMPANIES: (context) => {
@@ -402,6 +417,16 @@ export default new Vuex.Store({
           .catch((error) => reject(error));
       });
     },
+    PATCH_TASK(state, [task]) {
+      const apiUrl = 'tasks';
+
+      return new Promise((resolve, reject) => {
+        request
+          .patch(apiUrl, task)
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
     /**
      * Удаляет контакт из БД.
      *
@@ -410,6 +435,22 @@ export default new Vuex.Store({
      */
     DELETE_CONTACT(state, id) {
       const apiUrl = 'contacts/';
+
+      return new Promise((resolve, reject) => {
+        request
+          .delete(apiUrl.concat(id))
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+    /**
+     * Удаляет задачу из БД.
+     *
+     * @param {string} id - id удаляемой задачи.
+     * @returns {Promise} - ответ от сервера.
+     */
+    DELETE_TASK(state, id) {
+      const apiUrl = 'tasks/';
 
       return new Promise((resolve, reject) => {
         request

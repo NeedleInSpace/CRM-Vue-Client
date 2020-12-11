@@ -20,25 +20,27 @@
             </div>
           </div>
           <div v-for="task in tasks" v-bind:key="task.taskId">
-            <div class="task" v-if="getFormatedDate(task.taskDate)===day.dayNumber">
-              <div class="fields-layout">
-                <div class="taskField">
-                  <div class="taskField-title">
-                    Компания
+            <div v-on:click="toTaskDetails(task.taskId)"> 
+              <div class="task" v-if="getFormatedDate(task.taskDate)===day.dayNumber">
+                <div class="fields-layout">
+                  <div class="taskField">
+                    <div class="taskField-title">
+                      Компания
+                    </div>
+                    <div class="taskField-content">{{ getCompanyName(task.taskCompanyId) }}</div>
                   </div>
-                  <div class="taskField-content">{{ getCompanyName(task.taskCompanyId) }}</div>
-                </div>
-                <div class="taskField">
-                  <div class="taskField-title">
-                    Время
+                  <div class="taskField">
+                    <div class="taskField-title">
+                      Время
+                    </div>
+                    <div class="taskField-content">{{ task.taskTime }}</div>
                   </div>
-                  <div class="taskField-content">{{ task.taskTime }}</div>
-                </div>
-                <div class="taskField">
-                  <div class="taskField-title">
-                    Название задачи
+                  <div class="taskField">
+                    <div class="taskField-title">
+                      Название задачи
+                    </div>
+                    <div class="taskField-content">{{ task.taskName }}</div>
                   </div>
-                  <div class="taskField-content">{{ task.taskName }}</div>
                 </div>
               </div>
             </div>
@@ -93,6 +95,18 @@ export default class Calendar extends Vue {
       this.$forceUpdate();
     }
   }
+
+  /**
+   * Функция редиректа на страницу с подробной информацией о задаче.
+   * @param {string} taskId - id задач
+   */
+  toCompanyDetails(taskId: string) {
+    this.tempUrl = '/deals/taskDetails/';
+
+    this.$router.push(this.tempUrl.concat(taskId));
+  }
+
+  tempUrl = '';
 
   get days() {
     const arr: any[] = [];

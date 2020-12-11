@@ -185,22 +185,6 @@ export default class EditMode extends Vue {
       transform: scale(1.5);
     }
 
-    #companyVolumeContent {
-      margin-top: 5px;
-    }
-
-    #innFieldBorder,
-    #kppFieldBorder,
-    #okpoFieldBorder {
-      width: 108px;
-    }
-
-    #innFieldContent,
-    #kppFieldContent,
-    #okpoFieldContent {
-      width: 95px;
-    }
-
     .fieldTitle {
       color: #7f7f7f;
       font-size: 10pt;
