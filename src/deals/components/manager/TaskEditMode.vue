@@ -168,7 +168,9 @@ export default class EditMode extends Vue {
     }
     return true;
   }
+
   error = '';
+
   temp = '';
 }
 </script>

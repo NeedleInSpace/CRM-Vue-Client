@@ -157,13 +157,13 @@ export default class EditMode extends Vue {
     #innFieldBorder,
     #kppFieldBorder,
     #okpoFieldBorder {
-      width: 108px;
+      width: 120px;
     }
 
     #innFieldContent,
     #kppFieldContent,
     #okpoFieldContent {
-      width: 95px;
+      width: 105px;
     }
 
     .fieldTitle {
@@ -185,6 +185,11 @@ export default class EditMode extends Vue {
       }
     }
   }
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
 }
 
 </style>

@@ -103,7 +103,7 @@ export default class Calendar extends Vue {
    */
   toTaskDetails(task: Task) {
     this.tempUrl = '/deals/taskDetails/';
-    this.$store.commit('SET_CURRENT_TASK', task)
+    this.$store.commit('SET_CURRENT_TASK', task);
     this.$router.push(this.tempUrl.concat(task.taskId.toString()));
   }
 
@@ -168,6 +168,7 @@ export default class Calendar extends Vue {
       margin-right: 25px;
       color: #7f7f7f;
       font-size: 20pt;
+      cursor: pointer;
 
       i:hover {
         color: black;
@@ -183,6 +184,7 @@ export default class Calendar extends Vue {
       opacity: 0.95;
       text-decoration: none;
       background: #5ac37d;
+      cursor: pointer;
 
       .button-text {
         font-size: 14pt;
@@ -237,6 +239,7 @@ export default class Calendar extends Vue {
         margin: 20px 10px;
         box-shadow: 1.3px 1.3px 5px #707070;
         border: 1px solid #ffffff;
+        cursor: pointer;
 
         .fields-layout {
           padding: 10px 15px;

@@ -88,6 +88,7 @@ export default class ContactPersonList extends Vue {
     padding: 10px 5px;
     box-shadow: 1.3px 1.3px 5px #707070;
     border: 1px solid #ffffff;
+    cursor: pointer;
   }
 
   .contact:hover {

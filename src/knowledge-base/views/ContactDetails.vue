@@ -252,7 +252,7 @@ input::-webkit-inner-spin-button {
         #header-left {
           display: inline-block;
           text-align: left;
-          width: 50%;
+          width: 90%;
 
           #return-button {
             display: inline-block;
@@ -285,6 +285,7 @@ input::-webkit-inner-spin-button {
               display: inline-block;
               margin-left: 10px;
               font-size: 12pt;
+              cursor: pointer;
 
               i:hover {
                 color: black;
@@ -298,6 +299,7 @@ input::-webkit-inner-spin-button {
                 display: inline-block;
                 margin-left: 10px;
                 font-size: 12pt;
+                cursor: pointer;
 
                 i:hover {
                   color: black;
@@ -308,6 +310,7 @@ input::-webkit-inner-spin-button {
                 display: inline-block;
                 margin-left: 10px;
                 font-size: 12pt;
+                cursor: pointer;
 
                 i:hover {
                   color: black;
@@ -321,14 +324,16 @@ input::-webkit-inner-spin-button {
           display: inline-block;
           text-align: right;
           vertical-align: top;
-          width: 50%;
-        }
+          width: 10%;
 
-        #delete-button {
-          font-size: 18pt;
+          #delete-button {
+            display: inline-block;
+            font-size: 18pt;
+            cursor: pointer;
 
-          i:hover {
-            color: black;
+            i:hover {
+              color: black;
+            }
           }
         }
       }
@@ -430,6 +435,7 @@ input::-webkit-inner-spin-button {
         opacity: 0.95;
         text-decoration: none;
         background: #5ac37d;
+        cursor: pointer;
 
         #addNoteButton-text {
           font-size: 14pt;

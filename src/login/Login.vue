@@ -16,7 +16,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import store from '../store';
 
 @Component
 export default class Login extends Vue {
@@ -64,10 +63,17 @@ export default class Login extends Vue {
     width: 25%;
     padding: 2%;
   }
+  #form {
+    display: inline-block;
+    font-size: 20pt;
+    margin-bottom: 10px;
+  }
   input {
     padding: 3%;
     font-size: 14pt;
-    width: 90%;
+    width: 90.5%;
+    border-radius: 5px;
+    border: 1px solid #bebebe;
   }
   ::-webkit-input-placeholder {
     font-size: 10pt;
@@ -75,13 +81,24 @@ export default class Login extends Vue {
     transition: opacity 0.3s ease;
   }
   #button {
-    border: #508C64;
-    width: 87%;
-    padding: 5%;
-    color: white;
+    display: inline-block;
+    width: 89%;
+    padding: 4%;
+    margin-top: 10px;
+    border: 1px solid white;
+    border-radius: 8px;
     background-color: #508C64;
-    font-size: 19pt;
+    font-weight: bold;
+    color: white;
+    font-size: 18pt;
     text-align: center;
+    cursor: pointer
+  }
+
+  #button:hover {
+    border: 1px solid #508c64;
+    background: white;
+    color: #508c64;
   }
   #authWarn {
     color: red;

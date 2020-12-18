@@ -326,6 +326,7 @@ input::-webkit-inner-spin-button {
       border: none;
       outline: none;
       background: white;
+      cursor: pointer;
 
       .plus {
         display: inline-block;
@@ -358,6 +359,7 @@ input::-webkit-inner-spin-button {
       opacity: 0.95;
       text-decoration: none;
       background: #5ac37d;
+      cursor: pointer;
 
       #addContactButton-text {
         font-size: 14pt;

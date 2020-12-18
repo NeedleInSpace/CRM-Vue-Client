@@ -55,7 +55,7 @@
 <script lang="ts">
 import Project from '@/models/Project';
 import {
-  Component, Prop, Vue, Watch,
+  Component, Vue,
 } from 'vue-property-decorator';
 
 @Component
@@ -92,28 +92,26 @@ export default class AddProject extends Vue {
 }
 </script>
 <style scoped lang="scss">
+
 .head {
-    display: flex;
-    justify-content: space-between;
-    width: 90%;
-    margin: 4% auto;}
-    .name {
-    font-size: 20px;
-    font-family: calibri;
-    align-items: center;
-    display: flex;
-    opacity: 87%;
-    justify-content: space-around;
-    width: 35%;
+  display: flex;
+  width: 100%;
+  margin: 4%;
+}
+  .name {
+  font-size: 20pt;
+  display: flex;
+  opacity: 87%;
 }
 
 .project-data {
   margin: 20px 4%;
 
   .title {
-    font-size: 12px;
+    font-size: 10pt;
     color: #7f7f7f;
     margin-top: 10px;
+    margin-bottom: 2px;
   }
 
   .field {
@@ -125,8 +123,9 @@ export default class AddProject extends Vue {
     border: 1px solid #BEBEBE;
     border-radius: 4px;
     padding: 2px 5px;
-    font-size: 17px;
+    font-size: 14pt;
     width: 95%;
+    outline-style: none;
   }
 
   textarea {
@@ -136,12 +135,12 @@ export default class AddProject extends Vue {
   }
 
   .description-text {
-        height: 150px;
+    height: 150px;
   }
 
   .error {
     color:red;
-    font-size: 11px;
+    font-size: 10pt;
   }
 }
 
@@ -155,18 +154,31 @@ export default class AddProject extends Vue {
     padding: 8px;
     border-radius: 12px;
     opacity: 0.95;
-    font-size: 16px;
+    font-size: 14pt;
     color: white;
     max-width: 49%;
     text-align: center;
+    border: 1px solid white;
     padding: 8px 14px;
+    cursor: pointer;
   }
   .add-project-button {
     background: #5AC37D;
   }
+  .add-project-button:hover {
+    border: 1px solid #5AC37D;
+    background: white;
+    color: #5AC37D;
+  }
+
   .cancel-button {
     background: #EF5350;
     margin: 0 5%;
+  }
+  .cancel-button:hover {
+    border: 1px solid #EF5350;
+    background: white;
+    color: #EF5350;
   }
 }
 

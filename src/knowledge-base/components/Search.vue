@@ -58,10 +58,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import _, { concat } from 'lodash/';
+import { Component, Vue } from 'vue-property-decorator';
+import _ from 'lodash/';
 import axios from 'axios';
-import { th } from 'date-fns/locale';
 import Company from '@/models/Company';
 import Contact from '@/models/Contact';
 
@@ -259,6 +258,10 @@ font-size: x-large;
   left: 95%;
   margin: 17px 2px 0;
   font-size: larger;
+  cursor: pointer;
+}
+.fa-times:hover{
+  color: black;
 }
 i{
   height: 100%;
@@ -317,6 +320,7 @@ i{
 .res-text{
   display: flex;
   align-items: center;
+  padding-left: 10px;
 }
 
 ul {
@@ -333,5 +337,13 @@ li {
   font-family: calibri;
   display: flex;
   justify-content: space-between;
+}
+li:hover {
+  border-bottom: 1px solid #508C64;
+  background-color: #f0f0f0;
+
+  .fa-user, .fa-city {
+    color: #508C64;
+  }
 }
 </style>

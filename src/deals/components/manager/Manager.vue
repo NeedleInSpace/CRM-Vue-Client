@@ -115,6 +115,7 @@ export default class Manager extends Vue {
       opacity: 0.95;
       text-decoration: none;
       background: #5ac37d;
+      cursor: pointer;
 
       i {
         display: inline-block;

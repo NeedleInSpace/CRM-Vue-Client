@@ -209,6 +209,7 @@ export default class CalendarWidget extends Vue {
     #return-button {
       font-size: 26pt;
       color: #7f7f7f;
+      cursor: pointer;
 
       i:hover {
         color: black;
@@ -238,6 +239,7 @@ export default class CalendarWidget extends Vue {
 
     .month-navigation {
       font-size: 20pt;
+      cursor: pointer;
 
       i:hover {
         color: black;
@@ -324,6 +326,7 @@ export default class CalendarWidget extends Vue {
 
     #acceptButton-border {
       background: #5ac37d;
+      cursor: pointer;
     }
 
     #acceptButton-border:hover {

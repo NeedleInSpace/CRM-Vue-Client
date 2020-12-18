@@ -59,7 +59,7 @@
 <script lang="ts">
 import Stage from '@/models/Stage';
 import {
-  Component, Prop, Vue, Watch,
+  Component, Vue,
 } from 'vue-property-decorator';
 
 @Component
@@ -133,7 +133,7 @@ export default class AddStage extends Vue {
         display: grid;
         margin-top: 5px;
         border-radius: 6px;
-        border: 1px solid #7f7f7f;
+        border: 1px solid #bebebe;
         opacity: 0.95;
 
         .fieldContent {
@@ -153,6 +153,7 @@ export default class AddStage extends Vue {
     #cancelButton-layout {
       margin-right: 15px;
       background: #EF5350;
+      cursor: pointer;
     }
 
     #cancelButton-layout:hover {
@@ -167,6 +168,7 @@ export default class AddStage extends Vue {
 
     #addStageButton-layout {
       background: #5ac37d;
+      cursor: pointer;
     }
 
     #addStageButton-layout:hover {

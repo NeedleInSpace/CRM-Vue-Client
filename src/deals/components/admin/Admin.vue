@@ -60,22 +60,11 @@ export default class Deals extends Vue {
     width: 28%;
     margin: 2.5% 1%;
     display: inline-block;
-    height: 950px;
     box-shadow: 1.3px 1.3px 5px #707070;
     overflow: auto;
   }
   #project-list-component{
     overflow: hidden;
-    height: 100%;
-  }
-  .name {
-    font-size: 20px;
-    font-family: calibri;
-    align-items: center;
-    display: flex;
-    opacity: 87%;
-    justify-content: space-around;
-    width: 35%;
   }
   .details{
     width: 28%;

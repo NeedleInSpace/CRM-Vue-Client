@@ -13,31 +13,32 @@
       </div>
     </div>
     <div class="head">
+      <div id="leftPart">
         <div class="name">
           Подробности
         </div>
-         <div class="edit-title" v-if="project !== undefined">
-            <div class="edit-mode">
-              Редактирование
-              <div class="edit-switch" v-on:click="edit()">
-                <i class="fas fa-toggle-on"
-                v-on:click="rollBack()" v-show="isEditing"></i>
-                <i class="fas fa-toggle-off"
-                v-on:click="isEditing=!isEditing" v-show="!isEditing"></i>
-              </div>
-            </div>
-            <div class="delete-button" >
-              <i class="far fa-trash-alt" v-on:click="confirmOpened=true" v-show="!isEditing"></i>
-            </div>
-            <!-- <div class="rollback-button" > -->
-              <!-- <i class="fa fa-undo" v-on:click="rollBack()" v-show="isEditing"></i> -->
-            <!-- </div> -->
-            <div class="save-button" >
-              <i class="fa fa-floppy-o" v-on:click="saveChanges()" v-show="isEditing"></i>
+      </div>
+      <div id="rightPart">
+        <div class="edit-title" v-if="project !== undefined">
+          <div class="edit-mode">
+            <div id="redact">Редактирование</div>
+            <div class="edit-switch" v-on:click="edit()">
+              <i class="fas fa-toggle-on"
+              v-on:click="rollBack()" v-show="isEditing"></i>
+              <i class="fas fa-toggle-off"
+              v-on:click="isEditing=!isEditing" v-show="!isEditing"></i>
             </div>
           </div>
+          <div class="delete-button" >
+            <i class="far fa-trash-alt" v-on:click="confirmOpened=true" v-show="!isEditing"></i>
+          </div>
+          <div class="save-button" >
+            <i class="fa fa-floppy-o" v-on:click="saveChanges()" v-show="isEditing"></i>
+          </div>
+        </div>
       </div>
-      <div class="details-info" v-if="project !== undefined && project.id !== -1">
+    </div>
+    <div class="details-info" v-if="project !== undefined && project.id !== -1">
         <div class="short-name" v-if="project.shortName.length !== 0">
           <div class="title">
             Краткое название проекта
@@ -110,7 +111,7 @@
             @input="isSaved=false"
           />
         </div>
-      </div>
+    </div>
   </div>
 </template>
 
@@ -178,23 +179,24 @@ export default class ProjectsDetils extends Vue {
     top: calc(50% - 50px);
     background: white;
     padding: 14px 20px;
+    font-size: 14pt;
     border: 1px solid #BEBEBE;
     border-radius: 8px;
 
     .buttons-menu {
     display: flex;
     padding-top: 15px;
-    justify-content: space-between;
 
     .button {
       display: inline-block;
       border-radius: 12px;
       opacity: 0.95;
-      font-size: 16px;
+      font-size: 16pt;
       color: white;
-      max-width: 49%;
       text-align: center;
       padding: 8px 14px;
+      margin: 10px 0px;
+      cursor: pointer;
     }
 
     .confirm-button {
@@ -203,6 +205,7 @@ export default class ProjectsDetils extends Vue {
 
     .cancel-button {
       background: #EF5350;
+      margin-right: 20px;
     }
   }
 }
@@ -220,58 +223,90 @@ export default class ProjectsDetils extends Vue {
 
 .head {
   display: flex;
-  justify-content: space-between;
-  width: 90%;
-  margin: 4% auto;
+  width: 100%;
+  margin: 20px 4% 0px 4%;
 
-  .name {
-  font-size: 20px;
-  font-family: calibri;
-  align-items: center;
-  display: flex;
-  opacity: 87%;
-  justify-content: space-around;
-  width: 35%;
+  #leftPart {
+    display: inline-block;
+    width: 40%;
+
+    .name {
+      font-size: 20pt;
+      align-items: center;
+      display: flex;
+      opacity: 87%;
+    }
   }
 
-  .edit-title {
-    display: flex;
-    // width: 60%;
-    margin-right: 10px;
-    justify-content: space-between;
-    align-items: center;
+  #rightPart {
+    display: inline-block;
+    width: 60%;
+    text-align: right;
+    margin-right: 10%;
 
-    .edit-mode {
-      color: #7f7f7f;
-      font-size:12px;
-      display: flex;
+    .edit-title {
+      display: inline-block;
       align-items: center;
-    }
 
-    .edit-switch {
-      margin: 0 7px;
-      font-size: 20px;
-    }
+      .edit-mode {
+        color: #7f7f7f;
+        font-size: 12pt;
+        display: inline-block;
+        align-items: center;
 
-    .fa-toggle-on{
-      color:#5AC37D;
-    }
+        #redact {
+          display: inline-block;
+        }
+      }
 
-    .fa-toggle-off{
-      color: #7f7f7f;;
-    }
+      .edit-switch {
+        display: inline-block;
+        margin: 0 10px;
+        font-size: 14pt;
+        cursor: pointer;
 
-    .fa-trash-alt {
-      color: #707070;
-    }
+        .fa-toggle-on{
+          color:#5AC37D;
+        }
 
-    .fa-floppy-o{
-      color:#5AC37D;
-      font-size: 20px;
-    }
+        .fa-toggle-on:hover {
+          color: #A11E1E;
+        }
 
-    .fa-undo{
-      color: #A11E1E;
+        .fa-toggle-off {
+          color: #7f7f7f;
+        }
+
+        .fa-toggle-off:hover {
+          color:#5AC37D;
+        }
+      }
+
+      .delete-button {
+        display: inline-block;
+        cursor: pointer;
+
+        .fa-trash-alt {
+          display: inline-block;
+          font-size: 14pt;
+          color: #707070;
+        }
+
+        .fa-trash-alt:hover {
+          color: #A11E1E;
+        }
+      }
+
+      .save-button {
+        display: inline-block;
+        color: black;
+        font-size: 14pt;
+        cursor: pointer;
+      }
+
+      .save-button:hover {
+        color:#5AC37D;
+      }
     }
   }
 }
@@ -279,12 +314,12 @@ export default class ProjectsDetils extends Vue {
   margin: 20px 4%;
 
   .title {
-    font-size: 12px;
+    font-size: 10pt;
     color: #7f7f7f;
   }
 
   .field {
-    font-size: 17px;
+    font-size: 14pt;
     margin-bottom: 10px;
   }
 
@@ -292,9 +327,10 @@ export default class ProjectsDetils extends Vue {
     border: 1px solid #BEBEBE;
     border-radius: 4px;
     padding: 2px 5px;
-    font-size: 17px;
+    font-size: 14pt;
     margin-bottom: 10px;
-    width:95%
+    width:95%;
+    outline-style: none;
   }
   textarea {
     resize: none;
@@ -304,21 +340,17 @@ export default class ProjectsDetils extends Vue {
     height: 150px;
   }
 }
-
 ::-webkit-scrollbar {
   width: 5px;
 }
-
 ::-webkit-scrollbar-track {
   box-shadow: inset 0 0 5px #BEBEBE;
   border-radius: 10px;
 }
-
 ::-webkit-scrollbar-thumb {
   background: #BEBEBE;
   border-radius: 10px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background: #7F7F7F;
 }

@@ -209,14 +209,9 @@ input::-webkit-inner-spin-button {
         margin-left: 10px;
         font-size: 12pt;
 
-        i:hover {
-          color: black;
-        }
-
         #edit-text {
           display: inline-block;
           margin-left: 10px;
-          // margin-top: 10px;
           color:  #707070;
         }
 
@@ -224,11 +219,12 @@ input::-webkit-inner-spin-button {
           display: inline-block;
           margin-left: 10px;
           font-size: 14pt;
-          color:  #707070;
+          color: #707070;
+          cursor: pointer;
         }
 
         #toEditMode:hover {
-          color: black;
+          color: #5AC37D;
         }
 
         #fromEditMode {
@@ -236,6 +232,11 @@ input::-webkit-inner-spin-button {
           margin-left: 10px;
           font-size: 14pt;
           color: #5ac37d;
+          cursor: pointer;
+        }
+
+        #fromEditMode:hover {
+          color: #b93e3c;
         }
 
         #onEditMode-buttons {
@@ -245,9 +246,11 @@ input::-webkit-inner-spin-button {
             display: inline-block;
             margin-left: 10px;
             font-size: 14pt;
-            color: #5ac37d;
+            color: black;
+            cursor: pointer;
+
             i:hover {
-              color: black;
+              color: #5ac37d;
             }
           }
         }
@@ -267,6 +270,7 @@ input::-webkit-inner-spin-button {
         opacity: 0.95;
         text-decoration: none;
         background: #5ac37d;
+        cursor: pointer;
 
         #addButton-text {
           font-size: 14pt;
@@ -319,9 +323,10 @@ input::-webkit-inner-spin-button {
             margin: 10px 20px 0px 0px;
             font-size: 14pt;
             color:  #707070;
+            cursor: pointer;
 
             i:hover {
-              color: #EF5350;
+              color: #b93e3c;
             }
           }
         }
@@ -343,7 +348,7 @@ input::-webkit-inner-spin-button {
             display: grid;
             margin-top: 5px;
             border-radius: 6px;
-            border: 1px solid #7f7f7f;
+            border: 1px solid #bebebe;
             opacity: 0.95;
 
             .fieldContent {

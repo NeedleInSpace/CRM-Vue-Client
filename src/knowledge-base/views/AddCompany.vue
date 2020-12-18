@@ -281,13 +281,13 @@ input::-webkit-inner-spin-button {
     #innFieldBorder,
     #kppFieldBorder,
     #okpoFieldBorder {
-      width: 108px;
+      width: 120px;
     }
 
     #innFieldContent,
     #kppFieldContent,
     #okpoFieldContent {
-      width: 95px;
+      width: 105px;
     }
 
     .fieldTitle {
@@ -323,6 +323,7 @@ input::-webkit-inner-spin-button {
       opacity: 0.95;
       text-decoration: none;
       background: #5ac37d;
+      cursor: pointer;
 
       #addCompanyButton-text {
         font-size: 14pt;

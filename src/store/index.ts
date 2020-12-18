@@ -48,7 +48,7 @@ export default new Vuex.Store({
       alert(state.firstDay);
       return state.firstDay;
     }, */
-    CURRENT_TIME: (state) => new Date(),
+    CURRENT_TIME: () => new Date(),
     COMPANIES: (state) => state.companies,
     CONTACTS: (state) => state.contacts,
     CURRENT_COMPANY: (state) => state.currentCompany,
@@ -90,8 +90,6 @@ export default new Vuex.Store({
       state.currentStages = payload;
     },
     SET_TASKS: (state, payload) => {
-      const tempArr = [] as Task[];
-
       if (payload[0] !== undefined) {
         for (let i = 0; i < payload.length; i += 1) {
           const task: Task = payload[i];

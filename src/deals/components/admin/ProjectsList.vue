@@ -1,15 +1,13 @@
 <template>
   <div>
     <div class="head">
-        <div class="name">
-          Проекты
-          <img alt="sort" src="../../../assets/sort.svg" v-on:click="sortIt">
-        </div>
-        <div class = "add-project-button" v-on:click="addNewProject()">
-          <i class="fas fa-plus"></i>
-          Добавить проект
-        </div>
+      <div id="leftPart">
+        <div class="name">Проекты</div>
       </div>
+      <div id="rightPart">
+        <div class = "add-project-button" v-on:click="addNewProject()">+ Добавить проект</div>
+      </div>
+    </div>
     <div class="list">
     <ul class="project-list">
       <li class="project" v-for="project in projects"
@@ -46,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import Project from '@/models/Project';
 
 @Component
@@ -86,116 +84,104 @@ export default class ProjectsList extends Vue {
 </script>
 
 <style scoped lang="scss">
+
 .head {
-    display: flex;
-    justify-content: space-between;
-    width: 90%;
-    margin: 4% auto;
-  }
+  display: flex;
+  width: 100%;
+  margin: 20px 4% 0px 4%;
 
-  .name {
-    font-size: 20px;
-    font-family: calibri;
-    align-items: center;
-    display: flex;
-    opacity: 87%;
-    justify-content: space-around;
-    width: 35%;
-  }
-
-  .add-project-button {
+  #leftPart {
     display: inline-block;
-    padding: 10px;
-    border-radius: 12px;
-    opacity: 0.95;
-    text-decoration: none;
-    background: #5AC37D;
-    color: white;
-    max-width: 49%;
-    text-align: center;
-  }
-.head {
-    display: flex;
-    justify-content: space-between;
-    width: 90%;
-    margin: 4% auto;
+    width: 20%;
+
+    .name {
+      margin-top: 5px;
+      font-size: 20pt;
+      display: flex;
+      opacity: 87%;
+    }
   }
 
-  .name {
-    font-size: 20px;
-    font-family: calibri;
-    align-items: center;
-    display: flex;
-    opacity: 87%;
-    justify-content: space-around;
-    width: 35%;
-  }
-
-  .add-project-button {
+  #rightPart {
     display: inline-block;
-    padding: 10px;
-    border-radius: 12px;
-    opacity: 0.95;
-    text-decoration: none;
-    background: #5AC37D;
-    color: white;
-    max-width: 49%;
-    text-align: center;
-  }
+    width: 80%;
+    text-align: right;
+    margin-right: 7%;
 
-  .list {
-    width: 94%;
-    margin: 20px auto 0;
-    box-shadow: 1.3px 1.3px 5px #707070;
-    height: 90%;
-    overflow: auto;
-  }
-  .project-list {
-    padding: 0;
-  }
-  .project:hover {
-    box-shadow: 2px 2px 5px #508C64;
-  }
-  .project {
-    list-style: none;
-    display: inline-block;
-    list-style: none;
-    width: 84%;
-    margin: 10px 2.5%;
-    padding: 20px 0 20px 10%;
-    box-shadow: 1.3px 1.3px 5px #707070;
-    border: 1px solid #ffffff;
-    .short-name {
-      margin-bottom: 12px;
-    }
-    .date {
-      margin-bottom: 12px;
-    }
-    .title {
-      font-size: 12px;
-      color: #7f7f7f;
+    .add-project-button {
+      display: inline-block;
+      border: 1px solid white;
+      padding: 10px;
+      border-radius: 12px;
+      opacity: 0.95;
+      font-size: 14pt;
+      text-decoration: none;
+      background: #5AC37D;
+      color: white;
+      cursor: pointer;
     }
 
-    .field {
-      font-size: 17px;
+    .add-project-button:hover {
+      border: 1px solid #5ac37d;
+      opacity: 1;
+      background: white;
+      color: #5ac37d;
     }
   }
+}
 
-  ::-webkit-scrollbar {
-    width: 5px;
+.list {
+  margin: 10px 5px;
+}
+.project-list {
+  width: 100%;
+  padding: 0;
+}
+.project:hover {
+  border: 1px solid #508c64;
+}
+.project {
+  list-style: none;
+  display: inline-block;
+  list-style: none;
+  width: 90%;
+  margin: 10px 2.5%;
+  padding: 20px 0 20px 5%;
+  box-shadow: 1.3px 1.3px 5px #707070;
+  border: 1px solid #ffffff;
+  cursor: pointer;
+
+  .short-name {
+    margin-bottom: 12px;
+  }
+  .date {
+    margin-bottom: 12px;
+  }
+  .title {
+    font-size: 10pt;
+    color: #7f7f7f;
   }
 
-  ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px #BEBEBE;
-    border-radius: 10px;
+  .field {
+    font-size: 14pt;
   }
+}
 
-  ::-webkit-scrollbar-thumb {
-    background: #BEBEBE;
-    border-radius: 10px;
-  }
+::-webkit-scrollbar {
+  width: 5px;
+}
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: #7F7F7F;
-  }
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px #BEBEBE;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #BEBEBE;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7F7F7F;
+}
 </style>

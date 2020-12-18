@@ -8,9 +8,6 @@
         <div id="companiesForm-header">
           <div id="activeCompanyElements-layout">
             <div id="title">Компании</div>
-            <div id="icons">
-              <i class="fas fa-filter" />
-            </div>
           </div>
           <div id="addCompany-layout">
             <router-link to="/kb/addCompany" class="nav-element" active-class="active">
@@ -63,10 +60,10 @@ export default class KnowledgeBase extends Vue {}
 
 <style scoped lang="scss">
 #main-layout {
-  margin: 2.5% 1%;
+  margin: 1%;
 
   #search-layout{
-    margin: 0 auto 15px;
+    margin-bottom: 20px;
   }
   #companiesForm-layout {
     display: inline-block;

@@ -1,11 +1,13 @@
 <template>
   <div>
     <div class="head">
-        <div class="name">
-            Подробности
-        </div>
+      <div id="left-header">
+        <div class="name">Подробности</div>
+      </div>
+      <div id="right-header">
         <i class="fa fa-floppy-o" v-on:click="addTask()"></i>
       </div>
+    </div>
     <div class="task-data">
         <div class="task-name" >
           <div class="title">
@@ -147,7 +149,6 @@ import {
   Component, Prop, Vue, Watch,
 } from 'vue-property-decorator';
 import { format, parseISO } from 'date-fns';
-import { ru } from 'date-fns/locale';
 
 @Component
 export default class AddTask extends Vue {
@@ -224,31 +225,43 @@ export default class AddTask extends Vue {
 
 <style scoped lang="scss">
 .head {
-    display: flex;
-    justify-content: space-between;
-    width: 90%;
-    margin: 4% auto;}
-    .name {
-    font-size: 20px;
-    font-family: calibri;
-    align-items: center;
-    display: flex;
-    opacity: 87%;
-    justify-content: space-around;
-    width: 35%;
+  display: flex;
+  // justify-content: space-between;
+  width: 100%;
+  margin: 20px 4%;
+
+  #left-header {
+    display: inline-block;
+    width: 50%;
+  }
+
+  #right-header {
+    display: inline-block;
+    width: 50%;
+    text-align: right;
+    margin-right: 10.5%;
+  }
+}
+
+.name {
+  display: inline-block;
+  font-size: 20pt;
+  font-family: calibri;
+  display: flex;
+  opacity: 87%;
 }
 
 .task-data {
   margin: 20px 4%;
 
   .title {
-    font-size: 12px;
+    font-size: 12pt;
     color: #7f7f7f;
     margin-top: 10px;
   }
 
   .field {
-    font-size: 17px;
+    font-size: 16pt;
     margin-bottom: 10px;
   }
 
@@ -256,8 +269,9 @@ export default class AddTask extends Vue {
     border: 1px solid #BEBEBE;
     border-radius: 4px;
     padding: 2px 5px;
-    font-size: 17px;
+    font-size: 16pt;
     width: 95%;
+    outline-style: none;
   }
 .edit-attr{
     border-radius: 3px;
@@ -273,23 +287,23 @@ export default class AddTask extends Vue {
 .place{
     max-width: 45%;
 }
-  textarea {
-    resize: none;
-    overflow: auto;
-    width: 95%;
-  }
+textarea {
+  resize: none;
+  overflow: auto;
+  width: 95%;
+}
 
-  .description-text {
-    height: 150px;
-    box-shadow: 1px 3px 5px #BEBEBE;
-    border: none;
-  }
+.description-text {
+  height: 150px;
+  box-shadow: 1px 3px 5px #BEBEBE;
+  border: none;
+}
 .select-field{
     width: 98%;
 }
   .error {
     color:red;
-    font-size: 11px;
+    font-size: 10pt;
   }
 }
 
@@ -322,8 +336,27 @@ export default class AddTask extends Vue {
 .fa-floppy-o{
   color:#5AC37D;
   font-size: 20px;
+  cursor: pointer;
 }
 .project-block {
   width: 45%;
 }
+
+::-webkit-input-placeholder {
+  color: #bebebe;
+  opacity: 0.95;
+} /* webkit */
+::-moz-placeholder {
+  color: #bebebe;
+  opacity: 0.95;
+} /* Firefox 19+ */
+:-moz-placeholder {
+  color: #bebebe;
+  opacity: 0.95;
+} /* Firefox 18- */
+:-ms-input-placeholder {
+  color: #bebebe;
+  opacity: 0.95;
+} /* IE */
+
 </style>
