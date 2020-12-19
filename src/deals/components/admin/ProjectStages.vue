@@ -297,10 +297,8 @@ input::-webkit-inner-spin-button {
     display: grid;
     margin-top: 20px;
     margin-bottom: 15px;
-    box-shadow: 1.3px 1.3px 5px #707070;
 
     #stages-layout {
-      margin: 10px 2px;
 
       .error {
         margin-left: 10px;
@@ -311,7 +309,7 @@ input::-webkit-inner-spin-button {
       .stage {
         display: grid;
         list-style: none;
-        margin: 10px;
+        margin: 15px 0px;
         box-shadow: 1.3px 1.3px 5px #707070;
         border: 1px solid #ffffff;
 

@@ -81,7 +81,7 @@ export default class AddStage extends Vue {
   onAddStageClick() {
     if (this.checkForm()) {
       this.stage.projectId = this.currentProject.id;
-      this.stage.stageNumber = 0;
+      this.stage.stageNumber = this.currentProject.stagesNumber;
       this.$store
         .dispatch('POST_NEW_STAGE', this.stage)
         .then(() => {
