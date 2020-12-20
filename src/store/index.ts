@@ -89,6 +89,9 @@ export default new Vuex.Store({
     SET_CURRENT_STAGES: (state, payload) => {
       state.currentStages = payload;
     },
+    SET_CURRENT_STAGE: (state, payload) => {
+      state.currentStage = payload;
+    },
     SET_TASKS: (state, payload) => {
       if (payload[0] !== undefined) {
         for (let i = 0; i < payload.length; i += 1) {
@@ -215,6 +218,13 @@ export default new Vuex.Store({
         .get(`projects/${id}`)
         .then((response) => {
           context.commit('SET_CURRENT_PROJECT', response.data);
+        });
+    },
+    GET_STAGE_BY_ID(context, id) {
+      request
+        .get(`stages/${id}`)
+        .then((response) => {
+          context.commit('SET_CURRENT_STAGE', response.data);
         });
     },
     GET_THREE_DAY_TASKS(context, firstDay) {

@@ -103,7 +103,7 @@
             <div class="title">
               Дата
             </div>
-            <input min=currDate
+            <input
             class="edit-field edit-attr" v-model="task.taskDate" type="date">
             <div class="error" v-if="task.taskDate===undefined || task.taskDate.length===0">
               {{this.error}}
@@ -156,8 +156,6 @@ export default class AddTask extends Vue {
 
   error = '';
 
-  currDate: Date = new Date();
-
   mounted() {
     this.$store.dispatch('GET_PROJECTS');
   }
@@ -196,7 +194,7 @@ export default class AddTask extends Vue {
       this.task.employeeId = this.$store.getters.USER_ID;
       this.task.taskStatusId = 1;
       this.$store.dispatch('POST_NEW_TASK', [this.task])
-        .then(() => {
+        .then((response) => {
           for (let i = 0; i < this.tasks.length; i += 1) {
             if (format(this.tasks[i].taskDate, 'dd.MM') === format(parseISO(this.task.taskDate.toString()), 'dd.MM')) {
               this.tasks.splice(i, 1);
@@ -205,8 +203,8 @@ export default class AddTask extends Vue {
           }
           this.$store.dispatch('GET_DAY_TASKS', [this.$store.getters.USERNAME, this.task.taskDate]);
         });
-      this.$emit('cancel');
       this.$store.commit('SET_COMPANY_CONTACTS', '');
+      this.$store.commit('SET_CURRENT_TASK', this.task);
     }
   }
 
@@ -226,7 +224,6 @@ export default class AddTask extends Vue {
 <style scoped lang="scss">
 .head {
   display: flex;
-  // justify-content: space-between;
   width: 100%;
   margin: 20px 4%;
 

@@ -102,9 +102,7 @@ export default class Calendar extends Vue {
    * @param {string} taskId - id задач
    */
   toTaskDetails(task: Task) {
-    this.tempUrl = '/deals/taskDetails/';
     this.$store.commit('SET_CURRENT_TASK', task);
-    this.$router.push(this.tempUrl.concat(task.taskId.toString()));
   }
 
   tempUrl = '';

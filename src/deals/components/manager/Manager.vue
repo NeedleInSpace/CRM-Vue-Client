@@ -19,12 +19,12 @@
       <div id="main-layout">
         <Calendar id="calendar" @open='openCalendar' @newTask='onAddButtonClicked'/>
         <div id="details-layout">
-          <div id="taskDetails-layout" v-if="addButtonClicked">
-            <AddTask id="add-task-layout" @cancel='cancelAddBlock'/>
+          <div id="taskDetails-layout" v-if="currentTask===undefined||currentTask.length===0">
+            <AddTask id="add-task-layout"/>
           </div>
-          <!-- <div id="personDetails-layout" v-if="!addButtonClicked"> -->
-            <!-- Подробности по КЛ. -->
-          <!-- </div> -->
+          <div id="taskDetails-layout" v-if="currentTask!==undefined&&currentTask.length!==0">
+            <TaskDetails id="task-details"/>
+          </div>
         </div>
       </div>
     </div>
@@ -36,18 +36,22 @@ import { Component, Vue } from 'vue-property-decorator';
 import Calendar from './Calendar.vue';
 import CalendarWidget from './CalendarWidget.vue';
 import AddTask from './AddTask.vue';
+import TaskDetails from './TaskDetails.vue';
 
 @Component({
   components: {
     Calendar,
     CalendarWidget,
     AddTask,
+    TaskDetails,
   },
 })
 export default class Manager extends Vue {
   showCalendar = false;
 
-  addButtonClicked = false;
+  get currentTask() {
+    return this.$store.getters.CURRENT_TASK;
+  }
 
   mounted() {
     this.$store.dispatch('GET_THREE_DAY_TASKS', new Date());
@@ -63,11 +67,7 @@ export default class Manager extends Vue {
   }
 
   onAddButtonClicked() {
-    this.addButtonClicked = true;
-  }
-
-  cancelAddBlock() {
-    this.addButtonClicked = false;
+    this.$store.commit('SET_CURRENT_TASK', '');
   }
 }
 
@@ -167,6 +167,7 @@ export default class Manager extends Vue {
       #taskDetails-layout {
         margin-bottom: 20px;
         box-shadow: 1.3px 1.3px 5px #707070;
+        height:fit-content;
       }
 
       #personDetails-layout {

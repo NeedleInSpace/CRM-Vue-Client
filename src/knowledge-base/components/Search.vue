@@ -8,8 +8,8 @@
         </div>
         <div class="search-results" v-show="isOpen">
             <ul>
-                <li v-for="(company, i) in companies"
-                :key="i" @click="setCompanyResult(company)"
+                <li v-for="(company) in companies"
+                :key="'C'+company.companyId" @click="setCompanyResult(company)"
                 ><i class="fas fa-city"></i>
                     <div class="res-text">
                         {{company.name !== null && company.name.length !== 0?
@@ -18,12 +18,9 @@
                         {{company.consumptionVolume !== null ? ', > '
                         + company.consumptionVolume + ' МВт': ''}}
                     </div>
-                    <div class="company-stage">
-                        этап
-                    </div>
                 </li>
                 <li v-for="(contact) in compContacts"
-                :key="contact.contactPersonId" @click="setContactResult(contact)"
+                :key="'CCP'+contact.contactPersonId" @click="setContactResult(contact)"
                 ><i class="fas fa-user"></i>
                     <div class="res-text">
                       {{contact.contactName !== null ? contact.contactName: ''}}
@@ -38,7 +35,7 @@
                     </div>
                 </li>
                 <li v-for="(contact) in contacts"
-                :key="contact.contactPersonId" @click="setContactResult(contact)"
+                :key="'CP'+contact.contactPersonId" @click="setContactResult(contact)"
                 ><i class="fas fa-user"></i>
                     <div class="res-text">
                       {{contact.contactName !== null ? contact.contactName: ''}}

@@ -4,20 +4,10 @@
       <div id="details-layout">
         <div id="details-header">
           <div id="header-left">
-            <router-link to="/deals" class="nav-element" active-class="active">
-              <div id="return-button">
-                <i class="fa fa-arrow-left" aria-hidden="true"></i>
-              </div>
-            </router-link>
-            <div id="taskName-layout">
-              <div id="taskName" class="fieldContent">
-                  {{ task.taskName }}
-              </div>
-            </div>
+            <div class="name">Подробности</div>
+          </div>
+          <div id="header-right"  v-if="task!==undefined">
             <div id="editMode">
-              <div id="edit-text">
-                  Режим редкатирования
-              </div>
               <div id="toEdit-button" v-on:click="onEditButtonClick" v-if="!editMode">
                   <i class="fa fa-pencil" aria-hidden="true"></i>
               </div>
@@ -30,14 +20,12 @@
                   </div>
               </div>
             </div>
-          </div>
-          <div id="header-right">
-            <div id="delete-button" v-on:click="onDeleteButton">
-              <i class="fa fa-trash" aria-hidden="true"></i>
+            <div class="button-layout" v-on:click="onDeleteButton"  v-if="!editMode">
+              <i class="fas fa-check"></i>Сдать задачу
             </div>
           </div>
         </div>
-        <div id="fields-layout">
+        <div id="fields-layout" v-if="task!==undefined">
           <div id="fields" v-if="!editMode">
             <div id="taskName-layout" class="taskField">
               <div id="taskName" class="fieldTitle">
@@ -54,21 +42,8 @@
               <div class="fieldContent">
                 {{ company.name }}
               </div>
-            </div>
-            <div id="taskCompany-layout" class="taskField">
-              <div id="taskCompany" class="fieldTitle">
-                Проект
-              </div>
-              <div class="fieldContent">
-                {{ project.shortName }}
-              </div>
-            </div>
-            <div id="taskStage-layout" class="taskField">
-              <div id="taskStage" class="fieldTitle">
-                Этап
-              </div>
-              <div class="fieldContent">
-                {{ stage.stageName }}
+              <div id="project-info">
+                {{ project.shortName + ": " + stage.stageName }}
               </div>
             </div>
             <div id="taskContact-layout" class="taskField">
@@ -85,7 +60,7 @@
                   Дата
                 </div>
                 <div class="fieldContent">
-                  {{ task.taskDate }}
+                  {{ this.date }}
                 </div>
               </div>
               <div id="taskTime-layout" class="taskField">
@@ -96,7 +71,8 @@
                   {{ task.taskTime }}
                 </div>
               </div>
-              <div id="taskPlace-layout" class="taskField">
+              <div id="taskPlace-layout" class="taskField"
+              v-if="task.taskPlace!==null&&task.taskPlace!==undefined">
                 <div id="taskPlace" class="fieldTitle">
                   Место
                 </div>
@@ -109,14 +85,11 @@
                 <div id="taskDescription" class="fieldTitle">
                   Описание задачи
                 </div>
-                <div class="fieldContent">
+                <div class="fieldContent description">
                   {{ task.taskDescription }}
                 </div>
             </div>
           </div>
-          <!-- <div id="editFields-layout" v-if="editMode">
-            <EditMode id="editMode-layout"/>
-          </div> !-->
         </div>
       </div>
     </div>
@@ -125,6 +98,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
 import EditMode from './TaskEditMode.vue';
 
 @Component({
@@ -133,10 +108,6 @@ import EditMode from './TaskEditMode.vue';
   },
 })
 export default class TaskDetails extends Vue {
-  get task() {
-    return this.$store.getters.CURRENT_TASK;
-  }
-
   get project() {
     return this.$store.getters.CURRENT_PROJECT;
   }
@@ -157,24 +128,28 @@ export default class TaskDetails extends Vue {
 
   taskStatus = '';
 
-  beforeMount() {
-    console.log(this.$route.params.id);
-    this.$store.dispatch('GET_TASK_BY_ID', parseFloat(this.$route.params.id));
-  }
+  date = '';
 
-  mounted() {
-    this.$store.dispatch('GET_PROJECT_BY_ID', this.$store.getters.CURRENT_TASK.taskProjectId);
-    this.$store.dispatch('GET_COMPANY_BY_ID', this.$store.getters.CURRENT_TASK.taskCompanyId);
-    this.$store.dispatch('GET_CONTACT_BY_ID', this.$store.getters.CURRENT_TASK.contactId);
-    if (this.$store.getters.CURRENT_TASK.taskStatusId === 1) {
-      this.taskStatus = 'В работе';
+  get task() {
+    if (this.$store.getters.CURRENT_TASK.taskName !== undefined) {
+      const task = this.$store.getters.CURRENT_TASK;
+      this.date = format(new Date(task.taskDate), 'dd.MM.yyyy');
+      this.$store.dispatch('GET_PROJECT_BY_ID', task.taskProjectId);
+      this.$store.dispatch('GET_COMPANY_BY_ID', task.taskCompanyId);
+      this.$store.dispatch('GET_STAGE_BY_ID', task.taskStageId);
+      this.$store.dispatch('GET_CONTACT_BY_ID', task.contactId);
+      if (task.taskStatusId === 1) {
+        this.taskStatus = 'В работе';
+      }
+      if (task.taskStatusId === 2) {
+        this.taskStatus = 'Ожидает подтверждения';
+      }
+      if (task.taskStatusId === 3) {
+        this.taskStatus = 'Выполнена';
+      }
+      return task;
     }
-    if (this.$store.getters.CURRENT_TASK.taskStatusId === 2) {
-      this.taskStatus = 'Ожидает подтверждения';
-    }
-    if (this.$store.getters.CURRENT_TASK.taskStatusId === 3) {
-      this.taskStatus = 'Выполнена';
-    }
+    return undefined;
   }
 
   /** Функция обработки нажатия кнопки редактирования */
@@ -225,15 +200,18 @@ input::-webkit-inner-spin-button {
   opacity: 0.95;
 
   #main-layout {
-    display: inline-block;
-    min-width: 1000px;
-    max-width: auto;
-    margin: 25px 25px 0px 25px;
-    padding-bottom: 25px;
-    text-align: left;
-    box-shadow: 1.4px 1.4px 5px #707070;
-    border: 1px solid #ffffff;
 
+    .button-layout {
+      display: inline-block;
+      border: 1px solid white;
+      padding: 10px;
+      border-radius: 12px;
+      opacity: 0.95;
+      text-decoration: none;
+      background: #5ac37d;
+      cursor: pointer;
+      color:white;
+    }
     #details-layout {
       margin: 0px 15px;
 
@@ -241,13 +219,21 @@ input::-webkit-inner-spin-button {
         justify-content: space-between;
         text-align: left;
         margin: 25px 20px 15px 10px;
-        font-size: 28pt;
         color: #7f7f7f;
+        display: flex;
 
         #header-left {
           display: inline-block;
           text-align: left;
           width: 50%;
+
+          .name {
+            display: inline-block;
+            font-size: 20pt;
+            font-family: calibri;
+            display: flex;
+            opacity: 87%;
+          }
 
           #return-button {
             display: inline-block;
@@ -270,6 +256,7 @@ input::-webkit-inner-spin-button {
           #editMode {
             display: inline-block;
             margin-left: 25px;
+            margin-right: 10px;
 
             #edit-text {
               display: inline-block;
@@ -313,10 +300,13 @@ input::-webkit-inner-spin-button {
         }
 
         #header-right {
-          display: inline-block;
-          text-align: right;
+          display: inline-flex;
           vertical-align: top;
-          width: 50%;
+          align-items: center;
+
+          #toEdit-button {
+            margin-right: 10px;
+          }
         }
 
         #delete-button {
@@ -327,11 +317,22 @@ input::-webkit-inner-spin-button {
           }
         }
       }
-
+      #project-info {
+        display: inline-block;
+        padding: 3px 15px;
+        border-radius: 12px;
+        opacity: 0.95;
+        text-decoration: none;
+        background: #FFB300;
+      }
+      #meetDate {
+        display: flex;
+        width: 98%;
+      }
       #fields {
         display: inline-block;
-        vertical-align: top;
-        width: 35%;
+        margin-bottom: 10px;
+        width: 100%;
 
         .taskField {
           margin: 8px 10px 5px 10px;
@@ -345,6 +346,13 @@ input::-webkit-inner-spin-button {
         .fieldContent {
           font-size: 14pt;
           opacity: 0.95;
+        }
+
+        .description{
+          height: fit-content;
+          padding: 10px;
+          box-shadow: 1px 3px 5px #BEBEBE;
+          border: none;
         }
       }
 
