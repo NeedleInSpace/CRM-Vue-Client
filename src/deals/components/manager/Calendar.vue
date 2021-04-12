@@ -21,7 +21,8 @@
           </div>
           <div v-for="task in tasks" v-bind:key="task.taskId">
             <div v-on:click="toTaskDetails(task)">
-              <div class="task" v-if="getFormatedDate(task.taskDate)===day.dayNumber">
+              <div class="task" v-if="getFormatedDate(task.taskDate)===day.dayNumber"
+              v-bind:style="{ 'box-shadow': checkTime(task.taskTime, task.taskDate)}">
                 <div class="fields-layout">
                   <div class="taskField">
                     <div class="taskField-title">
@@ -54,15 +55,31 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
+import { ru, ta } from 'date-fns/locale';
 import Task from '@/models/Task';
 
 @Component
 export default class Calendar extends Vue {
   temp = '';
 
+  currentDateTime = new Date();
+
   get companies() {
     return this.$store.getters.COMPANIES;
+  }
+
+  checkTime(taskTime: string, taskDate: Date) {
+    const tempDate = new Date(taskDate.toString().replace('00:00:00', taskTime));
+    const diffTime = tempDate.getTime() - this.currentDateTime.getTime();
+    if (taskDate.getDay() === this.currentDateTime.getDay()) {
+      if (diffTime <= 3600000 && diffTime >= 0) {
+        return '1.3px 1.3px 5px #FFB300';
+      }
+      if (diffTime < 0) { // добавить проерки на завершение задачи
+        return '1.3px 1.3px 5px red';
+      }
+    }
+    return '1.3px 1.3px 5px #707070';
   }
 
   getCompanyName(taskCompanyId: string) {

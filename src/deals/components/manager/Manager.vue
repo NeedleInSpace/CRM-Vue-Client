@@ -18,12 +18,18 @@
       </div>
       <div id="main-layout">
         <Calendar id="calendar" @open='openCalendar' @newTask='onAddButtonClicked'/>
-        <div id="details-layout">
-          <div id="taskDetails-layout" v-if="currentTask===undefined||currentTask.length===0">
-            <AddTask id="add-task-layout"/>
+        <div class="details">
+          <div id="details-layout">
+            <div id="taskDetails-layout" v-if="currentTask===undefined||currentTask.length===0">
+              <AddTask id="add-task-layout"/>
+            </div>
+            <div id="taskDetails-layout" v-if="currentTask!==undefined&&currentTask.length!==0">
+              <TaskDetails id="task-details"/>
+            </div>
           </div>
-          <div id="taskDetails-layout" v-if="currentTask!==undefined&&currentTask.length!==0">
-            <TaskDetails id="task-details"/>
+          <div id="details-layout"
+            v-if="currentTask!==undefined&&currentTask.contactId!==undefined" >
+            <ContactDetails id="contact-details"/>
           </div>
         </div>
       </div>
@@ -37,6 +43,7 @@ import Calendar from './Calendar.vue';
 import CalendarWidget from './CalendarWidget.vue';
 import AddTask from './AddTask.vue';
 import TaskDetails from './TaskDetails.vue';
+import ContactDetails from './ContactDetails.vue';
 
 @Component({
   components: {
@@ -44,6 +51,7 @@ import TaskDetails from './TaskDetails.vue';
     CalendarWidget,
     AddTask,
     TaskDetails,
+    ContactDetails,
   },
 })
 export default class Manager extends Vue {
@@ -56,6 +64,7 @@ export default class Manager extends Vue {
   mounted() {
     this.$store.dispatch('GET_THREE_DAY_TASKS', new Date());
     this.$store.dispatch('GET_COMPANIES');
+    console.log(this.currentTask);
   }
 
   openCalendar() {
@@ -157,8 +166,11 @@ export default class Manager extends Vue {
     #calendar {
       margin-right: 20px;
       box-shadow: 1.3px 1.3px 5px #707070;
+      height: fit-content;
     }
-
+    #contact-details{
+      box-shadow: 1.3px 1.3px 5px #707070;
+    }
     #details-layout {
       display: grid;
       grid-template-rows: minmax(200px, auto);

@@ -1,5 +1,40 @@
 <template>
   <div>
+    <div class="complete-confirm" v-show="confirmIsOpen" v-if="task!==undefined">
+      <div class="gray"></div>
+      <div class="complete-window">
+        <div class="buttons-menu">
+          <div class="last-task">
+            Последняя задача этапа
+            <div class="switch">
+              <i class="fas fa-toggle-on"
+              v-show="isLastTask"
+              v-on:click="isLastTask = false"></i>
+              <i class="fas fa-toggle-off"
+              v-show="!isLastTask"
+              v-on:click="isLastTask = true"></i>
+            </div>
+          </div>
+          <div class="button-layout" v-on:click="completeTask()">
+              <i class="fas fa-check"></i>
+              {{!isLastTask ? 'Сдать задачу' : 'Завершить этап'}}
+          </div>
+        </div>
+        <div class="addition">
+          Результат задачи
+          <div class="task-result">
+            <input
+              v-model.lazy.trim="task.taskResult"
+              class="fieldContent"
+              placeholder="Результат задачи"
+            />
+          </div>
+          <div class="documents" v-show="isLastTask">
+            <i class="fas fa-plus"></i> Прикрепить файл
+          </div>
+        </div>
+      </div>
+    </div>
     <div id="main-layout">
       <div id="details-layout">
         <div id="details-header">
@@ -20,7 +55,7 @@
                   </div>
               </div>
             </div>
-            <div class="button-layout" v-on:click="onDeleteButton"  v-if="!editMode">
+            <div class="button-layout" v-on:click="confirmIsOpen = true"  v-if="!editMode">
               <i class="fas fa-check"></i>Сдать задачу
             </div>
           </div>
@@ -91,6 +126,9 @@
             </div>
           </div>
         </div>
+        <div id="fields-layout" v-if="editMode">
+            <EditMode id="editMode-layout"/>
+        </div>
       </div>
     </div>
   </div>
@@ -108,6 +146,10 @@ import EditMode from './TaskEditMode.vue';
   },
 })
 export default class TaskDetails extends Vue {
+  isLastTask = false;
+
+  confirmIsOpen = false;
+
   get project() {
     return this.$store.getters.CURRENT_PROJECT;
   }
@@ -138,6 +180,7 @@ export default class TaskDetails extends Vue {
       this.$store.dispatch('GET_COMPANY_BY_ID', task.taskCompanyId);
       this.$store.dispatch('GET_STAGE_BY_ID', task.taskStageId);
       this.$store.dispatch('GET_CONTACT_BY_ID', task.contactId);
+      this.$store.dispatch('GET_COMPANY_CONTACTS', task.taskCompanyId);
       if (task.taskStatusId === 1) {
         this.taskStatus = 'В работе';
       }
@@ -150,6 +193,10 @@ export default class TaskDetails extends Vue {
       return task;
     }
     return undefined;
+  }
+
+  completeTask() {
+    console.log(this.task);
   }
 
   /** Функция обработки нажатия кнопки редактирования */
@@ -165,10 +212,12 @@ export default class TaskDetails extends Vue {
 
   /** Функция обработки нажатия кнопки сохранений изменений */
   onSaveButtonClick() {
+    console.log(this.task);
     this.$store
       .dispatch('PATCH_TASK', [this.task])
       .then(() => {
-        this.$store.dispatch('GET_TASK_BY_ID', Number(this.$route.params.id));
+        console.log(this.task.taskId);
+        this.$store.dispatch('GET_TASK_BY_ID', this.task.taskId);
         this.editMode = false;
       });
   }
@@ -363,5 +412,74 @@ input::-webkit-inner-spin-button {
       }
     }
   }
+.gray {
+  position: absolute;
+  z-index: 200;
+  width: 100%;
+  height: 100%;
+  background: #BEBEBE;
+  opacity: 50%;
+  left: 0;
+  top: 0;
+}
+.complete-window {
+    z-index: 300;
+    width: 35%;
+    position: absolute;
+    top: calc(50% - 50px);
+    left: calc(50% - 250px);
+    background: white;
+    padding: 14px 20px;
+    font-size: 14pt;
+    border: 1px solid #BEBEBE;
+    border-radius: 8px;
+}
+.buttons-menu{
+  display: flex;
+  justify-content: space-between;
+
+}
+.last-task{
+  font-size: 12pt;
+  color: #BEBEBE;
+  display: flex;
+}
+.fieldBorder {
+    display: inline-block;
+    margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #bebebe;
+    width: 100%;
+}
+.fieldContent {
+  margin: 3px;
+  font-size: 14pt;
+  border: white;
+  outline-style: none;
+}
+.switch{
+  font-size: 14pt;
+  margin-left: 10px;
+  color: #5ac37d;
+}
+.task-result{
+   display: inline-block;
+    margin-top: 2px;
+    border-radius: 6px;
+    border: 1px solid #bebebe;
+    width: 100%;
+  width: 98%;
+  min-height: 100px;
+}
+.fa-plus{
+  color: #5ac37d;
+}
+.addition{
+  margin: 20px 0 0;
+  font-size: 12pt;
+}
+.documents{
+  margin-top: 2px;
+}
 }
 </style>

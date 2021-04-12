@@ -14,4 +14,5 @@ export default interface Task {
   employeeId: number;
   endDate: Date;
   endTime: Date;
+  taskResult: string;
 }
