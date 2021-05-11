@@ -31,6 +31,12 @@
             v-if="currentTask!==undefined&&currentTask.contactId!==undefined" >
             <ContactDetails id="contact-details"/>
           </div>
+          <div id="details-layout"
+            v-if="(currentTask!==undefined&&currentTask.contactId===undefined)
+            ||(currentTask===undefined&&currentCompany!==undefined
+            &&currentCompany.companyId!==undefined)" >
+            <AddContactPerson id="add-contact"/>
+          </div>
         </div>
       </div>
     </div>
@@ -44,6 +50,7 @@ import CalendarWidget from './CalendarWidget.vue';
 import AddTask from './AddTask.vue';
 import TaskDetails from './TaskDetails.vue';
 import ContactDetails from './ContactDetails.vue';
+import AddContactPerson from './AddContactPerson.vue';
 
 @Component({
   components: {
@@ -52,6 +59,7 @@ import ContactDetails from './ContactDetails.vue';
     AddTask,
     TaskDetails,
     ContactDetails,
+    AddContactPerson,
   },
 })
 export default class Manager extends Vue {
@@ -61,10 +69,15 @@ export default class Manager extends Vue {
     return this.$store.getters.CURRENT_TASK;
   }
 
+  get currentCompany() {
+    return this.$store.getters.CURRENT_COMPANY;
+  }
+
   mounted() {
     this.$store.dispatch('GET_THREE_DAY_TASKS', new Date());
     this.$store.dispatch('GET_COMPANIES');
-    console.log(this.currentTask);
+    this.$store.commit('SET_CURRENT_TASK', undefined);
+    this.$store.dispatch('GET_OVERDUE_TASKS', new Date());
   }
 
   openCalendar() {
@@ -107,7 +120,6 @@ export default class Manager extends Vue {
 
 #offsets {
   margin: 2%;
-  margin-right: 5%;
 
   #header-buttons {
     display: inline-block;

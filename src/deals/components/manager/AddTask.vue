@@ -55,10 +55,13 @@
                 {{ contact.contactName }}
               </option>
             </select>
-          <div class="error" v-if="task.contactId===undefined">
+            <div class="button-layout addContact" v-on:click="addContactPerson()"
+                v-bind:key="null" v-bind:value="null">
+                    Добавить контакное лицо
+            </div>
+        </div><div class="error" v-if="task.contactId===undefined">
             {{this.error}}
           </div>
-        </div>
         <div class="attr">
           <div class="project-block">
             <div class="title">
@@ -195,6 +198,8 @@ export default class AddTask extends Vue {
       this.task.taskStatusId = 1;
       this.$store.dispatch('POST_NEW_TASK', [this.task])
         .then((response) => {
+          console.log(response.data);
+          this.task.taskId = response.data;
           for (let i = 0; i < this.tasks.length; i += 1) {
             if (format(this.tasks[i].taskDate, 'dd.MM') === format(parseISO(this.task.taskDate.toString()), 'dd.MM')) {
               this.tasks.splice(i, 1);
@@ -218,6 +223,13 @@ export default class AddTask extends Vue {
     }
     return true;
   }
+
+  addContactPerson() {
+    if (this.task.taskCompanyId) {
+      console.log('lksdlas');
+      this.$store.dispatch('GET_COMPANY_BY_ID', this.task.taskCompanyId);
+    }
+  }
 }
 </script>
 
@@ -226,6 +238,7 @@ export default class AddTask extends Vue {
   display: flex;
   width: 100%;
   margin: 20px 4%;
+  align-items: center;
 
   #left-header {
     display: inline-block;
@@ -242,10 +255,11 @@ export default class AddTask extends Vue {
 
 .name {
   display: inline-block;
-  font-size: 20pt;
+  font-size: 17pt;
   font-family: calibri;
   display: flex;
   opacity: 87%;
+  color: #7f7f7f;
 }
 
 .task-data {
@@ -267,7 +281,7 @@ export default class AddTask extends Vue {
     border-radius: 4px;
     padding: 2px 5px;
     font-size: 16pt;
-    width: 95%;
+    width: 97%;
     outline-style: none;
   }
 .edit-attr{
@@ -296,7 +310,7 @@ textarea {
   border: none;
 }
 .select-field{
-    width: 98%;
+    width: 100%;
 }
   .error {
     color:red;
@@ -355,5 +369,19 @@ textarea {
   color: #bebebe;
   opacity: 0.95;
 } /* IE */
-
+.button-layout {
+      background: #5ac37d;
+      display: flex;
+      border: 1px solid white;
+      padding: 8px;
+      border-radius: 12px;
+      opacity: 0.95;
+      text-decoration: none;
+      cursor: pointer;
+      color:white;
+    }
+.addContact {
+  padding: 3px 20%;
+  font-size: 12pt;
+}
 </style>

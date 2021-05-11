@@ -122,11 +122,9 @@ export default class TaskDetails extends Vue {
 
   /** Функция обработки нажатия кнопки сохранений изменений */
   onSaveButtonClick() {
-    console.log(this.contact);
     this.$store
       .dispatch('PATCH_CONTACT', [this.contact, this.contact.contactPersonId])
       .then(() => {
-        console.log(this.contact.contactPersonId);
         this.$store.dispatch('GET_CONTACT_BY_ID', this.contact.contactPersonId);
         this.editMode = false;
       });
@@ -140,12 +138,13 @@ export default class TaskDetails extends Vue {
         margin: 25px 20px 15px 10px;
         color: #7f7f7f;
         display: flex;
+        align-items: center;
 
         #header-left {
           display: inline-block;
           text-align: left;
           .name{
-            font-size: 20pt;
+            font-size: 18pt;
             font-family: calibri;
             display: flex;
             opacity: 87%;

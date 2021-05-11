@@ -19,10 +19,42 @@
               {{ day.dayNumber }}
             </div>
           </div>
+          <div v-for="task in overdueTasks" v-bind:key="task.taskId+'A'">
+            <div v-on:click="toTaskDetails(task)">
+              <div class="task" v-if="getFormatedDate(currentDateTime)===day.dayNumber"
+              v-bind:style="{ 'box-shadow': checkTime(task, task.taskTime, task.taskDate)}">
+              <i class="fas fa-bell" v-show="task.taskStatusId===2"></i>
+              <i class="fas fa-check" v-show="task.taskStatusId===3"></i>
+              <div class="overdue-date" >от {{getFormatedDate(task.taskDate)}}</div>
+                <div class="fields-layout">
+                  <div class="taskField">
+                    <div class="taskField-title">
+                      Компания
+                    </div>
+                    <div class="taskField-content">{{ getCompanyName(task.taskCompanyId) }}</div>
+                  </div>
+                  <div class="taskField">
+                    <div class="taskField-title">
+                      Время
+                    </div>
+                    <div class="taskField-content">{{ task.taskTime }}</div>
+                  </div>
+                  <div class="taskField">
+                    <div class="taskField-title">
+                      Название задачи
+                    </div>
+                    <div class="taskField-content">{{ task.taskName }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div v-for="task in tasks" v-bind:key="task.taskId">
             <div v-on:click="toTaskDetails(task)">
               <div class="task" v-if="getFormatedDate(task.taskDate)===day.dayNumber"
-              v-bind:style="{ 'box-shadow': checkTime(task.taskTime, task.taskDate)}">
+              v-bind:style="{ 'box-shadow': checkTime(task, task.taskTime, task.taskDate)}">
+              <i class="fas fa-bell" v-show="task.taskStatusId===2"></i>
+              <i class="fas fa-check" v-show="task.taskStatusId===3"></i>
                 <div class="fields-layout">
                   <div class="taskField">
                     <div class="taskField-title">
@@ -68,16 +100,18 @@ export default class Calendar extends Vue {
     return this.$store.getters.COMPANIES;
   }
 
-  checkTime(taskTime: string, taskDate: Date) {
+  get overdueTasks() {
+    return this.$store.getters.EMPLOYEE_OVERDUE_TASKS;
+  }
+
+  checkTime(task: Task, taskTime: string, taskDate: Date) {
     const tempDate = new Date(taskDate.toString().replace('00:00:00', taskTime));
-    const diffTime = tempDate.getTime() - this.currentDateTime.getTime();
-    if (taskDate.getDay() === this.currentDateTime.getDay()) {
-      if (diffTime <= 3600000 && diffTime >= 0) {
-        return '1.3px 1.3px 5px #FFB300';
-      }
-      if (diffTime < 0) { // добавить проерки на завершение задачи
-        return '1.3px 1.3px 5px red';
-      }
+    const diffTime = tempDate.valueOf() - this.currentDateTime.valueOf();
+    if (diffTime <= 3600000 && diffTime >= 0 && task.taskStatusId === 1) {
+      return '1.3px 1.3px 5px #FFB300';
+    }
+    if ((diffTime < 0 && task.taskStatusId === 1)) {
+      return '1.3px 1.3px 5px red';
     }
     return '1.3px 1.3px 5px #707070';
   }
@@ -128,32 +162,33 @@ export default class Calendar extends Vue {
     const arr: any[] = [];
 
     const first = this.firstDay;
-    const second = new Date(this.firstDay.getFullYear(), this.firstDay.getMonth());
-    const third = new Date(this.firstDay.getFullYear(), this.firstDay.getMonth());
+    if (this.firstDay !== null) {
+      const second = new Date(this.firstDay.getFullYear(), this.firstDay.getMonth());
+      const third = new Date(this.firstDay.getFullYear(), this.firstDay.getMonth());
 
-    second.setDate(first.getDate() + 1);
-    third.setDate(first.getDate() + 2);
+      second.setDate(first.getDate() + 1);
+      third.setDate(first.getDate() + 2);
 
-    const lowerFirst = format(first, 'eeee', { locale: ru });
-    const lowerSecond = format(second, 'eeee', { locale: ru });
-    const lowerThird = format(third, 'eeee', { locale: ru });
+      const lowerFirst = format(first, 'eeee', { locale: ru });
+      const lowerSecond = format(second, 'eeee', { locale: ru });
+      const lowerThird = format(third, 'eeee', { locale: ru });
 
-    arr[0] = {
-      date: first,
-      dayNumber: format(first, 'dd.MM'),
-      dayName: lowerFirst[0].toUpperCase() + lowerFirst.slice(1),
-    };
-    arr[1] = {
-      date: second,
-      dayNumber: format(second, 'dd.MM'),
-      dayName: lowerSecond[0].toUpperCase() + lowerSecond.slice(1),
-    };
-    arr[2] = {
-      date: third,
-      dayNumber: format(third, 'dd.MM'),
-      dayName: lowerThird[0].toUpperCase() + lowerThird.slice(1),
-    };
-
+      arr[0] = {
+        date: first,
+        dayNumber: format(first, 'dd.MM'),
+        dayName: lowerFirst[0].toUpperCase() + lowerFirst.slice(1),
+      };
+      arr[1] = {
+        date: second,
+        dayNumber: format(second, 'dd.MM'),
+        dayName: lowerSecond[0].toUpperCase() + lowerSecond.slice(1),
+      };
+      arr[2] = {
+        date: third,
+        dayNumber: format(third, 'dd.MM'),
+        dayName: lowerThird[0].toUpperCase() + lowerThird.slice(1),
+      };
+    }
     return arr;
   }
 
@@ -282,5 +317,22 @@ export default class Calendar extends Vue {
     }
   }
 }
-
+.fa-bell{
+  color: #ffb300;
+  float: right;
+  margin: 10px 10px 0 0;
+  font-size: 15pt;
+}
+.fa-check {
+  color: #5ac37d;
+  float: right;
+  margin: 10px 10px 0 0;
+  font-size: 15pt;
+}
+.overdue-date {
+  color: #EF5350;
+  float: right;
+  margin: 10px 10px 0 0;
+  font-size: 13pt;
+}
 </style>

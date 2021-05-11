@@ -35,6 +35,8 @@ export default new Vuex.Store({
     /** Поле с выбранной сейчас задачей */
     currentTask: {} as Task,
     currentStage: {} as Stage,
+    taskDocuments: [] as Array<File>,
+    employeeOverdueTasks: [] as Task[],
   },
   getters: {
     PROJECTS: (state) => state.projects,
@@ -55,6 +57,8 @@ export default new Vuex.Store({
     COMPANY_CONTACTS: (state) => state.companyContacts,
     CURRENT_CONTACT: (state) => state.currentContact,
     CURRENT_TASK: (state) => state.currentTask,
+    TASK_DOCUMENTS: (state) => state.taskDocuments,
+    EMPLOYEE_OVERDUE_TASKS: (state) => state.employeeOverdueTasks,
     /* TOKEN: (state) => state.token,
     USERNAME: (state) => state.userName,
     ROLE: (state) => state.userRole,
@@ -101,6 +105,15 @@ export default new Vuex.Store({
         }
       }
     },
+    SET_OVERDUE_TASKS: (state, payload) => {
+      if (payload[0] !== undefined) {
+        for (let i = 0; i < payload.length; i += 1) {
+          const task: Task = payload[i];
+          task.taskDate = new Date(payload[i].taskDate);
+          state.employeeOverdueTasks.push(payload[i]);
+        }
+      }
+    },
     SET_CURRENT_TASK: (state, payload) => {
       state.currentTask = payload;
     },
@@ -124,6 +137,9 @@ export default new Vuex.Store({
     },
     SET_CURRENT_CONTACT: (state, payload) => {
       state.currentContact = payload;
+    },
+    SET_TASK_DOCUMENTS: (state, payload) => {
+      state.taskDocuments = payload;
     },
   },
   actions: {
@@ -257,6 +273,7 @@ export default new Vuex.Store({
         })
           .then((response) => {
             context.commit('SET_TASKS', response.data);
+            resolve(response);
           })
           .catch((error) => reject(error));
       });
@@ -266,6 +283,19 @@ export default new Vuex.Store({
         .get(`tasks/${id}`)
         .then((response) => {
           context.commit('SET_CURRENT_TASK', response.data);
+        });
+    },
+    GET_OVERDUE_TASKS(context, date) {
+      let today = format(date, 'yyyy-MM-dd');
+      request({
+        method: 'GET',
+        url: `employee/overdue/tasks/${this.getters.USER_ID}`,
+        params: {
+          today
+        },
+      })
+        .then((response) => {
+          context.commit('SET_OVERDUE_TASKS', response.data);
         });
     },
     /** Получает список всех компаний и помещает в companies. */
@@ -491,6 +521,39 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         request
           .post('tasks', task)
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+    SEND_DOCUMENTS(state, [taskId, formData]) {
+      request.post(`task/documents/${taskId}`, formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then(() => {
+          console.log('SUCCESS!!');
+        })
+        .catch(() => {
+          console.log('FAILURE!!');
+        });
+    },
+    GET_TASK_DOCUMENTS(state, taskId) {
+      return new Promise((resolve, reject) => {
+        request
+          .get(`task/documents/${taskId}`)
+          .then((response) => {
+            state.commit('SET_TASK_DOCUMENTS', response.data);
+          })
+          .catch((error) => reject(error));
+      });
+    },
+    DOWNLOAD_DOCUMENT(state, documentId) {
+      return new Promise((resolve, reject) => {
+        request.get(`documents/${documentId}`, {
+          responseType: 'blob',
+        })
           .then((response) => resolve(response))
           .catch((error) => reject(error));
       });

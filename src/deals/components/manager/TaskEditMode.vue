@@ -16,19 +16,15 @@
         </div>
         <div id="taskCompany-layout" class="taskField">
             <div id="taskCompany" class="fieldTitle">Компания</div>
-            <div class="fieldBorder">
                 <div class="fieldContent">
                     {{ project.shortName }}
                 </div>
-            </div>
         </div>
                 <div id="taskStage-layout" class="taskField">
             <div id="taskStage" class="fieldTitle">Этап</div>
-            <div class="fieldBorder">
                 <div class="fieldContent">
                     {{ stage.stageName }}
                 </div>
-            </div>
         </div>
         <div id="taskContact-layout" class="taskField">
             <div id="taskContact" class="fieldTitle">Контактное лицо</div>
@@ -43,6 +39,10 @@
                             {{ cont.contactName }}
                         </option>
                     </select>
+                    <div class="button-layout addContact" v-on:click="addContactPerson()"
+                        v-bind:key="null" v-bind:value="null">
+                            Добавить контакное лицо
+                    </div>
                     <div class="error" v-if="task.contactId===undefined">
                         {{this.error}}
                     </div>
@@ -163,6 +163,10 @@ export default class EditMode extends Vue {
     }
   }
 
+  addContactPerson() {
+    this.task.contactId = undefined;
+  }
+
   onSaveButtonClick() {
     this.temp = '';
   }
@@ -193,6 +197,7 @@ export default class EditMode extends Vue {
   .select-field{
     border: white;
     width: 100%;
+    font-size: inherit;
   }
   #fields-layout {
     display: grid;
@@ -211,13 +216,12 @@ export default class EditMode extends Vue {
       border-radius: 6px;
       border: 1px solid #bebebe;
       width: 100%;
-
-      .fieldContent {
+    }
+    .fieldContent {
         margin: 3px;
         font-size: 14pt;
         border: white;
         outline-style: none;
-      }
     }
   }
 .time{
@@ -233,5 +237,23 @@ export default class EditMode extends Vue {
 #taskDate-layout, #taskTime-layout{
       width: 45%;
 }
+}
+input {
+  width: 97%;
+}
+.button-layout {
+      background: #5ac37d;
+      display: flex;
+      border: 1px solid white;
+      padding: 8px;
+      border-radius: 12px;
+      opacity: 0.95;
+      text-decoration: none;
+      cursor: pointer;
+      color:white;
+    }
+.addContact {
+  padding: 3px 20%;
+  font-size: 12pt;
 }
 </style>
