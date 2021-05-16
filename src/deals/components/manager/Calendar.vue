@@ -21,7 +21,8 @@
           </div>
           <div v-for="task in overdueTasks" v-bind:key="task.taskId+'A'">
             <div v-on:click="toTaskDetails(task)">
-              <div class="task" v-if="getFormatedDate(currentDateTime)===day.dayNumber"
+              <div class="task" v-if="task!==undefined
+              &&getFormatedDate(currentDateTime)===day.dayNumber"
               v-bind:style="{ 'box-shadow': checkTime(task, task.taskTime, task.taskDate)}">
               <i class="fas fa-bell" v-show="task.taskStatusId===2"></i>
               <i class="fas fa-check" v-show="task.taskStatusId===3"></i>
@@ -101,7 +102,7 @@ export default class Calendar extends Vue {
   }
 
   get overdueTasks() {
-    return this.$store.getters.EMPLOYEE_OVERDUE_TASKS;
+    return this.$store.getters.OVERDUE_TASKS;
   }
 
   checkTime(task: Task, taskTime: string, taskDate: Date) {
@@ -144,6 +145,9 @@ export default class Calendar extends Vue {
 
   mounted() {
     if (this.firstDay === null) {
+      this.$forceUpdate();
+    }
+    if (this.overdueTasks === null) {
       this.$forceUpdate();
     }
   }

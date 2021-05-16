@@ -36,7 +36,7 @@ export default new Vuex.Store({
     currentTask: {} as Task,
     currentStage: {} as Stage,
     taskDocuments: [] as Array<File>,
-    employeeOverdueTasks: [] as Task[],
+    overdueTasks: [] as Task[],
   },
   getters: {
     PROJECTS: (state) => state.projects,
@@ -58,7 +58,7 @@ export default new Vuex.Store({
     CURRENT_CONTACT: (state) => state.currentContact,
     CURRENT_TASK: (state) => state.currentTask,
     TASK_DOCUMENTS: (state) => state.taskDocuments,
-    EMPLOYEE_OVERDUE_TASKS: (state) => state.employeeOverdueTasks,
+    OVERDUE_TASKS: (state) => state.overdueTasks,
     /* TOKEN: (state) => state.token,
     USERNAME: (state) => state.userName,
     ROLE: (state) => state.userRole,
@@ -110,7 +110,7 @@ export default new Vuex.Store({
         for (let i = 0; i < payload.length; i += 1) {
           const task: Task = payload[i];
           task.taskDate = new Date(payload[i].taskDate);
-          state.employeeOverdueTasks.push(payload[i]);
+          state.overdueTasks.push(payload[i]);
         }
       }
     },
@@ -122,6 +122,9 @@ export default new Vuex.Store({
     },
     CLEAR_TASKS: (state) => {
       state.tasks = [];
+    },
+    CLEAR_OVERDUE_TASKS: (state) => {
+      state.overdueTasks = [];
     },
     SET_COMPANIES: (state, payload) => {
       state.companies = payload;
@@ -229,6 +232,14 @@ export default new Vuex.Store({
           context.commit('SET_PROJECTS', response.data);
         });
     },
+    GET_EMPLOYEE_PROJECTS: (context) => {
+      const userId = context.getters.USER_ID;
+      request
+      .get(`/employee/projects/${userId}`)
+      .then((response) => 
+          context.commit('SET_PROJECTS', response.data));
+    },
+
     GET_PROJECT_BY_ID(context, id) {
       request
         .get(`projects/${id}`)
@@ -286,17 +297,22 @@ export default new Vuex.Store({
         });
     },
     GET_OVERDUE_TASKS(context, date) {
-      let today = format(date, 'yyyy-MM-dd');
-      request({
-        method: 'GET',
-        url: `employee/overdue/tasks/${this.getters.USER_ID}`,
-        params: {
-          today
-        },
-      })
-        .then((response) => {
-          context.commit('SET_OVERDUE_TASKS', response.data);
-        });
+      this.commit('CLEAR_OVERDUE_TASKS');
+      return new Promise((resolve, reject) => {
+        let today = format(date, 'yyyy-MM-dd');
+        request({
+          method: 'GET',
+          url: `employee/overdue/tasks/${this.getters.USER_ID}`,
+          params: {
+            today
+          },
+        })
+          .then((response) => {
+            context.commit('SET_OVERDUE_TASKS', response.data);
+            console.log("fgkdjhfg");
+            resolve(response);
+          });
+      });
     },
     /** Получает список всех компаний и помещает в companies. */
     GET_COMPANIES: (context) => {

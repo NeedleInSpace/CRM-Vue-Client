@@ -34,7 +34,7 @@
           </div>
           <li class="stage" v-for="stage in stages" v-bind:key="stage.stageId">
             <div id="buttons" v-if="editMode">
-              <div id="delete-button" v-if="stage.stageNumber==stages.length-1"
+              <div id="delete-button" v-if="stage.stageNumber==stages.length"
               v-on:click="onDelete(stage.id)">
                 <i class="fa fa-trash" aria-hidden="true"></i>
               </div>

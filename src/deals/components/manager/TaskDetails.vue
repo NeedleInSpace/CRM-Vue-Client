@@ -65,10 +65,17 @@
           </div>
           <div id="header-right"  v-if="task!==undefined">
             <div id="editMode">
-              <div id="toEdit-button" v-show="task.taskStatusId===1"
-              v-if="!editMode&&task.employeeId===this.$store.getters.USER_ID">
-                  <i class="fa fa-pencil" aria-hidden="true" v-on:click="onEditButtonClick"></i>
-                  <i class="far fa-trash-alt" v-on:click="confirmDeleteOpen=true"></i>
+              <div id="toEdit-button">
+                  <i class="far fa-list-alt" title="Перейти к списоку этапов"
+                  v-on:click="openStages"></i>
+                  <i class="fa fa-pencil" title="Редактировать"
+                  aria-hidden="true" v-on:click="onEditButtonClick"
+                  v-if="task.taskStatusId===1&&!editMode
+                  &&task.employeeId===this.$store.getters.USER_ID"></i>
+                  <i class="far fa-trash-alt" title="Удалить"
+                  v-on:click="confirmDeleteOpen=true"
+                  v-if="task.taskStatusId===1&&!editMode
+                  &&task.employeeId===this.$store.getters.USER_ID"></i>
               </div>
               <div id="onEditMode-buttons" v-if="editMode">
                   <div id="rollback-button" v-on:click="onRollBackButtonClick">
@@ -234,6 +241,11 @@ export default class TaskDetails extends Vue {
     return undefined;
   }
 
+  openStages() {
+    this.$store.dispatch('GET_PROJECT_STAGES', this.project.id)
+      .then(() => this.$emit('openStages'));
+  }
+
   completeTask() {
     if (this.isLastTask) {
       const formData = new FormData();
@@ -304,6 +316,10 @@ export default class TaskDetails extends Vue {
           })
           .catch(() => {
             console.log('ошибка');
+          });
+        this.$store.dispatch('GET_OVERDUE_TASKS', new Date())
+          .then(() => {
+            this.$store.commit('SET_CURRENT_TASK', undefined);
           });
       });
     this.confirmDeleteOpen = false;
@@ -653,7 +669,7 @@ input::-webkit-inner-spin-button {
     }
   }
 }
-.fa-pencil {
+.fa-pencil, .fa-list-alt {
   margin-right: 10px;
 }
 </style>
