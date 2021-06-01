@@ -24,9 +24,12 @@
               <div class="task" v-if="task!==undefined
               &&getFormatedDate(currentDateTime)===day.dayNumber"
               v-bind:style="{ 'box-shadow': checkTime(task, task.taskTime, task.taskDate)}">
-              <i class="fas fa-bell" v-show="task.taskStatusId===2"></i>
-              <i class="fas fa-check" v-show="task.taskStatusId===3"></i>
-              <div class="overdue-date" >от {{getFormatedDate(task.taskDate)}}</div>
+                <i class="fas fa-bell" v-show="task.taskStatusId===2"></i>
+                <i class="fas fa-check" v-show="task.taskStatusId===3"></i>
+                <i class="fas fa-times-circle" v-show="task.taskStatusId===4"></i>
+                <div class="overdue-date" v-if="!task.isAssignment">
+                  от {{getFormatedDate(task.taskDate)}}
+                </div>
                 <div class="fields-layout">
                   <div class="taskField">
                     <div class="taskField-title">
@@ -108,10 +111,11 @@ export default class Calendar extends Vue {
   checkTime(task: Task, taskTime: string, taskDate: Date) {
     const tempDate = new Date(taskDate.toString().replace('00:00:00', taskTime));
     const diffTime = tempDate.valueOf() - this.currentDateTime.valueOf();
-    if (diffTime <= 3600000 && diffTime >= 0 && task.taskStatusId === 1) {
+    if (diffTime <= 3600000 && diffTime >= 0 && task.taskStatusId === 1
+    && !task.isAssignment) {
       return '1.3px 1.3px 5px #FFB300';
     }
-    if ((diffTime < 0 && task.taskStatusId === 1)) {
+    if (diffTime < 0 && task.taskStatusId === 1 && !task.isAssignment) {
       return '1.3px 1.3px 5px red';
     }
     return '1.3px 1.3px 5px #707070';
@@ -329,6 +333,12 @@ export default class Calendar extends Vue {
 }
 .fa-check {
   color: #5ac37d;
+  float: right;
+  margin: 10px 10px 0 0;
+  font-size: 15pt;
+}
+.fa-times-circle {
+  color: #EF5350;
   float: right;
   margin: 10px 10px 0 0;
   font-size: 15pt;

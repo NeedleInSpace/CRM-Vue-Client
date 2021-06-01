@@ -26,6 +26,7 @@ export default class Login extends Vue {
   warnFlag = false;
 
   login() {
+    this.$forceUpdate();
     this.$store.dispatch('GET_USER', [this.userLogin, this.password])
       .then((response) => {
         if (response.data.token !== '') {

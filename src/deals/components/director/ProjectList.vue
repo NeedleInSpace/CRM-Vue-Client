@@ -1,26 +1,21 @@
 <template>
-  <div>
+  <div id="projects-layout">
     <div class="head">
-      <div id="leftPart">
-        <div class="name">Проекты</div>
-      </div>
-      <i class="fas fa-times" v-on:click="closeProjectList"></i>
+      <div class="name">Проекты</div>
+      <i class="fas fa-filter"></i>
     </div>
     <div class="list">
     <ul class="project-list">
       <li class="project" v-for="project in projects"
-      v-bind:key="project.id" @click='toProjectBoard(project.id)'>
+      v-bind:key="project.id" @click='toProjectDetails(project)'>
         <div class="short-name">
-          <div class="title">
-            Сокращенное название
-          </div>
           <div class="field">
             {{ project.shortName }}
           </div>
         </div>
         <div class="date">
           <div class="title">
-            Дата создания
+            Дата старта проекта
           </div>
           <div class="field">
             {{ project.startDate !== null?
@@ -35,6 +30,9 @@
             {{ project.stagesNumber  }}
           </div>
         </div>
+        <button class="button-layout">
+          <div class="button-text" v-on:click="toProjectBoard(project.id)">Перейти к проекту</div>
+        </button>
       </li>
     </ul>
     </div>
@@ -44,19 +42,24 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Project from '@/models/Project';
+import ProjectDetails from './ProjectDetails.vue';
 
-@Component({})
+@Component({
+  components: {
+    ProjectDetails,
+  },
+})
 export default class ProjectsList extends Vue {
   isSorted = false;
 
   tempUrl = '';
 
-  get projects() {
-    return this.$store.getters.PROJECTS;
+  mounted() {
+    this.$store.dispatch('GET_PROJECTS');
   }
 
-  selectProject(project: Project) {
-    this.$store.commit('SET_CURRENT_PROJECT', project);
+  get projects() {
+    return this.$store.getters.PROJECTS;
   }
 
   closeProjectList() {
@@ -66,6 +69,10 @@ export default class ProjectsList extends Vue {
   toProjectBoard(projectId: string) {
     this.tempUrl = '/deals/projectBoard/';
     this.$router.push(this.tempUrl.concat(projectId));
+  }
+
+  toProjectDetails(project: Project) {
+    this.$store.commit('SET_CURRENT_PROJECT', project);
   }
 
   sortIt() {
@@ -89,24 +96,25 @@ export default class ProjectsList extends Vue {
 </script>
 
 <style scoped lang="scss">
-
+#projects-layout {
+    margin-right: 20px;
+    box-shadow: 1.3px 1.3px 5px #707070;
+    max-height: 600px;
+    overflow: hidden;
+    display: grid;
+}
 .head {
   display: flex;
   align-items: center;
   margin: 20px 5px 0px 4%;
-  justify-content: space-between;
-  color:#BEBEBE;
+  color:#7c7c7c;
 
-  #leftPart {
-    display: inline-block;
-    width: 20%;
-
-    .name {
-      margin-top: 5px;
-      font-size: 20pt;
-      display: flex;
-      opacity: 87%;
-    }
+  .name {
+    margin-top: 5px;
+    margin-right: 10px;
+    font-size: 20pt;
+    display: flex;
+    opacity: 87%;
   }
 
   #rightPart {
@@ -139,6 +147,9 @@ export default class ProjectsList extends Vue {
 
 .list {
   margin: 10px 5px;
+  overflow: scroll;
+  overflow-x: hidden;
+  height: 95%;
 }
 .project-list {
   width: 100%;
@@ -162,6 +173,9 @@ export default class ProjectsList extends Vue {
 
   .short-name {
     margin-bottom: 12px;
+    .field {
+      font-size: 16pt;
+    }
   }
   .date {
     margin-bottom: 12px;
@@ -172,7 +186,37 @@ export default class ProjectsList extends Vue {
   }
 
   .field {
-    font-size: 14pt;
+    font-size: 13pt;
+  }
+
+  .button-layout {
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 12px;
+    opacity: 0.95;
+    text-decoration: none;
+    background: #5ac37d;
+    cursor: pointer;
+
+      .button-text {
+          display: inline-block;
+          font-size: 12pt;
+          color: white;
+      }
+
+      .button-layout:active,
+      .button-layout:focus {
+        outline: none;
+      }
+
+      .button-layout:hover {
+      border: 1px solid #508c64;
+      background: white;
+
+        .button-text {
+            color: #508c64;
+        }
+      }
   }
 
 }

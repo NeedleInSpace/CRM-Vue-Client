@@ -1,6 +1,7 @@
 import VueRouter, { RouteConfig } from 'vue-router';
 import Vue from 'vue';
 import Home from '../home/Home.vue';
+import ProjectDetail from '../deals/components/director/MainProjectPage.vue';
 import store from '../store';
 
 Vue.use(VueRouter);
@@ -51,6 +52,16 @@ const routes: Array<RouteConfig> = [
     path: '/deals/taskDetails/:id',
     name: 'TaskDetails',
     component: () => import('../deals/components/manager/TaskDetails.vue'),
+  },
+  {
+    path: '/deals/projectBoard/:id',
+    name: 'ProjectDetails',
+    component: ProjectDetail,
+  },
+  {
+    path: '/analytics',
+    name: 'Analytics',
+    component: () => import('../analytics/Analytics.vue'),
   },
 ];
 

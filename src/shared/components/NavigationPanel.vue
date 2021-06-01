@@ -12,6 +12,10 @@
       active-class="active">
       <i class="fas fa-hands-helping"/> Сделки
     </router-link>
+    <router-link to="/analytics" class="nav-element"
+      active-class="active">
+      <i class="fas fa-chart-bar"></i> Аналитика
+    </router-link>
     <div v-on:click="logout()">
       <router-link to="/login" class="nav-element"
       active-class="active">
@@ -31,6 +35,7 @@ export default class NavigationPanel extends Vue {
   }
 
   logout() {
+    window.location.reload();
     this.$store.dispatch('POST_LOGOUT');
   }
 }
@@ -62,6 +67,9 @@ export default class NavigationPanel extends Vue {
       background-color: white;
       color: #508C64;
     }
+  }
+  .fa-chart-bar {
+    font-size: 18px;
   }
 }
 </style>

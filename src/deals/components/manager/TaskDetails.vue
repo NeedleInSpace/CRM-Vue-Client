@@ -41,7 +41,7 @@
           <div class="task-result">
             <input
               v-model.lazy.trim="taskResult"
-              class="fieldContent"
+              class="field-content"
             />
           </div>
           <div class="documents" v-show="isLastTask">
@@ -64,18 +64,18 @@
             <div class="name">Подробности</div>
           </div>
           <div id="header-right"  v-if="task!==undefined">
-            <div id="editMode">
+            <div id="edit-mode">
               <div id="toEdit-button">
                   <i class="far fa-list-alt" title="Перейти к списоку этапов"
                   v-on:click="openStages"></i>
                   <i class="fa fa-pencil" title="Редактировать"
                   aria-hidden="true" v-on:click="onEditButtonClick"
                   v-if="task.taskStatusId===1&&!editMode
-                  &&task.employeeId===this.$store.getters.USER_ID"></i>
+                  &&task.creatorId===this.$store.getters.USER_ID"></i>
                   <i class="far fa-trash-alt" title="Удалить"
                   v-on:click="confirmDeleteOpen=true"
                   v-if="task.taskStatusId===1&&!editMode
-                  &&task.employeeId===this.$store.getters.USER_ID"></i>
+                  &&task.creatorId===this.$store.getters.USER_ID"></i>
               </div>
               <div id="onEditMode-buttons" v-if="editMode">
                   <div id="rollback-button" v-on:click="onRollBackButtonClick">
@@ -94,66 +94,75 @@
         </div>
         <div id="fields-layout" v-if="task!==undefined">
           <div id="fields" v-if="!editMode">
-            <div id="taskName-layout" class="taskField">
-              <div id="taskName" class="fieldTitle">
+            <div id="task-name-layout" class="task-field">
+              <div id="task-name" class="title">
                 Название задачи
               </div>
-              <div class="fieldContent">
+              <div class="field-content">
                 {{ task.taskName }}
               </div>
             </div>
-            <div id="taskCompany-layout" class="taskField">
-              <div id="taskCompany" class="fieldTitle">
+            <div id="task-company-layout" class="task-field">
+              <div id="task-company" class="title">
                 Компания
               </div>
-              <div class="fieldContent">
+              <div class="field-content">
                 {{ company.name }}
               </div>
               <div id="project-info">
                 {{ project.shortName + ": " + stage.stageName }}
               </div>
             </div>
-            <div id="taskContact-layout" class="taskField">
-              <div id="taskContact" class="fieldTitle">
+            <div id="task-contact-layout" class="task-field"
+            v-if="contact!==undefined&&contact.contactPersonId!==undefined">
+              <div id="task-contact" class="field-title">
                 Контактное лицо
               </div>
-              <div class="fieldContent">
+              <div class="field-content">
                 {{ contact.contactName }}
               </div>
             </div>
-            <div id="meetDate">
-              <div id="taskDate-layout" class="taskField">
-                <div id="taskDate" class="fieldTitle">
+            <div id="meet-date">
+              <div id="task-date-layout" class="task-field">
+                <div id="task-date" class="title">
                   Дата
                 </div>
-                <div class="fieldContent">
+                <div class="field-content">
                   {{ this.date }}
                 </div>
               </div>
-              <div id="taskTime-layout" class="taskField">
-                <div id="taskTime" class="fieldTitle">
+              <div id="task-time-layout" class="task-field">
+                <div id="task-time" class="title">
                   Время
                 </div>
-                <div class="fieldContent">
+                <div class="field-content">
                   {{ task.taskTime }}
                 </div>
               </div>
-              <div id="taskPlace-layout" class="taskField"
+              <div id="task-place-layout" class="task-field"
               v-if="task.taskPlace!==null&&task.taskPlace!==undefined">
-                <div id="taskPlace" class="fieldTitle">
+                <div id="task-place" class="title">
                   Место
                 </div>
-                <div class="fieldContent">
+                <div class="field-content">
                   {{ task.taskPlace }}
                 </div>
               </div>
             </div>
-            <div id="taskDescription-layout" class="taskField">
-                <div id="taskDescription" class="fieldTitle">
+            <div id="task-description-layout" class="task-field">
+                <div id="task-description" class="title">
                   Описание задачи
                 </div>
-                <div class="fieldContent description">
+                <div class="field-content description">
                   {{ task.taskDescription }}
+                </div>
+            </div>
+            <div id="task-comment-layout" class="task-field" v-if="task.comment!==null">
+                <div id="task-comment" class="title">
+                  Комментарий
+                </div>
+                <div class="field-content description">
+                  {{ task.comment }}
                 </div>
             </div>
           </div>
@@ -220,12 +229,15 @@ export default class TaskDetails extends Vue {
 
   get task() {
     if (this.$store.getters.CURRENT_TASK.taskName !== undefined) {
+      this.taskResult = '';
       const task = this.$store.getters.CURRENT_TASK;
       this.date = format(new Date(task.taskDate), 'dd.MM.yyyy');
       this.$store.dispatch('GET_PROJECT_BY_ID', task.taskProjectId);
       this.$store.dispatch('GET_COMPANY_BY_ID', task.taskCompanyId);
       this.$store.dispatch('GET_STAGE_BY_ID', task.taskStageId);
-      this.$store.dispatch('GET_CONTACT_BY_ID', task.contactId);
+      if (task.contactId !== null) {
+        this.$store.dispatch('GET_CONTACT_BY_ID', task.contactId);
+      }
       this.$store.dispatch('GET_COMPANY_CONTACTS', task.taskCompanyId);
       if (task.taskStatusId === 1) {
         this.taskStatus = 'В работе';
@@ -308,7 +320,7 @@ export default class TaskDetails extends Vue {
           }
         }
         this.$store
-          .dispatch('GET_DAY_TASKS', [this.$store.getters.USERNAME, fullDayFormatedDate])
+          .dispatch('GET_DAY_TASKS', [this.$store.getters.USER_ID, fullDayFormatedDate])
           .then((response) => {
             this.$store.commit('SET_CURRENT_TASK', undefined);
             this.$store.commit('SET_COMPANY_CONTACTS', '');
@@ -328,6 +340,7 @@ export default class TaskDetails extends Vue {
   @Ref('myfile') readonly form!: HTMLInputElement;
 
   handleFileUploads() {
+    this.files = [];
     this.files = this.$refs.myfile.files;
     console.log(this.files[0]);
   }
@@ -411,16 +424,16 @@ input::-webkit-inner-spin-button {
             }
           }
 
-          #taskName-layout {
+          #task-name-layout {
             display: inline-block;
             margin-left: 25px;
 
-            #taskName {
+            #task-name {
               font-size: 28pt;
             }
           }
 
-          #editMode {
+          #edit-mode {
             display: inline-block;
             margin-left: 25px;
             margin-right: 10px;
@@ -493,7 +506,7 @@ input::-webkit-inner-spin-button {
         text-decoration: none;
         background: #FFB300;
       }
-      #meetDate {
+      #meet-date {
         display: flex;
         width: 98%;
       }
@@ -502,16 +515,16 @@ input::-webkit-inner-spin-button {
         margin-bottom: 10px;
         width: 100%;
 
-        .taskField {
+        .task-field {
           margin: 8px 10px 5px 10px;
         }
 
-        .fieldTitle {
+        .title {
           font-size: 10pt;
           color: #7f7f7f;
         }
 
-        .fieldContent {
+        .field-content {
           font-size: 14pt;
           opacity: 0.95;
         }
@@ -563,14 +576,7 @@ input::-webkit-inner-spin-button {
   color: #BEBEBE;
   display: flex;
 }
-.fieldBorder {
-    display: inline-block;
-    margin-top: 5px;
-    border-radius: 6px;
-    border: 1px solid #bebebe;
-    width: 100%;
-}
-.fieldContent {
+.field-content {
   margin: 3px;
   font-size: 14pt;
   border: white;
@@ -585,11 +591,11 @@ input::-webkit-inner-spin-button {
   font-size: 17pt;
 }
 .task-result{
-   display: inline-block;
-    margin-top: 2px;
-    border-radius: 6px;
-    border: 1px solid #bebebe;
-    width: 100%;
+  display: inline-block;
+  margin-top: 2px;
+  border-radius: 6px;
+  border: 1px solid #bebebe;
+  width: 100%;
   width: 98%;
   min-height: 100px;
 }
@@ -618,12 +624,12 @@ input::-webkit-inner-spin-button {
 }
 .file-icon {
   margin-right: 15px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    width: 25%;
-    font-size: 11pt;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 25%;
+  font-size: 11pt;
 }
 .file-info {
   display: flex;

@@ -16,10 +16,8 @@
           <div class="button-text">Просмотр других пользователей</div>
         </button>
       </div>
-      <div  v-if="showProjects">
-        <div  id="projects-layout">
-          <ProjectList @closeProjects="showProjects = false"/>
-        </div>
+      <div  id="projects-layout" v-if="showProjects">
+        <ProjectList @closeProjects="showProjects = false"/>
       </div>
       <div id="main-layout" v-if="!showProjects">
         <Calendar  v-if="!showStages" id="calendar"
@@ -33,18 +31,20 @@
               <AddTask id="add-task-layout"/>
             </div>
             <div id="taskDetails-layout" v-if="currentTask!==undefined&&currentTask.length!==0">
-              <TaskDetails  @openStages='openStagesList' id="task-details"/>
+              <TaskDetails  @openAddPerson='openAddContact=true'
+              @openStages='showStages = true' id="task-details"/>
             </div>
           </div>
           <div id="details-layout"
-            v-if="currentTask!==undefined&&currentTask.contactId!==undefined" >
+            v-if="currentTask!==undefined&&currentTask.contactId!==undefined
+            &&currentTask.contactId!==null" >
             <ContactDetails id="contact-details"/>
           </div>
           <div id="details-layout"
             v-if="(currentTask!==undefined&&currentTask.contactId===undefined)
             ||(currentTask===undefined&&currentCompany!==undefined
             &&currentCompany.companyId!==undefined)" >
-            <AddContactPerson id="add-contact"/>
+            <AddContactPerson v-if="openAddContact" id="add-contact"/>
           </div>
         </div>
       </div>
@@ -82,6 +82,8 @@ export default class Manager extends Vue {
 
   showProjects = false;
 
+  openAddContact = false;
+
   get currentTask() {
     return this.$store.getters.CURRENT_TASK;
   }
@@ -110,7 +112,6 @@ export default class Manager extends Vue {
   }
 
   openCalendar() {
-    console.log('pdhkfh');
     this.showCalendar = true;
   }
 

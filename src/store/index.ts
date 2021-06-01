@@ -10,6 +10,8 @@ import Task from '@/models/Task';
 // Установить npm install --save vuex-persistedstate
 import createPersistedState from 'vuex-persistedstate';
 import request from '../request';
+import Employee from '@/models/Employee';
+import ChartData from '@/models/ChartData';
 
 Vue.use(Vuex);
 
@@ -37,6 +39,11 @@ export default new Vuex.Store({
     currentStage: {} as Stage,
     taskDocuments: [] as Array<File>,
     overdueTasks: [] as Task[],
+    managers: [] as Employee[],
+    managerTasksCount: {} as Map<Number, Number>,
+    waitingList: [] as Task[],
+    employeeContactsChart: [] as ChartData[],
+    taskCountChart: [] as ChartData[],
   },
   getters: {
     PROJECTS: (state) => state.projects,
@@ -45,6 +52,7 @@ export default new Vuex.Store({
     CURRENT_STAGE: (state) => state.currentStage,
     TASKS: (state) => state.tasks
       .sort((prev, next) => prev.taskDate.getDate() - next.taskDate.getDate()),
+    WAITING_LIST: (state) => state.waitingList,
     FIRST_DAY: (state) => state.firstDay,
     /* FIRST_DAY: (state) => {
       alert(state.firstDay);
@@ -59,6 +67,10 @@ export default new Vuex.Store({
     CURRENT_TASK: (state) => state.currentTask,
     TASK_DOCUMENTS: (state) => state.taskDocuments,
     OVERDUE_TASKS: (state) => state.overdueTasks,
+    MANAGERS: (state) => state.managers,
+    MANAGER_TASKS_COUNT: (state) => state.managerTasksCount,
+    EMPLOYEE_CONTACTS_CHART: (state) => state.employeeContactsChart,
+    TASK_COUNT_CHART: (state) => state.taskCountChart,
     /* TOKEN: (state) => state.token,
     USERNAME: (state) => state.userName,
     ROLE: (state) => state.userRole,
@@ -114,8 +126,20 @@ export default new Vuex.Store({
         }
       }
     },
+    SET_WAITING_LIST: (state, payload) => {
+      if (payload[0] !== undefined) {
+        for (let i = 0; i < payload.length; i += 1) {
+          const task: Task = payload[i];
+          task.taskDate = new Date(payload[i].taskDate);
+          state.waitingList.push(payload[i]);
+        }
+      }
+    },
     SET_CURRENT_TASK: (state, payload) => {
       state.currentTask = payload;
+    },
+    SET_MANAGER_TASKS_COUNT: (state, payload) => {
+      state.managerTasksCount = payload;
     },
     SET_FIRST_DAY: (state, payload) => {
       state.firstDay = payload;
@@ -125,6 +149,9 @@ export default new Vuex.Store({
     },
     CLEAR_OVERDUE_TASKS: (state) => {
       state.overdueTasks = [];
+    },
+    CLEAR_WAITING_LIST: (state) => {
+      state.waitingList = [];
     },
     SET_COMPANIES: (state, payload) => {
       state.companies = payload;
@@ -144,6 +171,23 @@ export default new Vuex.Store({
     SET_TASK_DOCUMENTS: (state, payload) => {
       state.taskDocuments = payload;
     },
+    SET_MANAGERS: (state, payload) => {
+      for (let i = 0; i < payload.length; i += 1) {
+        const manager: Employee = {} as Employee;
+        manager.employeeId = payload[i][0];
+        manager.name = payload[i][1];
+        state.managers.push(manager);
+      }
+    },
+    CLEAR_MANAGERS: (state) => {
+      state.managers = [];
+    },
+    SET_EMPLOYEE_CONTACTS_CHART: (state, payload) => {
+      state.employeeContactsChart = payload;
+    },
+    SET_TASK_COUNT_CHART: (state, payload) => {
+      state.taskCountChart = payload;
+    }
   },
   actions: {
     PATCH_PROJECT(state, [project]) {
@@ -235,9 +279,8 @@ export default new Vuex.Store({
     GET_EMPLOYEE_PROJECTS: (context) => {
       const userId = context.getters.USER_ID;
       request
-      .get(`/employee/projects/${userId}`)
-      .then((response) => 
-          context.commit('SET_PROJECTS', response.data));
+        .get(`/employee/projects/${userId}`)
+        .then((response) => context.commit('SET_PROJECTS', response.data));
     },
 
     GET_PROJECT_BY_ID(context, id) {
@@ -267,18 +310,18 @@ export default new Vuex.Store({
 
         this.commit('SET_FIRST_DAY', firstDay);
 
-        this.dispatch('GET_DAY_TASKS', [this.getters.USERNAME, format(firstDay, 'yyyy-MM-dd')]);
-        this.dispatch('GET_DAY_TASKS', [this.getters.USERNAME, format(secondDay, 'yyyy-MM-dd')]);
-        this.dispatch('GET_DAY_TASKS', [this.getters.USERNAME, format(thirdDay, 'yyyy-MM-dd')]);
+        this.dispatch('GET_DAY_TASKS', [this.getters.USER_ID, format(firstDay, 'yyyy-MM-dd')]);
+        this.dispatch('GET_DAY_TASKS', [this.getters.USER_ID, format(secondDay, 'yyyy-MM-dd')]);
+        this.dispatch('GET_DAY_TASKS', [this.getters.USER_ID, format(thirdDay, 'yyyy-MM-dd')]);
       }
     },
-    GET_DAY_TASKS(context, [username, date]) {
+    GET_DAY_TASKS(context, [userId, date]) {
       return new Promise((resolve, reject) => {
         request({
           method: 'GET',
           url: 'employee/tasks',
           params: {
-            username,
+            userId,
             date,
           },
         })
@@ -296,23 +339,69 @@ export default new Vuex.Store({
           context.commit('SET_CURRENT_TASK', response.data);
         });
     },
+    GET_TASKS_BY_PROJECT_ID(context, projectId) {
+      this.commit('CLEAR_TASKS');
+      return new Promise((resolve, reject) => {
+        request
+          .get(`tasks/project/${projectId}`)
+          .then((response) => {
+            this.commit('SET_TASKS', response.data);
+            resolve(response);
+          })
+          .catch((error) => reject(error));
+      });
+    },
     GET_OVERDUE_TASKS(context, date) {
       this.commit('CLEAR_OVERDUE_TASKS');
       return new Promise((resolve, reject) => {
-        let today = format(date, 'yyyy-MM-dd');
+        const today = format(date, 'yyyy-MM-dd');
         request({
           method: 'GET',
           url: `employee/overdue/tasks/${this.getters.USER_ID}`,
           params: {
-            today
+            today,
           },
         })
           .then((response) => {
             context.commit('SET_OVERDUE_TASKS', response.data);
-            console.log("fgkdjhfg");
             resolve(response);
           });
       });
+    },
+    GET_PROJECT_WAITING_TASKS: (context, projectId) => {
+      context.commit('CLEAR_WAITING_LIST');
+      const creatorId = context.getters.USER_ID;
+      request({
+        method: 'GET',
+        url: `tasks/waiting/${projectId}`,
+        params: {
+          creatorId,
+        },
+      })
+        .then((response) => {
+          context.commit('SET_WAITING_LIST', response.data);
+        });
+    },
+    GET_WAITING_TASKS: (context) => {
+      context.commit('CLEAR_WAITING_LIST');
+      const creatorId = context.getters.USER_ID;
+      request({
+        method: 'GET',
+        url: `tasks/waiting`,
+        params: {
+          creatorId,
+        },
+      })
+        .then((response) => {
+          context.commit('SET_WAITING_LIST', response.data);
+        });
+    },
+    GET_MANAGER_TASKS_COUNT: (context) => {
+      request
+        .get(`tasks/count`)
+        .then((response) => {
+          context.commit('SET_MANAGER_TASKS_COUNT', response.data);
+        });
     },
     /** Получает список всех компаний и помещает в companies. */
     GET_COMPANIES: (context) => {
@@ -574,6 +663,38 @@ export default new Vuex.Store({
           .catch((error) => reject(error));
       });
     },
+    GET_MANAGERS(context) {
+      context.commit('CLEAR_MANAGERS');
+      return new Promise((resolve, reject) => {
+        request
+          .get('managers')
+          .then((response) => {
+            context.commit('SET_MANAGERS', response.data);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    GET_EMPLOYEE_CONTACTS_CHART(context) {
+      return new Promise((resolve, reject) => {
+        request
+          .get('analytics/employee/contact')
+          .then((response) => {
+            context.commit('SET_EMPLOYEE_CONTACTS_CHART', response.data);
+            resolve(response);
+          })
+          .catch((error) => reject(error));
+      });
+    },
+    GET_TASK_COUNT_BY_STATUS(context) {
+      request
+        .get('analytics/task/count')
+        .then((response) => {
+          context.commit('SET_TASK_COUNT_CHART', response.data);
+          console.log(response.data);
+        });
+    }
   },
   modules: {
     User: {
