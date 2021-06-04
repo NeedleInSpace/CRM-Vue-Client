@@ -7,19 +7,28 @@
     </div>
     <div id="offsets">
       <div id="header-buttons">
-        <button class="button-layout">
+        <button class="button-layout"  v-if="this.$route.params.id===undefined">
           <i class="fa fa-list" aria-hidden="true"></i>
           <div class="button-text" v-on:click="showProjects=true">Список проектов</div>
         </button>
-        <button class="button-layout">
+        <button class="button-layout" v-if="this.$route.params.id===undefined"
+         v-on:click="showManagerList = true">
           <i class="fa fa-search" aria-hidden="true"></i>
           <div class="button-text">Просмотр других пользователей</div>
+        </button>
+        <button class="button-layout" v-if="this.$route.params.id!==undefined"
+         v-on:click="toHome()">
+          <i class="fas fa-home"></i>
+          <div class="button-text">Домой</div>
         </button>
       </div>
       <div  id="projects-layout" v-if="showProjects">
         <ProjectList @closeProjects="showProjects = false"/>
       </div>
-      <div id="main-layout" v-if="!showProjects">
+      <div v-if="showManagerList">
+        <ManagerList @closeManagerList="showManagerList = false"/>
+      </div>
+      <div id="main-layout" v-if="!showProjects&&!showManagerList">
         <Calendar  v-if="!showStages" id="calendar"
         @open='openCalendar' @newTask='onAddButtonClicked'/>
         <div id="stages-layout" v-if="showStages">
@@ -27,7 +36,8 @@
         </div>
         <div class="details">
           <div id="details-layout">
-            <div id="taskDetails-layout" v-if="currentTask===undefined||currentTask.length===0">
+            <div id="taskDetails-layout"
+            v-if="(currentTask===undefined||currentTask.length===0)&&checkUser()">
               <AddTask id="add-task-layout"/>
             </div>
             <div id="taskDetails-layout" v-if="currentTask!==undefined&&currentTask.length!==0">
@@ -44,7 +54,7 @@
             v-if="(currentTask!==undefined&&currentTask.contactId===undefined)
             ||(currentTask===undefined&&currentCompany!==undefined
             &&currentCompany.companyId!==undefined)" >
-            <AddContactPerson v-if="openAddContact" id="add-contact"/>
+            <AddContactPerson v-if="openAddContact&&checkUser()" id="add-contact"/>
           </div>
         </div>
       </div>
@@ -62,6 +72,7 @@ import ContactDetails from './ContactDetails.vue';
 import AddContactPerson from './AddContactPerson.vue';
 import StageList from './StageList.vue';
 import ProjectList from './ProjectList.vue';
+import ManagerList from '../ManagerList.vue';
 
 @Component({
   components: {
@@ -73,6 +84,7 @@ import ProjectList from './ProjectList.vue';
     AddContactPerson,
     StageList,
     ProjectList,
+    ManagerList,
   },
 })
 export default class Manager extends Vue {
@@ -83,6 +95,8 @@ export default class Manager extends Vue {
   showProjects = false;
 
   openAddContact = false;
+
+  showManagerList = false;
 
   get currentTask() {
     return this.$store.getters.CURRENT_TASK;
@@ -105,10 +119,32 @@ export default class Manager extends Vue {
   }
 
   mounted() {
-    this.$store.dispatch('GET_THREE_DAY_TASKS', new Date());
-    this.$store.dispatch('GET_COMPANIES');
-    this.$store.commit('SET_CURRENT_TASK', undefined);
-    this.$store.dispatch('GET_OVERDUE_TASKS', new Date());
+    if (!this.checkUser()) {
+      this.$store.dispatch('GET_THREE_DAY_TASKS', [new Date(), this.$route.params.id]);
+      this.$store.dispatch('GET_COMPANIES');
+      this.$store.commit('SET_CURRENT_TASK', undefined);
+      this.$store.dispatch('GET_OVERDUE_TASKS', [new Date(), this.$route.params.id]);
+    } else {
+      this.$store.dispatch('GET_THREE_DAY_TASKS', [new Date(), this.$store.getters.USER_ID]);
+      this.$store.dispatch('GET_COMPANIES');
+      this.$store.commit('SET_CURRENT_TASK', undefined);
+      this.$store.dispatch('GET_OVERDUE_TASKS', [new Date(), this.$store.getters.USER_ID]);
+    }
+  }
+
+  checkUser() {
+    return !(this.$route.params.id !== undefined
+    && this.$route.params.id !== this.$store.getters.USER_ID);
+  }
+
+  toManagerList() {
+    this.showManagerList = true;
+  }
+
+  toHome() {
+    this.$store.commit('SET_FIRST_DAY', null);
+    this.$store.dispatch('GET_THREE_DAY_TASKS', [new Date(), this.$store.getters.USER_ID]);
+    this.$router.push('/deals');
   }
 
   openCalendar() {

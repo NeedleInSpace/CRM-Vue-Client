@@ -23,7 +23,7 @@ export default class TaskCountChart extends Vue<Bar> {
     }
 
     mounted() {
-      console.log(this.options);
+      console.log(this.chartdata);
       this.renderChart(this.chartdata, this.options);
     }
 }

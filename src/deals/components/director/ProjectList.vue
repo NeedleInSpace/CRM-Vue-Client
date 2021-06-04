@@ -2,7 +2,6 @@
   <div id="projects-layout">
     <div class="head">
       <div class="name">Проекты</div>
-      <i class="fas fa-filter"></i>
     </div>
     <div class="list">
     <ul class="project-list">
@@ -73,6 +72,7 @@ export default class ProjectsList extends Vue {
 
   toProjectDetails(project: Project) {
     this.$store.commit('SET_CURRENT_PROJECT', project);
+    this.$emit('closeWaitingList');
   }
 
   sortIt() {

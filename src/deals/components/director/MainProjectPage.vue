@@ -13,12 +13,12 @@
               ({{waitingListCount}})
             </div>
             </button>
-            <button class="button-layout">
+            <button class="button-layout" v-on:click="showManagerList=true">
             <i class="fa fa-search" aria-hidden="true"></i>
             <div class="button-text">Поиск других пользователей</div>
             </button>
         </div>
-        <div class="main-page">
+        <div class="main-page" v-if="!showManagerList">
             <ProjectBoard @closeWaitingList="waitingListIsOpen=false"
             @newTask="addTaskIsOpen=true"/>
             <AddTask @cancelAddTask="addTaskIsOpen=false"
@@ -27,6 +27,9 @@
             &&!waitingListIsOpen&&!addTaskIsOpen"/>
             <WaitingList @closeWaitingList="waitingListIsOpen=false"
             v-if="waitingListIsOpen&&userRole==='DIRECTOR'"/>
+        </div>
+        <div class="managers" v-if="showManagerList">
+          <ManagerList @closeManagerList="showManagerList=false"/>
         </div>
     </div>
 </div>
@@ -38,6 +41,7 @@ import ProjectBoard from './ProjectBoard.vue';
 import AddTask from './AddTask.vue';
 import TaskDetails from './TaskDetails.vue';
 import WaitingList from './WaitingList.vue';
+import ManagerList from '../ManagerList.vue';
 
 @Component({
   components: {
@@ -45,12 +49,15 @@ import WaitingList from './WaitingList.vue';
     AddTask,
     TaskDetails,
     WaitingList,
+    ManagerList,
   },
 })
 export default class Deals extends Vue {
   addTaskIsOpen = false;
 
   waitingListIsOpen = false;
+
+  showManagerList = false;
 
   get userRole() {
     return this.$store.getters.ROLE;
@@ -63,7 +70,7 @@ export default class Deals extends Vue {
         this.$store.dispatch('GET_TASKS_BY_PROJECT_ID', this.$route.params.id);
         this.$store.dispatch('GET_COMPANIES');
         this.$store.dispatch('GET_MANAGERS');
-        if(this.userRole==='DIRECTOR') {
+        if (this.userRole === 'DIRECTOR') {
           this.$store.dispatch('GET_PROJECT_WAITING_TASKS', this.$route.params.id);
         }
       });

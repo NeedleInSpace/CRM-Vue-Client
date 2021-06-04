@@ -65,7 +65,7 @@
           </div>
           <div id="header-right"  v-if="task!==undefined">
             <div id="edit-mode">
-              <div id="toEdit-button">
+              <div id="toEdit-button" v-if="checkUser()">
                   <i class="far fa-list-alt" title="Перейти к списоку этапов"
                   v-on:click="openStages"></i>
                   <i class="fa fa-pencil" title="Редактировать"
@@ -86,9 +86,15 @@
                   </div>
               </div>
             </div>
-            <div class="button-layout" v-show="task.taskStatusId===1"
-            v-on:click="confirmIsOpen = true"  v-if="!editMode">
+            <div class="button-layout" v-show="task.taskStatusId===1||task.taskStatusId===4"
+            v-on:click="confirmIsOpen = true"
+            v-if="!editMode&&checkUser()&&task.isAssignment">
               <i class="fas fa-check"></i>Сдать задачу
+            </div>
+            <div class="button-layout" v-show="task.taskStatusId===1||task.taskStatusId===4"
+            v-on:click="completeTask()"
+            v-if="!editMode&&checkUser()&&!task.isAssignment">
+              <i class="fas fa-check"></i>Завершить
             </div>
           </div>
         </div>
@@ -178,7 +184,6 @@
 <script lang="ts">
 import { Component, Ref, Vue } from 'vue-property-decorator';
 import { format, parseISO } from 'date-fns';
-import { ru } from 'date-fns/locale';
 import EditMode from './TaskEditMode.vue';
 
 @Component({
@@ -258,15 +263,22 @@ export default class TaskDetails extends Vue {
       .then(() => this.$emit('openStages'));
   }
 
+  checkUser() {
+    return !(this.$route.params.id !== undefined
+    && this.$route.params.id !== this.$store.getters.USER_ID);
+  }
+
   completeTask() {
-    if (this.isLastTask) {
-      const formData = new FormData();
-      for (let i = 0; i < this.files.length; i += 1) {
-        const file = this.files[i];
-        formData.append('files', file);
+    if (this.task.isAssignment) {
+      if (this.isLastTask) {
+        const formData = new FormData();
+        for (let i = 0; i < this.files.length; i += 1) {
+          const file = this.files[i];
+          formData.append('files', file);
+        }
+        this.$store
+          .dispatch('SEND_DOCUMENTS', [this.task.taskId, formData]);
       }
-      this.$store
-        .dispatch('SEND_DOCUMENTS', [this.task.taskId, formData]);
       this.task.taskStatusId = 2; // задача ожидает подтверждения
     } else {
       this.task.taskStatusId = 3;
@@ -329,7 +341,7 @@ export default class TaskDetails extends Vue {
           .catch(() => {
             console.log('ошибка');
           });
-        this.$store.dispatch('GET_OVERDUE_TASKS', new Date())
+        this.$store.dispatch('GET_OVERDUE_TASKS', [new Date(), this.$store.getters.USER_ID])
           .then(() => {
             this.$store.commit('SET_CURRENT_TASK', undefined);
           });
@@ -337,11 +349,11 @@ export default class TaskDetails extends Vue {
     this.confirmDeleteOpen = false;
   }
 
-  @Ref('myfile') readonly form!: HTMLInputElement;
+  // @Ref('myfile') readonly inputFile!: HTMLInputElement;
 
   handleFileUploads() {
     this.files = [];
-    this.files = this.$refs.myfile.files;
+    this.files = (this.$refs.myfile as HTMLFormElement).files;
     console.log(this.files[0]);
   }
 

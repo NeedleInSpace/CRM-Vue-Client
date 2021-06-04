@@ -1,7 +1,9 @@
+/* eslint import/no-cycle: [1, { ignoreExternal: true }] */
 import VueRouter, { RouteConfig } from 'vue-router';
 import Vue from 'vue';
 import Home from '../home/Home.vue';
 import ProjectDetail from '../deals/components/director/MainProjectPage.vue';
+import ManagerDetails from '../deals/components/manager/Manager.vue';
 import store from '../store';
 
 Vue.use(VueRouter);
@@ -57,6 +59,11 @@ const routes: Array<RouteConfig> = [
     path: '/deals/projectBoard/:id',
     name: 'ProjectDetails',
     component: ProjectDetail,
+  },
+  {
+    path: '/deals/managerBoard/:id',
+    name: 'managerDetails',
+    component: ManagerDetails,
   },
   {
     path: '/analytics',

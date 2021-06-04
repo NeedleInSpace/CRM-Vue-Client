@@ -5,7 +5,7 @@
         <div id="calendarButton" v-on:click="openCalendar">
           <i class="fa fa-calendar" aria-hidden="true"></i>
         </div>
-        <button class="button-layout">
+        <button class="button-layout" v-if="checkUser()">
           <div class="button-text" v-on:click="onAddTaskClick">+ Добавить задачу</div>
         </button>
       </div>
@@ -119,6 +119,11 @@ export default class Calendar extends Vue {
       return '1.3px 1.3px 5px red';
     }
     return '1.3px 1.3px 5px #707070';
+  }
+
+  checkUser() {
+    return !(this.$route.params.id !== undefined
+    && this.$route.params.id !== this.$store.getters.USER_ID);
   }
 
   getCompanyName(taskCompanyId: string) {

@@ -192,7 +192,7 @@
       </div>
       <div class="buttons" v-if="task.taskStatusId===2
       &&task.creatorId===userId&&userRole==='DIRECTOR'">
-          <div class="button-layout">
+          <div class="button-layout" v-on:click="toManager(task.employeeId)">
               <div class="button-text">Перейти к сотруднику</div>
           </div>
           <div class="button-layout" v-on:click="confirmIsOpen=true">
@@ -218,6 +218,8 @@ export default class Deals extends Vue {
   editMode = false;
 
   confirmDeleteOpen = false;
+
+  tempUrl = '';
 
   get userId() {
     return this.$store.getters.USER_ID;
@@ -263,6 +265,13 @@ export default class Deals extends Vue {
       }
     }
     return '';
+  }
+
+  toManager(managerId: string) {
+    this.$store.commit('SET_FIRST_DAY', null);
+    this.$store.dispatch('GET_THREE_DAY_TASKS', [new Date(), managerId]);
+    this.tempUrl = '/deals/managerBoard/';
+    this.$router.push(this.tempUrl.concat(managerId));
   }
 
   get formatedDate() {

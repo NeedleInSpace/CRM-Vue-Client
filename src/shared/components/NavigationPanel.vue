@@ -1,11 +1,7 @@
 <template>
   <nav class="nav-list">
-    <router-link to="/" class="nav-element"
-      exact-active-class="active">
-      <i class="fas fa-home"/> Главная
-    </router-link>
     <router-link to="/kb" class="nav-element"
-      active-class="active">
+      exact-active-class="active">
       <i class="fas fa-database"/> База знаний
     </router-link>
     <router-link to="/deals" class="nav-element"

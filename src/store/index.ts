@@ -1,3 +1,4 @@
+/* eslint import/no-cycle: [1, { ignoreExternal: true }] */
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
@@ -9,9 +10,9 @@ import { format } from 'date-fns';
 import Task from '@/models/Task';
 // Установить npm install --save vuex-persistedstate
 import createPersistedState from 'vuex-persistedstate';
-import request from '../request';
 import Employee from '@/models/Employee';
 import ChartData from '@/models/ChartData';
+import request from '../request';
 
 Vue.use(Vuex);
 
@@ -40,10 +41,12 @@ export default new Vuex.Store({
     taskDocuments: [] as Array<File>,
     overdueTasks: [] as Task[],
     managers: [] as Employee[],
-    managerTasksCount: {} as Map<Number, Number>,
+    managerTasksCount: {} as Map<number, number>,
     waitingList: [] as Task[],
     employeeContactsChart: [] as ChartData[],
     taskCountChart: [] as ChartData[],
+    taskCountByProjectChart: [] as ChartData[],
+    taskCountByEmployeeChart: [] as ChartData[],
   },
   getters: {
     PROJECTS: (state) => state.projects,
@@ -71,6 +74,8 @@ export default new Vuex.Store({
     MANAGER_TASKS_COUNT: (state) => state.managerTasksCount,
     EMPLOYEE_CONTACTS_CHART: (state) => state.employeeContactsChart,
     TASK_COUNT_CHART: (state) => state.taskCountChart,
+    TASK_COUNT_BY_PROJECT_CHART: (state) => state.taskCountByProjectChart,
+    TASK_COUNT_BY_EMPLOYEE_CHART: (state) => state.taskCountByEmployeeChart,
     /* TOKEN: (state) => state.token,
     USERNAME: (state) => state.userName,
     ROLE: (state) => state.userRole,
@@ -187,7 +192,13 @@ export default new Vuex.Store({
     },
     SET_TASK_COUNT_CHART: (state, payload) => {
       state.taskCountChart = payload;
-    }
+    },
+    SET_TASK_COUNT_BY_PROJECT_CHART: (state, payload) => {
+      state.taskCountByProjectChart = payload;
+    },
+    SET_TASK_COUNT_BY_EMPLOYEE_CHART: (state, payload) => {
+      state.taskCountByEmployeeChart = payload;
+    },
   },
   actions: {
     PATCH_PROJECT(state, [project]) {
@@ -297,7 +308,7 @@ export default new Vuex.Store({
           context.commit('SET_CURRENT_STAGE', response.data);
         });
     },
-    GET_THREE_DAY_TASKS(context, firstDay) {
+    GET_THREE_DAY_TASKS(context, [firstDay, userId]) {
       if (this.getters.FIRST_DAY === null
         || this.getters.FIRST_DAY.getDate() !== firstDay.getDate()) {
         this.commit('CLEAR_TASKS');
@@ -310,9 +321,9 @@ export default new Vuex.Store({
 
         this.commit('SET_FIRST_DAY', firstDay);
 
-        this.dispatch('GET_DAY_TASKS', [this.getters.USER_ID, format(firstDay, 'yyyy-MM-dd')]);
-        this.dispatch('GET_DAY_TASKS', [this.getters.USER_ID, format(secondDay, 'yyyy-MM-dd')]);
-        this.dispatch('GET_DAY_TASKS', [this.getters.USER_ID, format(thirdDay, 'yyyy-MM-dd')]);
+        this.dispatch('GET_DAY_TASKS', [userId, format(firstDay, 'yyyy-MM-dd')]);
+        this.dispatch('GET_DAY_TASKS', [userId, format(secondDay, 'yyyy-MM-dd')]);
+        this.dispatch('GET_DAY_TASKS', [userId, format(thirdDay, 'yyyy-MM-dd')]);
       }
     },
     GET_DAY_TASKS(context, [userId, date]) {
@@ -351,13 +362,13 @@ export default new Vuex.Store({
           .catch((error) => reject(error));
       });
     },
-    GET_OVERDUE_TASKS(context, date) {
+    GET_OVERDUE_TASKS(context, [date, userId]) {
       this.commit('CLEAR_OVERDUE_TASKS');
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const today = format(date, 'yyyy-MM-dd');
         request({
           method: 'GET',
-          url: `employee/overdue/tasks/${this.getters.USER_ID}`,
+          url: `employee/overdue/tasks/${userId}`,
           params: {
             today,
           },
@@ -387,7 +398,7 @@ export default new Vuex.Store({
       const creatorId = context.getters.USER_ID;
       request({
         method: 'GET',
-        url: `tasks/waiting`,
+        url: 'tasks/waiting',
         params: {
           creatorId,
         },
@@ -398,7 +409,7 @@ export default new Vuex.Store({
     },
     GET_MANAGER_TASKS_COUNT: (context) => {
       request
-        .get(`tasks/count`)
+        .get('tasks/count')
         .then((response) => {
           context.commit('SET_MANAGER_TASKS_COUNT', response.data);
         });
@@ -636,12 +647,6 @@ export default new Vuex.Store({
           headers: {
             'Content-Type': 'multipart/form-data',
           },
-        })
-        .then(() => {
-          console.log('SUCCESS!!');
-        })
-        .catch(() => {
-          console.log('FAILURE!!');
         });
     },
     GET_TASK_DOCUMENTS(state, taskId) {
@@ -681,20 +686,35 @@ export default new Vuex.Store({
         request
           .get('analytics/employee/contact')
           .then((response) => {
-            context.commit('SET_EMPLOYEE_CONTACTS_CHART', response.data);
             resolve(response);
           })
           .catch((error) => reject(error));
       });
     },
     GET_TASK_COUNT_BY_STATUS(context) {
-      request
-        .get('analytics/task/count')
-        .then((response) => {
-          context.commit('SET_TASK_COUNT_CHART', response.data);
-          console.log(response.data);
-        });
-    }
+      return new Promise((resolve, reject) => {
+        request
+          .get('analytics/task/count')
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+    GET_TASK_COUNT_BY_PROJECT_CHART(context, projectId) {
+      return new Promise((resolve, reject) => {
+        request
+          .get(`analytics/task/count/project/${projectId}`)
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
+    GET_TASK_COUNT_BY_EMPLOYEE_CHART(context, employeeId) {
+      return new Promise((resolve, reject) => {
+        request
+          .get(`analytics/task/count/employee/${employeeId}`)
+          .then((response) => resolve(response))
+          .catch((error) => reject(error));
+      });
+    },
   },
   modules: {
     User: {

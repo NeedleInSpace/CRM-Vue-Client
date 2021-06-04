@@ -3,5 +3,7 @@ export default interface ChartData {
     day: number[];
     week: number[];
     mounth: number[];
+    year: number[];
+    all: number[];
     employeeIds: number[]; 
 }

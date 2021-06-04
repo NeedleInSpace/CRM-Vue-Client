@@ -1,10 +1,10 @@
 <template>
+    <div>
         <div class="chart">
-          <div class="header">
-            Текущее состояние задач
-          </div>
-          <div class="chart-body">
-            <TaskCountChart :chart-data="chartData" :options="chartOptions" />
+            <div class="header">
+              Новые клиенты
+            </div>
+            <EmployeeChart :chart-data="chartData" :options="chartOptions" />
             <div class="button-menu">
                 <div class="button-layout" :class="{active: activeButton === 'day' }"
                  v-on:click="getPeriodData('day')">
@@ -27,26 +27,24 @@
                     <div class="button-text" >Все</div>
                 </div>
             </div>
-          </div>
         </div>
+    </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import TaskCountChart from '../charts/TaskCountChart.vue';
+import EmployeeChart from '../charts/TaskCountChart.vue';
 
 @Component({
   components: {
-    TaskCountChart,
+    EmployeeChart,
   },
 })
-export default class TaskCount extends Vue {
+export default class EmployeeNewContacts extends Vue {
   activeButton = 'all';
 
-  statuses = ['В работе', 'Выполнено', 'Отклонено'];
-
   chartData = {
-    labels: this.statuses,
+    labels: [''],
     datasets: [{
       label: '',
       data: [0, 0, 0],
@@ -57,12 +55,8 @@ export default class TaskCount extends Vue {
   chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    legend: {
-      display: false,
-    },
     scales: {
       yAxes: [{
-        position: 'left',
         ticks: {
           min: 0,
           stepSize: 1,
@@ -71,36 +65,34 @@ export default class TaskCount extends Vue {
           scale.max += 1; // eslint-disable-line no-param-reassign
         },
       }],
-      gridLines: {
-        display: true,
-      },
     },
   }
 
   beforeCreate() {
-    this.$store.dispatch('GET_TASK_COUNT_BY_STATUS')
+    this.$store.dispatch('GET_EMPLOYEE_CONTACTS_CHART')
       .then((response) => {
-        this.$store.commit('SET_TASK_COUNT_CHART', response.data);
+        this.$store.commit('SET_EMPLOYEE_CONTACTS_CHART', response.data);
         this.getPeriodData('all');
       });
   }
 
-  mounted() {
-    console.log(this.taskChartData.length);
-  }
-
-  get taskChartData() {
-    return this.$store.getters.TASK_COUNT_CHART;
+  get employeeChartData() {
+    return this.$store.getters.EMPLOYEE_CONTACTS_CHART;
   }
 
   getPeriodData(period: string) {
-    if (this.taskChartData !== undefined) {
+    if (this.employeeChartData[0] !== undefined) {
       this.chartData = {
-        labels: this.statuses,
+        labels: this.employeeChartData[0].employeeIds,
         datasets: [
           {
-            label: this.taskChartData.label,
-            data: this.taskChartData[period],
+            label: this.employeeChartData[0].label,
+            data: this.employeeChartData[0][period],
+            backgroundColor: '#5ac37d',
+          },
+          {
+            label: this.employeeChartData[1].label,
+            data: this.employeeChartData[1][period],
             backgroundColor: '#5ac37d',
           },
         ],
@@ -115,6 +107,7 @@ export default class TaskCount extends Vue {
 .button-menu {
   display: flex;
   width: 100%;
+  height: 100%;
   background-color: #5ac37d;
   box-shadow: 1px 0 4px 4px rgba(0,0,0,.1);
 
@@ -141,10 +134,6 @@ export default class TaskCount extends Vue {
   margin: 50px 20px;
   box-shadow: 1.3px 1.3px 5px #707070;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  justify-content: space-between;
 }
 
 .header {

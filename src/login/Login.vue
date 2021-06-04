@@ -26,12 +26,14 @@ export default class Login extends Vue {
   warnFlag = false;
 
   login() {
-    this.$forceUpdate();
+    console.log('mngcvf');
     this.$store.dispatch('GET_USER', [this.userLogin, this.password])
       .then((response) => {
         if (response.data.token !== '') {
+          console.log('djkbkd');
           this.warnFlag = false;
-          this.$router.push('/');
+          window.location.replace('/');
+          // this.$router.push('/kb');
         } else {
           this.warnFlag = true;
         }

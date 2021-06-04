@@ -7,16 +7,19 @@
             <div class="button-text" v-on:click="showTasks=true">
               Задачи в ожидании ({{waitingListCount}})</div>
             </button>
-            <button class="button-layout">
+            <button class="button-layout" v-on:click="showManagerList=true">
             <i class="fa fa-search" aria-hidden="true"></i>
             <div class="button-text">Поиск других пользователей</div>
             </button>
         </div>
-        <div id="main-layout">
-            <ProjectList />
+        <div id="main-layout" v-if="!showManagerList">
+            <ProjectList @closeWaitingList="showTasks=false"/>
             <ProjectDetails
             v-if="project!==undefined&&project.id!==undefined&&!showTasks"/>
             <WaitingList @closeWaitingList="showTasks=false" v-if="showTasks"/>
+        </div>
+        <div class="managers" v-if="showManagerList">
+          <ManagerList @closeManagerList="showManagerList=false"/>
         </div>
     </div>
   </div>
@@ -27,19 +30,25 @@ import { Component, Vue } from 'vue-property-decorator';
 import ProjectList from './ProjectList.vue';
 import ProjectDetails from './ProjectDetails.vue';
 import WaitingList from './WaitingList.vue';
+import ManagerList from '../ManagerList.vue';
 
 @Component({
   components: {
     ProjectList,
     ProjectDetails,
     WaitingList,
+    ManagerList,
   },
 })
 export default class Deals extends Vue {
   showTasks = false;
 
+  showManagerList = false;
+
   mounted() {
     this.$store.dispatch('GET_WAITING_TASKS', this.project.id);
+    this.$store.dispatch('GET_COMPANIES');
+    this.$store.dispatch('GET_MANAGERS');
   }
 
   get project() {
@@ -48,6 +57,18 @@ export default class Deals extends Vue {
 
   get waitingListCount() {
     return this.$store.getters.WAITING_LIST.length;
+  }
+
+  get tasks() {
+    return this.$store.getters.WAITING_LIST;
+  }
+
+  get companies() {
+    return this.$store.getters.COMPANIES;
+  }
+
+  get managers() {
+    return this.$store.getters.MANAGERS;
   }
 }
 </script>

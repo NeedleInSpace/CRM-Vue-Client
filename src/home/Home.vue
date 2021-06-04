@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    Главная страница
   </div>
 </template>
 
@@ -8,5 +7,9 @@
 import { Component, Vue } from 'vue-property-decorator';
 
 @Component
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  mounted() {
+    this.$router.push('/kb');
+  }
+}
 </script>
