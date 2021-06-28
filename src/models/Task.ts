@@ -12,6 +12,10 @@ export default interface Task {
   taskDescription: string;
   taskStatusId: number;
   employeeId: number;
+  creatorId: number;
   endDate: Date;
   endTime: Date;
+  result: string;
+  isAssignment: boolean;
+  comment: string;
 }

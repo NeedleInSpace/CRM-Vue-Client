@@ -1,0 +1,245 @@
+<template>
+  <div id="projects-layout">
+    <div class="head">
+      <div class="name">Проекты</div>
+    </div>
+    <div class="list">
+    <ul class="project-list">
+      <li class="project" v-for="project in projects"
+      v-bind:key="project.id" @click='toProjectDetails(project)'>
+        <div class="short-name">
+          <div class="field">
+            {{ project.shortName }}
+          </div>
+        </div>
+        <div class="date">
+          <div class="title">
+            Дата старта проекта
+          </div>
+          <div class="field">
+            {{ project.startDate !== null?
+            project.startDate:'--'}}
+          </div>
+        </div>
+        <div class="stage-num">
+          <div class="title">
+            Количество этапов
+          </div>
+          <div class="field">
+            {{ project.stagesNumber  }}
+          </div>
+        </div>
+        <button class="button-layout">
+          <div class="button-text" v-on:click="toProjectBoard(project.id)">Перейти к проекту</div>
+        </button>
+      </li>
+    </ul>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import Project from '@/models/Project';
+import ProjectDetails from './ProjectDetails.vue';
+
+@Component({
+  components: {
+    ProjectDetails,
+  },
+})
+export default class ProjectsList extends Vue {
+  isSorted = false;
+
+  tempUrl = '';
+
+  mounted() {
+    this.$store.dispatch('GET_PROJECTS');
+  }
+
+  get projects() {
+    return this.$store.getters.PROJECTS;
+  }
+
+  closeProjectList() {
+    this.$emit('closeProjects');
+  }
+
+  toProjectBoard(projectId: string) {
+    this.tempUrl = '/deals/projectBoard/';
+    this.$router.push(this.tempUrl.concat(projectId));
+  }
+
+  toProjectDetails(project: Project) {
+    this.$store.commit('SET_CURRENT_PROJECT', project);
+    this.$emit('closeWaitingList');
+  }
+
+  sortIt() {
+    if (this.isSorted) {
+      this.projects.sort((a: Project, b: Project) => a.id - b.id);
+      this.isSorted = false;
+    } else {
+      this.projects.sort((a: Project, b: Project) => {
+        if (a.shortName.toLowerCase() < b.shortName.toLowerCase()) {
+          return -1;
+        }
+        if (a.shortName.toLowerCase() > b.shortName.toLowerCase()) {
+          return 1;
+        }
+        return 0;
+      });
+      this.isSorted = true;
+    }
+  }
+}
+</script>
+
+<style scoped lang="scss">
+#projects-layout {
+    margin-right: 20px;
+    box-shadow: 1.3px 1.3px 5px #707070;
+    max-height: 600px;
+    overflow: hidden;
+    display: grid;
+}
+.head {
+  display: flex;
+  align-items: center;
+  margin: 20px 5px 0px 4%;
+  color:#7c7c7c;
+
+  .name {
+    margin-top: 5px;
+    margin-right: 10px;
+    font-size: 20pt;
+    display: flex;
+    opacity: 87%;
+  }
+
+  #rightPart {
+    display: inline-block;
+    width: 80%;
+    text-align: right;
+    margin-right: 7%;
+
+    .add-project-button {
+      display: inline-block;
+      border: 1px solid white;
+      padding: 10px;
+      border-radius: 12px;
+      opacity: 0.95;
+      font-size: 14pt;
+      text-decoration: none;
+      background: #5AC37D;
+      color: white;
+      cursor: pointer;
+    }
+
+    .add-project-button:hover {
+      border: 1px solid #5ac37d;
+      opacity: 1;
+      background: white;
+      color: #5ac37d;
+    }
+  }
+}
+
+.list {
+  margin: 10px 5px;
+  overflow: scroll;
+  overflow-x: hidden;
+  height: 95%;
+}
+.project-list {
+  width: 100%;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.project:hover {
+  border: 1px solid #508c64;
+}
+.project {
+  list-style: none;
+  display: inline-block;
+  list-style: none;
+  width: 90%;
+  margin: 10px 2.5%;
+  padding: 20px 0 20px 5%;
+  box-shadow: 1.3px 1.3px 5px #707070;
+  border: 1px solid #ffffff;
+  cursor: pointer;
+
+  .short-name {
+    margin-bottom: 12px;
+    .field {
+      font-size: 16pt;
+    }
+  }
+  .date {
+    margin-bottom: 12px;
+  }
+  .title {
+    font-size: 10pt;
+    color: #7f7f7f;
+  }
+
+  .field {
+    font-size: 13pt;
+  }
+
+  .button-layout {
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 12px;
+    opacity: 0.95;
+    text-decoration: none;
+    background: #5ac37d;
+    cursor: pointer;
+
+      .button-text {
+          display: inline-block;
+          font-size: 12pt;
+          color: white;
+      }
+
+      .button-layout:active,
+      .button-layout:focus {
+        outline: none;
+      }
+
+      .button-layout:hover {
+      border: 1px solid #508c64;
+      background: white;
+
+        .button-text {
+            color: #508c64;
+        }
+      }
+  }
+
+}
+.fas{
+  margin-right: 3px;
+  cursor: pointer;
+  font-size: 20pt;
+}
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px #BEBEBE;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #BEBEBE;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7F7F7F;
+}
+</style>

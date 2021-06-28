@@ -7,23 +7,54 @@
     </div>
     <div id="offsets">
       <div id="header-buttons">
-        <button class="button-layout">
+        <button class="button-layout"  v-if="this.$route.params.id===undefined">
           <i class="fa fa-list" aria-hidden="true"></i>
-          <div class="button-text">Список проектов</div>
+          <div class="button-text" v-on:click="showProjects=true">Список проектов</div>
         </button>
-        <button class="button-layout">
+        <button class="button-layout" v-if="this.$route.params.id===undefined"
+         v-on:click="showManagerList = true">
           <i class="fa fa-search" aria-hidden="true"></i>
           <div class="button-text">Просмотр других пользователей</div>
         </button>
+        <button class="button-layout" v-if="this.$route.params.id!==undefined"
+         v-on:click="toHome()">
+          <i class="fas fa-home"></i>
+          <div class="button-text">Домой</div>
+        </button>
       </div>
-      <div id="main-layout">
-        <Calendar id="calendar" @open='openCalendar' @newTask='onAddButtonClicked'/>
-        <div id="details-layout">
-          <div id="taskDetails-layout" v-if="currentTask===undefined||currentTask.length===0">
-            <AddTask id="add-task-layout"/>
+      <div  id="projects-layout" v-if="showProjects">
+        <ProjectList @closeProjects="showProjects = false"/>
+      </div>
+      <div v-if="showManagerList">
+        <ManagerList @closeManagerList="showManagerList = false"/>
+      </div>
+      <div id="main-layout" v-if="!showProjects&&!showManagerList">
+        <Calendar  v-if="!showStages" id="calendar"
+        @open='openCalendar' @newTask='onAddButtonClicked'/>
+        <div id="stages-layout" v-if="showStages">
+          <StageList @closeStages="closeStagesList" id="stage-list"/>
+        </div>
+        <div class="details">
+          <div id="details-layout">
+            <div id="taskDetails-layout"
+            v-if="(currentTask===undefined||currentTask.length===0)&&checkUser()">
+              <AddTask id="add-task-layout"/>
+            </div>
+            <div id="taskDetails-layout" v-if="currentTask!==undefined&&currentTask.length!==0">
+              <TaskDetails  @openAddPerson='openAddContact=true'
+              @openStages='showStages = true' id="task-details"/>
+            </div>
           </div>
-          <div id="taskDetails-layout" v-if="currentTask!==undefined&&currentTask.length!==0">
-            <TaskDetails id="task-details"/>
+          <div id="details-layout"
+            v-if="currentTask!==undefined&&currentTask.contactId!==undefined
+            &&currentTask.contactId!==null" >
+            <ContactDetails id="contact-details"/>
+          </div>
+          <div id="details-layout"
+            v-if="(currentTask!==undefined&&currentTask.contactId===undefined)
+            ||(currentTask===undefined&&currentCompany!==undefined
+            &&currentCompany.companyId!==undefined)" >
+            <AddContactPerson v-if="openAddContact&&checkUser()" id="add-contact"/>
           </div>
         </div>
       </div>
@@ -37,6 +68,11 @@ import Calendar from './Calendar.vue';
 import CalendarWidget from './CalendarWidget.vue';
 import AddTask from './AddTask.vue';
 import TaskDetails from './TaskDetails.vue';
+import ContactDetails from './ContactDetails.vue';
+import AddContactPerson from './AddContactPerson.vue';
+import StageList from './StageList.vue';
+import ProjectList from './ProjectList.vue';
+import ManagerList from '../ManagerList.vue';
 
 @Component({
   components: {
@@ -44,18 +80,71 @@ import TaskDetails from './TaskDetails.vue';
     CalendarWidget,
     AddTask,
     TaskDetails,
+    ContactDetails,
+    AddContactPerson,
+    StageList,
+    ProjectList,
+    ManagerList,
   },
 })
 export default class Manager extends Vue {
   showCalendar = false;
 
+  showStages = false;
+
+  showProjects = false;
+
+  openAddContact = false;
+
+  showManagerList = false;
+
   get currentTask() {
     return this.$store.getters.CURRENT_TASK;
   }
 
+  get currentCompany() {
+    return this.$store.getters.CURRENT_COMPANY;
+  }
+
+  get overdueTasks() {
+    return this.$store.getters.EMPLOYEE_OVERDUE_TASKS;
+  }
+
+  get currentProject() {
+    return this.$store.getters.CURRENT_PROJECT;
+  }
+
+  get stages() {
+    return this.$store.getters.CURRENT_STAGES;
+  }
+
   mounted() {
-    this.$store.dispatch('GET_THREE_DAY_TASKS', new Date());
-    this.$store.dispatch('GET_COMPANIES');
+    if (!this.checkUser()) {
+      this.$store.dispatch('GET_THREE_DAY_TASKS', [new Date(), this.$route.params.id]);
+      this.$store.dispatch('GET_COMPANIES');
+      this.$store.commit('SET_CURRENT_TASK', undefined);
+      this.$store.dispatch('GET_OVERDUE_TASKS', [new Date(), this.$route.params.id]);
+    } else {
+      this.$store.dispatch('GET_THREE_DAY_TASKS', [new Date(), this.$store.getters.USER_ID]);
+      this.$store.dispatch('GET_COMPANIES');
+      this.$store.commit('SET_CURRENT_TASK', undefined);
+      this.$store.dispatch('GET_OVERDUE_TASKS', [new Date(), this.$store.getters.USER_ID]);
+    }
+  }
+
+  checkUser() {
+    return !(this.$route.params.id !== undefined
+    && this.$route.params.id !== this.$store.getters.USER_ID);
+  }
+
+  toManagerList() {
+    this.showManagerList = true;
+  }
+
+  toHome() {
+    this.$store.commit('SET_FIRST_DAY', null);
+    this.$store.dispatch('GET_THREE_DAY_TASKS', [new Date(), this.$store.getters.USER_ID]);
+    this.$router.push('/deals');
   }
 
   openCalendar() {
@@ -68,6 +157,15 @@ export default class Manager extends Vue {
 
   onAddButtonClicked() {
     this.$store.commit('SET_CURRENT_TASK', '');
+    console.log(this.currentProject);
+  }
+
+  openStagesList() {
+    this.showStages = true;
+  }
+
+  closeStagesList() {
+    this.showStages = false;
   }
 }
 
@@ -98,7 +196,6 @@ export default class Manager extends Vue {
 
 #offsets {
   margin: 2%;
-  margin-right: 5%;
 
   #header-buttons {
     display: inline-block;
@@ -157,8 +254,11 @@ export default class Manager extends Vue {
     #calendar {
       margin-right: 20px;
       box-shadow: 1.3px 1.3px 5px #707070;
+      height: fit-content;
     }
-
+    #contact-details{
+      box-shadow: 1.3px 1.3px 5px #707070;
+    }
     #details-layout {
       display: grid;
       grid-template-rows: minmax(200px, auto);
@@ -176,5 +276,31 @@ export default class Manager extends Vue {
     }
   }
 }
+#stages-layout, #projects-layout {
+    margin: 0 auto;
+    box-shadow: 1.3px 1.3px 5px #707070;
+    height: -webkit-fit-content;
+    height: -moz-fit-content;
+    max-height: 510px;
+    overflow: scroll;
+    overflow-x: hidden;
+    width: 80%;
+}
+::-webkit-scrollbar {
+  width: 5px;
+}
 
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px #BEBEBE;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #BEBEBE;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7F7F7F;
+}
 </style>

@@ -1,11 +1,8 @@
 <template>
-  <div>
+  <div class="task">
     <div class="head">
       <div id="left-header">
         <div class="name">Подробности</div>
-      </div>
-      <div id="right-header">
-        <i class="fa fa-floppy-o" v-on:click="addTask()"></i>
       </div>
     </div>
     <div class="task-data">
@@ -26,7 +23,7 @@
           <div class="title">
             Компания
           </div>
-          <select @change="companySelected($event)"
+          <select
           v-model="task.taskCompanyId" class="edit-field select-field">
             <option selected disabled>Выберите компанию</option>
             <option
@@ -41,44 +38,21 @@
             {{this.error}}
           </div>
         </div>
-        <div class="contact">
-          <div class="title">
-            Контактное лицо
-          </div>
-          <select v-model="task.contactId" class="edit-field select-field">
-              <option selected disabled>Выберите контактное лицо</option>
-              <option
-                v-for="contact in contactsOfCompany"
-                v-bind:key="contact.contactPersonId"
-                v-bind:value="contact.contactPersonId"
-              >
-                {{ contact.contactName }}
-              </option>
-            </select>
-            <div class="button-layout addContact" v-on:click="addContactPerson()"
-                v-bind:key="null" v-bind:value="null">
-                    Добавить контакное лицо
-            </div>
-        </div><div class="error" v-if="task.contactId===undefined">
-            {{this.error}}
-          </div>
-        <div class="attr">
           <div class="project-block">
             <div class="title">
-              Проект
+              Ответственный за выполнение
             </div>
-            <select @change="projectSelected($event)"
-            v-model="task.taskProjectId" class="edit-field select-field">
-              <option selected disabled>Выберите проект</option>
+            <select v-model="task.employeeId" class="edit-field select-field">
+              <option selected disabled>Выберите сотрудника</option>
               <option
-                v-for="project in projects"
-                v-bind:key="project.id"
-                v-bind:value="project.id"
+                v-for="manager in managers"
+                v-bind:key="manager.employeeId"
+                v-bind:value="manager.employeeId"
               >
-                {{ project.shortName }}
+                {{ manager.name }}
               </option>
             </select>
-            <div class="error" v-if="task.taskProjectId===undefined">
+            <div class="error" v-if="task.employeeId===undefined">
               {{this.error}}
             </div>
           </div>
@@ -100,34 +74,6 @@
               {{this.error}}
             </div>
           </div>
-        </div>
-        <div class="attr">
-          <div class="date">
-            <div class="title">
-              Дата
-            </div>
-            <input
-            class="edit-field edit-attr" v-model="task.taskDate" type="date">
-            <div class="error" v-if="task.taskDate===undefined || task.taskDate.length===0">
-              {{this.error}}
-            </div>
-          </div>
-          <div class="time">
-            <div class="title">
-              Время
-            </div>
-            <input class="edit-field edit-attr" v-model="task.taskTime" type="time">
-            <div class="error" v-if="task.taskTime===undefined || task.taskTime.length===0">
-              {{this.error}}
-            </div>
-          </div>
-           <div class="place">
-            <div class="title">
-              Место
-            </div>
-            <input class="edit-field edit-attr" v-model="task.taskPlace" placeholder="Место">
-          </div>
-        </div>
         <div class="description">
           <div class="title">
             Описание задачи
@@ -142,6 +88,14 @@
         || task.taskDescription.length===0">
           {{this.error}}
         </div>
+      </div>
+      <div class="button-menu">
+        <button class="button-layout cancel-button">
+          <div class="button-text" v-on:click="cancel">Отменить</div>
+        </button>
+        <button class="button-layout">
+            <div class="button-text" v-on:click="addTask">Добавить задачу</div>
+        </button>
       </div>
   </div>
 </template>
@@ -159,10 +113,6 @@ export default class AddTask extends Vue {
 
   error = '';
 
-  mounted() {
-    this.$store.dispatch('GET_EMPLOYEE_PROJECTS');
-  }
-
   get projectStages() {
     return this.$store.getters.CURRENT_STAGES;
   }
@@ -171,71 +121,65 @@ export default class AddTask extends Vue {
     return this.$store.getters.COMPANIES;
   }
 
-  get projects() {
-    return this.$store.getters.PROJECTS;
+  get project() {
+    return this.$store.getters.CURRENT_PROJECT;
   }
 
   get contactsOfCompany() {
     return this.$store.getters.COMPANY_CONTACTS;
   }
 
-  companySelected(event: any) {
-    this.$store.dispatch('GET_COMPANY_CONTACTS', [event.target.value]);
+  get managers() {
+    console.log(this.$store.getters.MANAGERS);
+    return this.$store.getters.MANAGERS;
   }
 
-  projectSelected(event: any) {
+  mounted() {
     this.$store.dispatch('GET_PROJECT_STAGES', this.task.taskProjectId);
-  }
-
-  get tasks() {
-    return this.$store.getters.TASKS;
+    this.$store.dispatch('GET_COMPANIES');
+    this.$store.dispatch('GET_MANAGERS');
   }
 
   addTask() {
     if (this.checkForm()) {
-      this.task.taskTime = this.task.taskTime.concat(':00');
+      this.task.taskTime = format(new Date(), 'HH:mm:ss');
+      this.task.taskDate = new Date();
       this.task.creatorId = this.$store.getters.USER_ID;
-      this.task.employeeId = this.$store.getters.USER_ID;
       this.task.taskStatusId = 1;
-      this.task.isAssignment = false;
+      this.task.taskProjectId = this.project.id;
+      this.task.isAssignment = true;
+      console.log(this.task);
       this.$store.dispatch('POST_NEW_TASK', [this.task])
         .then((response) => {
-          console.log(response.data);
           this.task.taskId = response.data;
-          for (let i = 0; i < this.tasks.length; i += 1) {
-            if (format(this.tasks[i].taskDate, 'dd.MM') === format(parseISO(this.task.taskDate.toString()), 'dd.MM')) {
-              this.tasks.splice(i, 1);
-              i -= 1;
-            }
-          }
-          this.$store.dispatch('GET_DAY_TASKS', [this.$store.getters.USER_ID, this.task.taskDate]);
+          this.$store.dispatch('GET_PROJECT_STAGES', this.project.id);
+          this.$store.dispatch('GET_TASKS_BY_PROJECT_ID', this.project.id);
+          this.$store.commit('SET_CURRENT_TASK', this.task);
         });
-      this.$store.commit('SET_COMPANY_CONTACTS', '');
-      this.$store.commit('SET_CURRENT_TASK', this.task);
+      this.cancel();
     }
   }
 
   checkForm() {
     if (this.task.taskName === undefined || this.task.taskDescription === undefined
     || this.task.taskName.length === 0 || this.task.taskDescription.length === 0
-    || this.task.contactId === undefined || this.task.taskCompanyId === undefined
-    || this.task.taskDate === undefined || this.task.taskTime === undefined) {
+    || this.task.taskCompanyId === undefined) {
       this.error = 'Пожалуйста, заполните поле';
       return false;
     }
     return true;
   }
 
-  addContactPerson() {
-    if (this.task.taskCompanyId) {
-      this.$store.dispatch('GET_COMPANY_BY_ID', this.task.taskCompanyId);
-      this.$emit('openAddPerson');
-    }
+  cancel() {
+    this.$emit('cancelAddTask');
   }
 }
 </script>
 
 <style scoped lang="scss">
+.task {
+    box-shadow: 1.3px 1.3px 5px #707070;
+    height: fit-content;
 .head {
   display: flex;
   width: 100%;
@@ -257,7 +201,7 @@ export default class AddTask extends Vue {
 
 .name {
   display: inline-block;
-  font-size: 17pt;
+  font-size: 18pt;
   font-family: calibri;
   display: flex;
   opacity: 87%;
@@ -319,12 +263,38 @@ textarea {
     font-size: 10pt;
   }
 }
-
-.attr {
+.button-menu {
+    float: right;
     display: flex;
-    justify-content: space-between;
-    width: 98%;
+    margin: 0 10px 10px;
+    .button-text {
+        font-size: 12pt;
+    }
+    .button-layout:active,
+    .button-layout:focus {
+      outline: none;
+    }
+
+    .button-layout:hover {
+      border: 1px solid #508c64;
+      background: white;
+
+      .button-text {
+        color: #508c64;
+      }
+    }
+    .cancel-button {
+        background: #EF5350;
+        margin-right: 20px;
+    }
+    .cancel-button:hover {
+        border: 1px solid #EF5350;
+        .button-text {
+        color: #EF5350;
+        }
+    }
 }
+
 ::-webkit-scrollbar {
   width: 5px;
 }
@@ -351,9 +321,6 @@ textarea {
   font-size: 20px;
   cursor: pointer;
 }
-.project-block {
-  width: 45%;
-}
 
 ::-webkit-input-placeholder {
   color: #bebebe;
@@ -372,18 +339,19 @@ textarea {
   opacity: 0.95;
 } /* IE */
 .button-layout {
-      background: #5ac37d;
-      display: flex;
-      border: 1px solid white;
-      padding: 8px;
-      border-radius: 12px;
-      opacity: 0.95;
-      text-decoration: none;
-      cursor: pointer;
-      color:white;
-    }
+    background: #5ac37d;
+    display: flex;
+    border: 1px solid white;
+    padding: 8px;
+    border-radius: 12px;
+    opacity: 0.95;
+    text-decoration: none;
+    cursor: pointer;
+    color:white;
+}
 .addContact {
   padding: 3px 20%;
   font-size: 12pt;
+}
 }
 </style>

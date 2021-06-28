@@ -1,3 +1,4 @@
+/* eslint import/no-cycle: [1, { ignoreExternal: true }] */
 import axios from 'axios';
 import store from './store';
 import router from './router';
@@ -7,14 +8,18 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use((req) => {
+  console.log('qwerty');
   store.dispatch('CHECK_SESSION')
-    .then(() => {})
+    .then((response) => {
+      Promise.resolve(response);
+    })
     .catch((error) => {
       router.push('/login');
     });
   return req;
-}, function (error) {
-  return Promise.reject(error);
+}, (error) => {
+  console.log('kfhk');
+  Promise.reject(error);
 });
 
 export default instance;
